@@ -1,6 +1,6 @@
 import "@ant-design/v5-patch-for-react-19";
 import {Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dasboard";
+import Home from "./pages/Home"
 import Investments from "./pages/Investments";
 import Teams from "./pages/Teams";
 import Reports from "./pages/Reports";
@@ -16,7 +16,7 @@ function App() {
     <>
       <Sidebar/>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Home />} />
         <Route path="/investments" element={<Investments />} />
         <Route path="/team" element={<Teams />} />
         <Route path="/reports" element={<Reports />} />
