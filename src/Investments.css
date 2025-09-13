@@ -35,14 +35,15 @@
     line-height: 1.2;
   }
 
-  .page-titles {
+  .page-titless {
     font-size: 24px;
     font-weight: 700;
     color: #111827;
   }
-  .sub-titles{
+  .sub-titless{
     color: #16a34a;
-    font-size: 21px;
+    font-size: 20px;
+    font-weight: 700;
   }
   
   

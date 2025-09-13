@@ -40,7 +40,6 @@ export default function Login() {
       return;
     }
 
-    // Simulate API call (replace with real backend API)
     setTimeout(() => {
       if (email === "admin@copytrading.com" && password === "admin1234") {
         localStorage.setItem("isLoggedIn", "true");

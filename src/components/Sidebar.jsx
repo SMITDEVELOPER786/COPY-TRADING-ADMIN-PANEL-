@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import '../Sidebar.css';
-import { 
-  LayoutDashboard, 
-  TrendingUp, 
-  Users, 
-  User, 
-  MessageSquare, 
-  FileText, 
-  Shield, 
-  Settings, 
-  LogOut,
-  UsersIcon,
-  Menu,
-  X      
+import {
+   LayoutDashboard,
+   TrendingUp,
+   Users,
+   User,
+   MessageSquare,
+   FileText,
+   Shield,
+   Settings,
+   LogOut,
+   UsersIcon,
+   Menu,
+   X      
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true); // default open on desktop
 
   // ✅ Detect screen size (desktop vs mobile)
@@ -34,6 +35,25 @@ const Sidebar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Handle logout functionality
+  const handleLogout = () => {
+    // Clear authentication data
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('token');
+    
+    // Clear any other stored user data if needed
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userRole');
+    
+    // Close mobile sidebar if open
+    if (window.innerWidth <= 1024) {
+      setIsOpen(false);
+    }
+    
+    // Navigate to login page
+    navigate('/login');
+  };
+
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/' },
     { name: 'Investments', icon: TrendingUp, path: '/investments' },
@@ -47,15 +67,25 @@ const Sidebar = () => {
   const bottomItems = [
     { name: 'KYC', icon: Shield, path: '/kyc' },
     { name: 'Settings', icon: Settings, path: '/settings' },
-    { name: 'Logout', icon: LogOut, path: '/logout' },
+    { name: 'Logout', icon: LogOut, path: '/logout', isLogout: true },
   ];
+
+  const handleItemClick = (item) => {
+    if (item.isLogout) {
+      handleLogout();
+    } else {
+      if (window.innerWidth <= 1024) {
+        setIsOpen(false); // close on mobile click
+      }
+    }
+  };
 
   return (
     <>
       {/* 📱 Mobile Hamburger Button */}
       <button 
-        className="mobile-toggle" 
-        onClick={() => setIsOpen(!isOpen)}
+         className="mobile-toggle"
+         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -69,13 +99,11 @@ const Sidebar = () => {
               const isActive = location.pathname === item.path;
 
               return (
-                <Link 
-                  key={item.name} 
-                  to={item.path} 
-                  className={`sidebar-item ${isActive ? 'active' : ''}`}
-                  onClick={() => {
-                    if (window.innerWidth <= 1024) setIsOpen(false); // close on mobile click
-                  }}
+                <Link
+                   key={item.name}
+                   to={item.path}
+                   className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  onClick={() => handleItemClick(item)}
                 >
                   <Icon size={20} />
                   <span>{item.name}</span>
@@ -83,22 +111,33 @@ const Sidebar = () => {
               );
             })}
           </nav>
-          
+                     
           <div className="sidebar-divider"></div>
-          
+                     
           <nav className="sidebar-bottom">
             {bottomItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.path;
+              const isActive = location.pathname === item.path && !item.isLogout;
+
+              if (item.isLogout) {
+                return (
+                  <button
+                     key={item.name}
+                     onClick={() => handleItemClick(item)}
+                     className="sidebar-item logout-button"
+                  >
+                    <Icon size={20} />
+                    <span>{item.name}</span>
+                  </button>
+                );
+              }
 
               return (
-                <Link 
-                  key={item.name} 
-                  to={item.path} 
-                  className={`sidebar-item ${isActive ? 'active' : ''}`}
-                  onClick={() => {
-                    if (window.innerWidth <= 1024) setIsOpen(false);
-                  }}
+                <Link
+                   key={item.name}
+                   to={item.path}
+                   className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  onClick={() => handleItemClick(item)}
                 >
                   <Icon size={20} />
                   <span>{item.name}</span>
