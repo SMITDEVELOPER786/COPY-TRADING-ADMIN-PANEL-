@@ -18,7 +18,7 @@ const Users = () => {
             <img
               src="https://randomuser.me/api/portraits/women/65.jpg"
               alt="User Avatar"
-              className="avatar"
+              className="avatars"
             />
             <div className="user-card-info">
               <h3>Maria Khan</h3>

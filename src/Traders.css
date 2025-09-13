@@ -227,11 +227,14 @@
   
   .chart-x-axis {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly; 
     margin-top: 1rem;
     font-size: 0.75rem;
     color: #9ca3af;
+    font-weight: 600;
+    gap: 5px;
   }
+  
   
   /* Traders Section */
   .traders-section {
