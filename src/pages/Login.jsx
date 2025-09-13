@@ -45,7 +45,7 @@ export default function Login() {
       if (email === "admin@copytrading.com" && password === "admin1234") {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("token", "sample-jwt-token");
-        navigate("/dashboard");
+        navigate("/");
       } else {
         setError("Invalid email or password ❌");
       }
