@@ -14,7 +14,6 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    // Fake delay to show loading (replace with API request)
     setTimeout(() => {
       if (email === "admin@copytrading.com" && password === "admin1234") {
         localStorage.setItem("isLoggedIn", "true");
