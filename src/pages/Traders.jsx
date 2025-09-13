@@ -72,7 +72,7 @@ function Traders() {
       <div className="main-content">
       <div className="content-header">
       <h2 className="page-titlees">
-          Dasboard <span className="sub-titlees">› Traders</span>
+          Dashboard <span className="sub-titlees">› Traders</span>
         </h2>            <div className="time-filters">
     {['Months', '30 Days', '7 Days', '24 Hour'].map((period) => (
       <button 

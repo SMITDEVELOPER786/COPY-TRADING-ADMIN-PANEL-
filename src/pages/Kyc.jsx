@@ -135,7 +135,7 @@ function KYC() {
         <div className="kyc-page">
           <div className="page-header">
           <h2 className="page-titlees">
-          Dasboard <span className="sub-titlees">› KYC</span>
+          Dashboard <span className="sub-titlees">› KYC</span>
         </h2>          </div>
           
           <div className="filters-container">

@@ -125,7 +125,9 @@ function Reports() {
       <div className="main-content">
         <div className="reports-page">
           <div className="page-header">
-            <h1>Reports</h1>
+          <h2 className="page-titlees">
+          Dashboard <span className="sub-titlees">› Reports</span>
+          </h2>                    
           </div>
           
           <div className="stats-container">

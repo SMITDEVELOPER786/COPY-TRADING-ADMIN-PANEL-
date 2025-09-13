@@ -143,7 +143,7 @@ function Team() {
         <div className="team-page">
           <div className="page-header">
           <h2 className="page-titlees">
-          Dasboard <span className="sub-titlees">› Teams</span>
+          Dashboard <span className="sub-titlees">› Teams</span>
         </h2>                    </div>
 
           <div className="filters-container">
