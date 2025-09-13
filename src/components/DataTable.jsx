@@ -68,34 +68,37 @@ const DataTable = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row) => (
-              <tr key={row.id}>
-                <td>
-                  <div className="name-cell">
-                    <img src={row.avatar} alt={row.name} className="avatar" />
-                    <span>{row.name}</span>
-                  </div>
-                </td>
-                <td className="portfolio-cell">{row.portfolio}</td>
-                <td>{row.investment}</td>
-                <td>{row.recentInvestment}</td>
-                <td>
-                  <span className="rank-badge">{row.rank}</span>
-                </td>
-                <td>
-                  <div className="actions-dropdown">
-                    <button className="actions-button">
-                      <MoreHorizontal size={16} />
-                    </button>
-                    <div className="dropdown-menu">
-                      <button>View Profile</button>
-                      <button>Send Email</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+  {tableData.map((row) => (
+    <tr key={row.id}>
+      <td data-label="Name">
+        <div className="name-cell">
+          <img src={row.avatar} alt={row.name} className="avatar" />
+          <span>{row.name}</span>
+        </div>
+      </td>
+      <td data-label="Portfolio" className="portfolio-cell">
+        {row.portfolio}
+      </td>
+      <td data-label="Investment">{row.investment}</td>
+      <td data-label="Recent Investment">{row.recentInvestment}</td>
+      <td data-label="Rank">
+        <span className="rank-badge">{row.rank}</span>
+      </td>
+      <td data-label="Actions">
+        <div className="actions-dropdown">
+          <button className="actions-button">
+            <MoreHorizontal size={16} />
+          </button>
+          <div className="dropdown-menu">
+            <button>View Profile</button>
+            <button>Send Email</button>
+          </div>
+        </div>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </div>
 

@@ -240,6 +240,44 @@
   }
   
   @media (max-width: 768px) {
+    .data-table,
+    .data-table thead,
+    .data-table tbody,
+    .data-table th,
+    .data-table td,
+    .data-table tr {
+      display: block;
+      width: 100%;
+    }
+  
+    .data-table thead {
+      display: none; /* hide headers */
+    }
+  
+    .data-table tr {
+      margin-bottom: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+  
+    .data-table td {
+      padding: 8px 12px;
+      text-align: left;
+      border: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .data-table td::before {
+      content: attr(data-label); /* pulls header text */
+      font-weight: 600;
+      color: #6b7280;
+      margin-right: 8px;
+    }
     .table-header {
       flex-direction: column;
       align-items: flex-start;
