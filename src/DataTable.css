@@ -251,7 +251,7 @@
     }
   
     .data-table thead {
-      display: none; /* hide headers */
+      display: none;
     }
   
     .data-table tr {
@@ -273,11 +273,12 @@
     }
   
     .data-table td::before {
-      content: attr(data-label); /* pulls header text */
+      content: attr(data-label);
       font-weight: 600;
       color: #6b7280;
       margin-right: 8px;
     }
+  
     .table-header {
       flex-direction: column;
       align-items: flex-start;
@@ -299,3 +300,67 @@
       padding: 8px 12px;
     }
   }
+  
+  @media (max-width: 480px) {
+    .data-table-container {
+      padding: 16px;
+      border-radius: 12px;
+    }
+  
+    .table-tab {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  
+    .see-all-btn {
+      font-size: 12px;
+    }
+  
+    .data-table tr {
+      padding: 8px;
+      margin-bottom: 12px;
+    }
+  
+    .data-table td {
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+  
+    .data-table td::before {
+      font-size: 11px;
+    }
+  
+  
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;   
+      overflow: hidden; 
+      display: flex;         
+      align-items: center;    
+      justify-content: center;
+      background: #e5e7eb;    
+    }
+  
+    .rank-badge {
+      font-size: 11px;
+      padding: 2px 6px;
+    }
+  
+    .entries-info {
+      font-size: 12px;
+    }
+  
+    .entries-select {
+      font-size: 12px;
+      padding: 2px 6px;
+    }
+  
+    .pagination-btn,
+    .pagination-number {
+      width: 28px;
+      height: 28px;
+      font-size: 12px;
+    }
+  }
+  

@@ -1,209 +1,262 @@
 .charts-section {
-    display: grid;
-    grid-template-columns: 1fr 400px;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chart-header {
+  margin-bottom: 24px;
+}
+
+.chart-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap; /* ✅ makes tabs wrap on small screens */
+}
+
+.chart-tab {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chart-tab.active {
+  background-color: #2d6b2d;
+  color: white;
+}
+
+.chart-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.chart-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.chart-growth {
+  background-color: #dcfce7;
+  color: #166534;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  height: 180px;
+  gap: 8px;
+}
+
+.bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+}
+
+.bar {
+  width: 100%;
+  max-width: 24px;
+  background: linear-gradient(to top, #2d6b2d, #4ade80);
+  border-radius: 4px 4px 0 0;
+  margin-bottom: 8px;
+  transition: opacity 0.2s ease;
+}
+
+.bar:hover {
+  opacity: 0.8;
+}
+
+.bar-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.revenue-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.revenue-card {
+  background: linear-gradient(135deg, #2d6b2d 0%, #1e4a1e 100%);
+  color: white;
+  padding: 32px 24px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.revenue-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.revenue-label {
+  font-size: 16px;
+  opacity: 0.8;
+  margin-bottom: 16px;
+}
+
+.revenue-growth {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.pie-chart-card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.pie-chart {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-color.investor {
+  background-color: #3b82f6;
+}
+
+.legend-color.trader {
+  background-color: #10b981;
+}
+
+.legend-color.company {
+  background-color: #f59e0b;
+}
+
+/* ✅ Tablets */
+@media (max-width: 1200px) {
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+
+  .revenue-section {
+    flex-direction: row;
     gap: 24px;
-    margin-bottom: 32px;
   }
-  
-  .chart-card {
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .revenue-card,
+  .pie-chart-card {
+    flex: 1;
   }
-  
-  .chart-header {
+}
+
+/* ✅ Large phones */
+@media (max-width: 768px) {
+  .revenue-section {
+    flex-direction: column;
+  }
+
+  .bar-chart {
+    height: 120px;
+    gap: 4px;
+  }
+
+  .chart-value {
+    font-size: 24px;
+  }
+
+  .revenue-value {
+    font-size: 24px;
+  }
+}
+
+/* ✅ Small phones */
+@media (max-width: 480px) {
+  .charts-section {
+    gap: 16px;
     margin-bottom: 24px;
   }
-  
-  .chart-tabs {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .chart-tab {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 20px;
-    background-color: #f3f4f6;
-    color: #6b7280;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .chart-tab.active {
-    background-color: #2d6b2d;
-    color: white;
-  }
-  
-  .chart-stats {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-  
-  .chart-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: #1f2937;
-  }
-  
-  .chart-growth {
-    background-color: #dcfce7;
-    color: #166534;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  
-  .bar-chart {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    height: 180px;
-    gap: 8px;
-  }
-  
-  .bar-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    height: 100%;
-  }
-  
-  .bar {
-    width: 100%;
-    max-width: 24px;
-    background: linear-gradient(to top, #2d6b2d, #4ade80);
-    border-radius: 4px 4px 0 0;
-    margin-bottom: 8px;
-    transition: opacity 0.2s ease;
-  }
-  
-  .bar:hover {
-    opacity: 0.8;
-  }
-  
-  .bar-label {
-    font-size: 12px;
-    color: #6b7280;
-    font-weight: 500;
-  }
-  
-  .revenue-section {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .revenue-card {
-    background: linear-gradient(135deg, #2d6b2d 0%, #1e4a1e 100%);
-    color: white;
-    padding: 32px 24px;
-    border-radius: 16px;
-    text-align: center;
-  }
-  
-  .revenue-value {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-  
-  .revenue-label {
-    font-size: 16px;
-    opacity: 0.8;
-    margin-bottom: 16px;
-  }
-  
-  .revenue-growth {
-    font-size: 14px;
-    opacity: 0.9;
-  }
-  
+
+  .chart-card, 
+  .revenue-card, 
   .pie-chart-card {
-    background: white;
-    padding: 24px;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    padding: 16px;
+    border-radius: 12px;
   }
-  
-  .pie-chart {
-    margin-bottom: 20px;
-    display: flex;
+
+  .chart-tabs {
     justify-content: center;
+    gap: 6px;
   }
-  
-  .pie-legend {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
+
+  .chart-tab {
+    padding: 6px 12px;
+    font-size: 12px;
   }
-  
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+
+  .chart-value {
+    font-size: 20px;
+  }
+
+  .revenue-value {
+    font-size: 20px;
+  }
+
+  .revenue-label {
     font-size: 14px;
-    color: #6b7280;
   }
-  
-  .legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+
+  .bar-chart {
+    height: 100px;
+    gap: 2px;
   }
-  
-  .legend-color.investor {
-    background-color: #3b82f6;
+
+  .bar-label {
+    font-size: 10px;
   }
-  
-  .legend-color.trader {
-    background-color: #10b981;
+
+  .legend-item {
+    font-size: 12px;
   }
-  
-  .legend-color.company {
-    background-color: #f59e0b;
-  }
-  
-  @media (max-width: 1200px) {
-    .charts-section {
-      grid-template-columns: 1fr;
-    }
-    
-    .revenue-section {
-      flex-direction: row;
-      gap: 24px;
-    }
-    
-    .revenue-card,
-    .pie-chart-card {
-      flex: 1;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .revenue-section {
-      flex-direction: column;
-    }
-    
-    .bar-chart {
-      height: 120px;
-      gap: 4px;
-    }
-    
-    .chart-value {
-      font-size: 24px;
-    }
-    
-    .revenue-value {
-      font-size: 24px;
-    }
-  }
+}
