@@ -1,6 +1,6 @@
-import "@ant-design/v5-patch-for-react-19";
-import {Routes, Route } from "react-router-dom";
-import Home from "./pages/Home"
+// src/App.js
+import { Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
 import Investments from "./pages/Investments";
 import Teams from "./pages/Teams";
 import Reports from "./pages/Reports";
@@ -9,21 +9,38 @@ import Users from "./pages/Users";
 import Traders from "./pages/Traders";
 import Messages from "./pages/Messages";
 import Sidebar from "./components/Sidebar";
-import './App.css'
+import Login from "./pages/Login";
+import "./App.css";
+
+function PrivateRoute({ children }) {
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+  return isLoggedIn ? children : <Navigate to="/login" />;
+}
 
 function App() {
   return (
     <>
-      <Sidebar/>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/investments" element={<Investments />} />
-        <Route path="/team" element={<Teams />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/kyc" element={<KYC />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/trader" element={<Traders />} />
-        <Route path="/messages" element={<Messages />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/*"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/investments" element={<Investments />} />
+                <Route path="/team" element={<Teams />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/kyc" element={<KYC />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/trader" element={<Traders />} />
+                <Route path="/messages" element={<Messages />} />
+              </Routes>
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </>
   );
