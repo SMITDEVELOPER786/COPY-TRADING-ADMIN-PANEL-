@@ -1,0 +1,325 @@
+ .dashboard-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 32px;
+    background-color: #ffffff;
+    margin-left: 280px;
+  }
+  
+  .team-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  
+  .add-staff-btn {
+    padding: 10px 16px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .add-staff-btn:hover {
+    background-color: #059669;
+  }
+  
+  .filters-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 24px;
+  }
+  
+  .search-container {
+    flex: 1;
+    max-width: 400px;
+  }
+  .search-input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+  }
+  .search-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 48px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    background-color: #f8fafc;
+    outline: none;
+  }
+  .search-input:focus {
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .status-filter {
+    position: relative;
+  }
+  .status-select {
+    appearance: none;
+    width: 120px;
+    height: 48px;
+    padding: 0 40px 0 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    background-color: #f8fafc;
+    color: #64748b;
+    cursor: pointer;
+    outline: none;
+  }
+  .status-select:focus {
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  .select-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+  }
+  
+  .table-container {
+    background-color: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  .team-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .team-table thead {
+    background-color: #f8fafc;
+  }
+  
+  .team-table th {
+    padding: 20px 24px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .team-table td {
+    padding: 20px 24px;
+    font-size: 14px;
+    color: #334155;
+  }
+  
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f1f5f9;
+  }
+  .user-name {
+    font-weight: 500;
+    color: #1e293b;
+  }
+  
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+  .status-active {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+  .status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  .status-withdraw {
+    background-color: #fce7f3;
+    color: #be185d;
+  }
+  
+  .more-button {
+    padding: 8px;
+    border: none;
+    background-color: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #64748b;
+  }
+  .more-button:hover {
+    background-color: #f1f5f9;
+    color: #475569;
+  }
+  
+  .table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0;
+  }
+  .showing-info {
+    font-size: 14px;
+    color: #64748b;
+  }
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pagination-button,
+  .pagination-number {
+    width: 400px;
+    height: 40px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+  }
+  .pagination-number.active {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    color: #ffffff;
+  }
+  
+  /* responsive */
+  
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .main-content {
+      margin-left: 0;
+      padding: 24px 20px;
+    }
+  
+    .filters-container {
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+    }
+  
+    .filter-controls {
+      flex-direction: row;
+      gap: 16px;
+      justify-content: flex-start;
+    }
+  
+    .team-table thead {
+      display: table-header-group;
+    }
+  
+    .team-table,
+    .team-table tbody,
+    .team-table tr,
+    .team-table td {
+      display: table-cell;
+    }
+  
+    .team-table td::before {
+      content: none !important;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .filters-container {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+  
+    .filter-controls {
+      flex-direction: column;
+      gap: 12px;
+    }
+  
+    .status-select,
+    .date-select {
+      width: 100%;
+    }
+  
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    .team-table thead {
+      display: none;
+    }
+  
+    .team-table,
+    .team-table tbody,
+    .team-table tr,
+    .team-table td {
+      display: block;
+      width: 100%;
+    }
+  
+    .team-table tr {
+      margin-bottom: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+    }
+  
+    .team-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+  
+    .team-table td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      text-transform: capitalize;
+      margin-right: 8px;
+      color: #555;
+    }
+  }
