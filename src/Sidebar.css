@@ -63,7 +63,6 @@
   padding: 0 24px;
 }
 
-/* 📱 Responsive */
 @media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%); /* hidden by default */
@@ -93,9 +92,9 @@
 /* 📱 Mobile toggle button */
 .mobile-toggle {
   display: none;
-  position: fixed;
+  position: absolute;
   top: 16px;
-  left: 16px;
+  right: 10px;
   z-index: 1100;
   background: #2d6b2d;
   border: none;

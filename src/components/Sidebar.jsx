@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../Sidebar.css';
 import { 
   LayoutDashboard, 
@@ -11,14 +11,28 @@ import {
   Settings, 
   LogOut,
   UsersIcon,
-  Menu,  // hamburger
-  X      // close button
+  Menu,
+  X      
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // default open on desktop
+
+  // ✅ Detect screen size (desktop vs mobile)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1024) {
+        setIsOpen(false); // mobile: closed by default
+      } else {
+        setIsOpen(true); // desktop: always open
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/' },
@@ -59,7 +73,9 @@ const Sidebar = () => {
                   key={item.name} 
                   to={item.path} 
                   className={`sidebar-item ${isActive ? 'active' : ''}`}
-                  onClick={() => setIsOpen(false)} // close on mobile click
+                  onClick={() => {
+                    if (window.innerWidth <= 1024) setIsOpen(false); // close on mobile click
+                  }}
                 >
                   <Icon size={20} />
                   <span>{item.name}</span>
@@ -80,7 +96,9 @@ const Sidebar = () => {
                   key={item.name} 
                   to={item.path} 
                   className={`sidebar-item ${isActive ? 'active' : ''}`}
-                  onClick={() => setIsOpen(false)} // close on mobile click
+                  onClick={() => {
+                    if (window.innerWidth <= 1024) setIsOpen(false);
+                  }}
                 >
                   <Icon size={20} />
                   <span>{item.name}</span>
