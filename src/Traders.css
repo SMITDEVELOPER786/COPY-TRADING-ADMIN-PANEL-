@@ -202,39 +202,69 @@
     color: #6b7280;
     font-size: 0.875rem;
   }
-  
-  /* Chart */
-  .chart-container {
-    position: relative;
-  }
-  
+    
+.chart-container {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;   
+  padding-bottom: 1rem;
+}
+
+.chart-y-axis {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.chart-area {
+  margin-left: 20px;
+  position: relative;
+  min-height: 200px; 
+}
+
+/* X-axis */
+.chart-x-axis {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;    
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 600;
+  gap: 8px;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
   .chart-y-axis {
-    position: absolute;
-    left: -40px;
-    top: 0;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    color: #9ca3af;
+    left: -30px;    
+    font-size: 0.65rem;
   }
-  
-  .chart-area {
-    margin-left: 20px;
-    position: relative;
-  }
-  
+
   .chart-x-axis {
-    display: flex;
-    justify-content: space-evenly; 
-    margin-top: 1rem;
-    font-size: 0.75rem;
-    color: #9ca3af;
-    font-weight: 600;
-    gap: 5px;
+    font-size: 0.65rem;
+    gap: 4px;
+    justify-content: flex-start;
+    overflow-x: auto;
   }
-  
+
+  .chart-x-axis span {
+    min-width: 50px;
+    flex-shrink: 0;
+  }
+
+  .chart-area {
+    margin-left: 10px; 
+  }
+}
+
   
   /* Traders Section */
   .traders-section {
