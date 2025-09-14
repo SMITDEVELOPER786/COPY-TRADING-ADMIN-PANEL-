@@ -430,101 +430,79 @@
     margin-left: 0;
     padding: 24px 16px;
   }
-  
+
   .stats-container {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
   }
-  
+
   .filters-container {
     flex-direction: column;
     align-items: stretch;
     gap: 16px;
   }
-  
+
   .search-container {
     max-width: 100%;
   }
-  
+
   .filter-controls {
     justify-content: flex-start;
     flex-wrap: wrap;
   }
-  
+
   .status-select,
   .report-select {
     min-width: 120px;
   }
 }
 
-/* Enhanced Mobile Design */
+/* Tablet & Mobile */
 @media (max-width: 768px) {
   .main-content {
     padding: 16px 12px;
   }
-  
+
   .page-titlees {
     font-size: 24px;
     margin-bottom: 16px;
+    text-align: center;
   }
-  
+
   .stats-container {
     grid-template-columns: 1fr;
     gap: 12px;
     margin-bottom: 24px;
   }
-  
+
   .stat-card {
     padding: 16px;
     gap: 12px;
   }
-  
-  .stat-icon {
-    width: 40px;
-    height: 40px;
-  }
-  
+
   .stat-number {
     font-size: 20px;
   }
-  
-  .stat-label {
-    font-size: 13px;
-  }
-  
+
   .filters-container {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
     margin-bottom: 20px;
   }
-  
-  .search-container {
-    max-width: 100%;
-  }
-  
+
   .search-input {
     height: 44px;
     font-size: 14px;
   }
-  
+
   .filter-controls {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 10px;
-    align-items: stretch;
-  }
-  
-  .status-select,
-  .report-select,
-  .date-input {
-    width: 100%;
-    height: 44px;
-    font-size: 13px;
-    min-width: unset;
   }
 
-  /* Mobile Table Transformation */
+  /* Table → Card view */
   .table-container {
     border-radius: 12px;
     overflow: visible;
@@ -541,183 +519,125 @@
     width: 100%;
   }
 
-  .reports-table {
-    border: none;
-  }
-
   .reports-table thead {
     display: none;
   }
 
-  .reports-table tbody {
-    display: block;
-  }
-
   .reports-table tr {
-    display: block;
     margin-bottom: 16px;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 16px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: relative;
-  }
-  
-  .reports-table tr:hover {
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .reports-table tr:not(:last-child) {
-    border-bottom: 1px solid #e2e8f0;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   }
 
   .reports-table td {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    font-size: 14px;
+    padding: 10px 0;
     border: none;
-    min-height: 40px;
-  }
-  
-  .reports-table td:not(:last-child) {
-    border-bottom: 1px solid #f1f5f9;
-    margin-bottom: 8px;
-    padding-bottom: 12px;
   }
 
   .reports-table td::before {
     content: attr(data-label);
     font-weight: 600;
     color: #475569;
+    font-size: 13px;
     flex-shrink: 0;
     min-width: 100px;
-    font-size: 13px;
+    margin-right: 10px;
+    text-align: left;
+    flex: 1;       
   }
-  
-  .reports-table td > * {
-    flex-shrink: 0;
-  }
-  
-  /* Mobile-specific cell adjustments */
+
+  /* Cell Adjustments */
   .reports-table .user-cell {
-    justify-content: flex-end;
-    flex: 1;
-    min-width: 0;
+    justify-content: flex-start;
     gap: 8px;
   }
-  
-  .reports-table .user-cell .user-avatar {
+
+  .reports-table .user-avatar {
     width: 28px;
     height: 28px;
   }
-  
-  .reports-table .user-cell .user-name {
+
+  .reports-table .user-name {
     font-size: 13px;
-    max-width: 120px;
-  }
-  
-  .reports-table .status-badge {
-    font-size: 10px;
-    padding: 4px 8px;
-  }
-  
-  .reports-table .report-title {
-    font-size: 13px;
-    text-align: right;
-    max-width: 180px;
+    max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
-  .reports-table .date {
+
+  .report-title {
     font-size: 12px;
+    max-width: 100%;  
+    white-space: normal;    
+    overflow: visible;  
+    text-overflow: unset;   
+    text-align: right;
+    line-height: 1.4;        
   }
   
+
+
+  .reports-table .status-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
   .reports-table .more-button {
+    margin-left: auto;
     padding: 6px;
-    min-width: 32px;
-    min-height: 32px;
   }
-  
+
+  /* Footer */
   .table-footer {
     flex-direction: column;
     gap: 16px;
-    align-items: center;
-    padding: 16px 20px;
-  }
-  
-  .pagination {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  
-  .pagination-button,
-  .pagination-number {
-    width: 36px;
-    height: 36px;
-    font-size: 12px;
-  }
-  
-  .showing-info {
-    font-size: 13px;
     text-align: center;
   }
 }
 
-/* Extra small screens */
+/* Extra Small Phones */
 @media (max-width: 480px) {
   .main-content {
     padding: 12px 8px;
   }
-  
+
   .page-titlees {
     font-size: 20px;
-    text-align: center;
   }
-  
-  .stat-card {
-    padding: 12px;
-  }
-  
-  .stat-number {
-    font-size: 18px;
-  }
-  
+
   .reports-table tr {
     padding: 12px;
   }
-  
+
   .reports-table td::before {
     min-width: 80px;
     font-size: 12px;
   }
-  
+
   .reports-table .report-title {
-    max-width: 140px;
     font-size: 12px;
+    font-weight:600;
+    line-height: 1.3;   
   }
-  
+
   .reports-table .user-name {
     font-size: 12px;
     max-width: 100px;
   }
-  
-  .table-footer {
-    padding: 12px 16px;
+
+  .status-badge {
+    font-size: 10px;
+    padding: 3px 8px;
   }
-  
-  .pagination-numbers {
-    gap: 2px;
-  }
-  
-  .pagination-button,
-  .pagination-number {
+
+  .pagination-number,
+  .pagination-button {
     width: 32px;
     height: 32px;
     font-size: 11px;
