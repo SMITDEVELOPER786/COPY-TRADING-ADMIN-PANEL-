@@ -226,7 +226,6 @@
   min-height: 200px; 
 }
 
-/* X-axis */
 .chart-x-axis {
   display: flex;
   justify-content: space-evenly;
@@ -464,3 +463,62 @@
     object-fit: cover;
     border: 2px solid #f1f5f9;
   }
+
+@media (max-width: 768px) {
+  .table-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .filter-btn {
+    flex: 1 1 45%; 
+    min-width: 140px;
+    justify-content: center;
+  }
+ 
+  .traders-table,
+  .traders-table thead,
+  .traders-table tbody,
+  .traders-table th,
+  .traders-table td,
+  .traders-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .traders-table thead {
+    display: none;
+  }
+
+  .traders-table tr {
+    background: #fff;
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .traders-table td {
+    border: none;
+    padding: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+  }
+
+  .traders-table td::before {
+    content: attr(data-label); 
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .more-btn {
+    align-self: flex-end;
+  }
+}

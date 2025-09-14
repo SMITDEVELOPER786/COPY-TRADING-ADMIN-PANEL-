@@ -226,27 +226,27 @@ function Traders() {
               <tbody>
                 {traders.map((trader, index) => (
                   <tr key={index}>
-                    <td>
+                  <td data-label="Trader Name">
                     <div className="trader-info">
                       <img src={trader.avatar} alt={trader.name} className="user-avatar" />
                       <span>{trader.name}</span>
-                      </div>
-                    </td>
-                    <td>{trader.amountSecured}</td>
-                    <td>{trader.netProfit}</td>
-                    <td>{trader.avgROI}</td>
-                    <td>{trader.avgDrawdown}</td>
-                    <td>
-                      <span className={`tag tag-${trader.tagColor}`}>
-                        {trader.tag}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="more-btn">
-                        <MoreHorizontal size={16} />
-                      </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </td>
+                  <td data-label="Amount Secured">{trader.amountSecured}</td>
+                  <td data-label="Net Profit">{trader.netProfit}</td>
+                  <td data-label="Avg ROI">{trader.avgROI}</td>
+                  <td data-label="Avg Drawdown">{trader.avgDrawdown}</td>
+                  <td data-label="Tag">
+                    <span className={`tag tag-${trader.tagColor}`}>
+                      {trader.tag}
+                    </span>
+                  </td>
+                  <td data-label="">
+                    <button className="more-btn">
+                      <MoreHorizontal size={16} />
+                    </button>
+                  </td>
+                </tr>
                 ))}
               </tbody>
             </table>
