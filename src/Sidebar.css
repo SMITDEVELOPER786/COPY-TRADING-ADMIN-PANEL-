@@ -72,84 +72,31 @@
     transform: translateX(0); /* slide in when toggled */
   }
 }
-
-/* Smaller mobile tweaks */
-@media (max-width: 600px) {
-  .sidebar {
-    width: 240px; /* slightly narrower */
-  }
-
-  .sidebar-item {
-    font-size: 14px;
-    padding: 10px 14px;
-  }
-
-  .sidebar-content {
-    padding: 24px 0;
-  }
-}
-
 /* 📱 Mobile toggle button */
 .mobile-toggle {
   display: none;
-  position: absolute;
-  top: 16px;
-  right: 10px;
-  z-index: 1100;
+  position: fixed;   /* absolute ki jagah fixed, taki har page par sahi rahe */
+  top: 12px;
+  right: 5px;        /* 👈 right se hata kar left me kar do (header icons ko block nahi karega) */
+  z-index: 1200;     /* header ke upar rahe, sidebar se upar bhi */
   background: #2d6b2d;
   border: none;
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 6px;
+  padding: 2px;      /* 👈 size chhota kiya */
   color: white;
+  
+
   cursor: pointer;
 }
 
 /* Show only on mobile */
 @media (max-width: 1024px) {
   .mobile-toggle {
-    display: block;
+    display: flex;           /* flex kiya for center alignment */
+    align-items: center;
+    justify-content: center;
+    width: 24px; 
+    margin-bottom: 110px;            /* 👈 chhota round button */
+    height: 24px;
   }
-}
-
-/* Add this to your existing Sidebar.css file */
-
-.logout-button {
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  text-align: left;
-  font-family: inherit;
-}
-
-.logout-button:hover {
-  background-color: #fee2e2;
-  color: #dc2626;
-}
-
-.logout-button:active {
-  transform: translateY(1px);
-}
-
-/* Mobile responsive adjustments */
-@media (max-width: 1024px) {
-  .logout-button {
-    padding: 14px 16px;
-    font-size: 15px;
-  }
-}
-
-/* Focus styles for accessibility */
-.logout-button:focus {
-  outline: 2px solid #dc2626;
-  outline-offset: 2px;
 }
