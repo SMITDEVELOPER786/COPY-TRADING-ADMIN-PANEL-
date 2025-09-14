@@ -135,8 +135,8 @@ function Investments() {
 
         <div className="investments-page">
           <div className="page-header">
-            <h2 className="page-titless">
-          Dashboard <span className="sub-titless">› Investments</span>
+            <h2 className="page-tittless">
+          Dashboard <span className="sub-tittless">› Investments</span>
         </h2>
           </div>
           

@@ -35,14 +35,14 @@
     line-height: 1.2;
   }
 
-  .page-titless {
-    font-size: 24px;
+  .page-tittless {
+    font-size: 28px;
     font-weight: 700;
     color: #111827;
   }
-  .sub-titless{
+  .sub-tittless{
     color: #16a34a;
-    font-size: 18px;
+    font-size: 26px;
     font-weight: 700;
   }
   
@@ -459,6 +459,16 @@
         }
       
         @media (max-width: 480px) {
+          .page-tittless {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+          }
+          .sub-tittless{
+            color: #16a34a;
+            font-size: 18px;
+            font-weight: 700;
+          }
           .investments-table thead {
             display: none;
           }
