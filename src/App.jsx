@@ -8,6 +8,7 @@ import KYC from "./pages/KYC";
 import Users from "./pages/Users";
 import Traders from "./pages/Traders";
 import Messages from "./pages/Messages";
+import Settings from "./pages/Settings";
 import Sidebar from "./components/Sidebar";
 import Login from "./pages/Login";
 import "./App.css";
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/users" element={<Users />} />
                 <Route path="/trader" element={<Traders />} />
                 <Route path="/messages" element={<Messages />} />
+                <Route path="/settings" element={<Settings />} />
               </Routes>
             </PrivateRoute>
           }
