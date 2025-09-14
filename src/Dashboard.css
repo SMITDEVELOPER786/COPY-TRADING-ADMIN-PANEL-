@@ -1,20 +1,3 @@
-/* Global Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f7fa;
-}
-
-/* Layout */
 .app {
   display: flex;
   min-height: 100vh;
@@ -24,24 +7,23 @@ body {
 .main-content {
   flex: 1;
   padding: 32px;
-  margin-left: 280px; /* leaves room for sidebar */
+  margin-left: 280px;
   background-color: #f5f7fa;
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-/* Time filters */
 .time-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;                /* smaller gap for small screens */
-  justify-content: center;  /* center buttons when wrapping */
+  gap: 12px;               
+  justify-content: center;
 }
 
 .time-filter {
-  flex: 1 1 auto;           /* allow buttons to shrink/grow */
-  min-width: 120px;         /* prevent too small */
+  flex: 1 1 auto;          
+  min-width: 120px;       
   padding: 8px 12px;
   border: 1px solid #e0e7ff;
   border-radius: 8px;
@@ -51,7 +33,7 @@ body {
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
-  text-align: center;       /* make text center */
+  text-align: center;
 }
 
 .time-filter:hover {
@@ -65,15 +47,13 @@ body {
   color: white;
 }
 
-/* Extra tweak for very small screens */
 @media (max-width: 480px) {
   .time-filter {
-    flex: 1 1 45%;   /* two per row */
+    flex: 1 1 45%;
     min-width: unset;
   }
 }
 
-/* Dashboard grid */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 320px;
@@ -88,21 +68,18 @@ body {
   gap: 24px;
 }
 
-/* 📱 Responsive Breakpoints */
 
-/* Tablet */
 @media (max-width: 1024px) {
   .main-content {
-    margin-left: 0; /* sidebar can collapse */
+    margin-left: 0; 
     padding: 16px;
   }
 
   .dashboard-grid {
-    grid-template-columns: 1fr; /* stack columns */
+    grid-template-columns: 1fr;
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   .time-filters {
     gap: 8px;

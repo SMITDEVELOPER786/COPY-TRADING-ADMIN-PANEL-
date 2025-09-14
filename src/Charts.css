@@ -19,7 +19,7 @@
 .chart-tabs {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap; /* ✅ makes tabs wrap on small screens */
+  flex-wrap: wrap;
 }
 
 .chart-tab {
@@ -174,7 +174,6 @@
   background-color: #f59e0b;
 }
 
-/* ✅ Tablets */
 @media (max-width: 1200px) {
   .charts-section {
     grid-template-columns: 1fr;
@@ -191,7 +190,6 @@
   }
 }
 
-/* ✅ Large phones */
 @media (max-width: 768px) {
   .revenue-section {
     flex-direction: column;
@@ -211,7 +209,6 @@
   }
 }
 
-/* ✅ Small phones */
 @media (max-width: 480px) {
   .charts-section {
     gap: 16px;

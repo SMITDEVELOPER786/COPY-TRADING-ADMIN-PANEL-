@@ -372,7 +372,6 @@
     border-color: #2563eb;
   }
   
-  /* Responsive Design */
   @media (max-width: 1024px) {
     .main-content {
       margin-left: 0;
@@ -395,6 +394,10 @@
   }
   
   @media (max-width: 768px) {
+    .table-container {
+      padding: 16px;
+    }
+
     .filters-container {
       flex-direction: column;
       align-items: stretch;
@@ -428,15 +431,16 @@
     }
   
     .kyc-table thead {
-      display: none; /* hide header on mobile */
+      display: none;
     }
   
     .kyc-table tr {
       background: #fff;
-      margin-bottom: 12px;
+      margin-bottom: 20px;
       border-radius: 12px;
       padding: 16px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    
     }
   
     .kyc-table td {

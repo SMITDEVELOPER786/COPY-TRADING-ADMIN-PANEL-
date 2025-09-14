@@ -2,7 +2,6 @@
     --sidebar-width: 260px;
   }
   
-  /* Desktop Default */
   .messagePage {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
@@ -79,7 +78,6 @@
     margin-left: 8px;
   }
   
-  /* Chat Window */
   .chatWindow {
     flex: 1;
     display: flex;
@@ -188,7 +186,6 @@
     transform: scale(0.95);
   }
   
-  /* Tablet Responsive */
   @media (max-width: 1023px) and (min-width: 768px) {
     .messagePage {
       margin-left: 0;
@@ -226,7 +223,6 @@
       box-shadow: none;
     }
   
-    /* User list full screen */
     .userList {
       width: 100%;
       height: 100%;
@@ -234,7 +230,6 @@
       border-right: none;
     }
   
-    /* Chat window hidden by default */
     .chatWindow {
       display: none;
       width: 100%;

@@ -7,7 +7,7 @@
   flex: 1;
   padding: 32px;
   background-color: #ffffff;
-  margin-left: 280px; /* Space for sidebar */
+  margin-left: 280px;
 }
 
 .breadcrumb {
@@ -424,7 +424,6 @@
   border-color: #2563eb;
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;
@@ -457,7 +456,6 @@
   }
 }
 
-/* Tablet & Mobile */
 @media (max-width: 768px) {
   .main-content {
     padding: 16px 12px;
@@ -502,7 +500,6 @@
     gap: 10px;
   }
 
-  /* Table → Card view */
   .table-container {
     border-radius: 12px;
     overflow: visible;
@@ -552,7 +549,6 @@
     flex: 1;       
   }
 
-  /* Cell Adjustments */
   .reports-table .user-cell {
     justify-content: flex-start;
     gap: 8px;
@@ -593,7 +589,6 @@
     padding: 6px;
   }
 
-  /* Footer */
   .table-footer {
     flex-direction: column;
     gap: 16px;
@@ -601,7 +596,6 @@
   }
 }
 
-/* Extra Small Phones */
 @media (max-width: 480px) {
   .main-content {
     padding: 12px 8px;

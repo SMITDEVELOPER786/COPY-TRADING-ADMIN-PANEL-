@@ -414,7 +414,7 @@
     
     .table-container {
         width: 100%;
-        overflow-x: auto; /* horizontal scroll on small screens */
+        overflow-x: auto;
       }
       
       .investments-table {
@@ -423,15 +423,13 @@
         font-size: 14px;
       }
       
-      /* Table headers and cells */
       .investments-table th,
       .investments-table td {
         padding: 12px 16px;
         text-align: left;
-        white-space: nowrap; /* prevents text wrapping in table */
+        white-space: nowrap; 
       }
       
-      /* Avatar & Name inside cell */
       .user-cell {
         display: flex;
         align-items: center;
@@ -445,7 +443,6 @@
         object-fit: cover;
       }
       
-      /* 📱 Mobile Styles */
       @media (max-width: 768px) {
         .investments-table {
           font-size: 12px;
@@ -456,16 +453,14 @@
           padding: 8px 10px;
         }
       
-        /* Make table scrollable horizontally */
         .table-container {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
         }
       
-        /* Optional: convert table to stacked cards for extra small screens */
         @media (max-width: 480px) {
           .investments-table thead {
-            display: none; /* hide table headers */
+            display: none;
           }
       
           .investments-table,
@@ -476,11 +471,16 @@
             width: 100%;
           }
       
+          .table-container {
+            padding: 12px;  
+          }
+        
           .investments-table tr {
             margin-bottom: 16px;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 10px;
+            padding: 14px;
+            background: #fff;
           }
       
           .investments-table td {
