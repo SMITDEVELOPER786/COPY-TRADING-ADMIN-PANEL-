@@ -68,7 +68,6 @@ function Traders() {
     <div className="dashboard">
 
 
-      {/* Main Content */}
       <div className="main-content">
       <div className="content-header">
       <h2 className="page-titlees">
@@ -87,7 +86,6 @@ function Traders() {
 </div>
 
 
-        {/* Metric Cards */}
         <div className="metrics-grid">
           {metricCards.map((card, index) => (
             <div key={index} className="metric-card">
@@ -121,7 +119,6 @@ function Traders() {
           ))}
         </div>
 
-        {/* ROI Section */}
         <div className="roi-section">
           <div className="roi-header">
             <div className="roi-tabs">
@@ -152,7 +149,6 @@ function Traders() {
             </div>
           </div>
 
-          {/* Chart */}
           <div className="chart-container">
             <div className="chart-y-axis">
               <span>12500</span>
@@ -192,7 +188,6 @@ function Traders() {
           </div>
         </div>
 
-        {/* Traders Table */}
         <div className="traders-section">
           <h2>Traders</h2>
           

@@ -52,17 +52,15 @@ export default function Messages() {
 
   const [activeChat, setActiveChat] = useState(null);
 
-  // ✅ Page load par desktop view me pehli chat auto-open
   useEffect(() => {
     if (window.innerWidth >= 1024) {
-      setActiveChat(users[0]); // Maria Khan default
+      setActiveChat(users[0]);
     }
   }, []);
 
   return (
     <div className="messagePage">
       <div className="chatContainer">
-        {/* Users List */}
         <div className={`userList ${activeChat ? "hide" : ""}`}>
           <h3 className="sub-titlees">Messages</h3>
           <input type="text" className="search" placeholder="Search Name" />
@@ -91,7 +89,6 @@ export default function Messages() {
           {activeChat && (
             <>
               <div className="chatHeader">
-                {/* Back button (mobile only) */}
                 <button
                   className="backBtn"
                   onClick={() => setActiveChat(null)}

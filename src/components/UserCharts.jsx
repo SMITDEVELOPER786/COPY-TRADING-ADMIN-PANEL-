@@ -4,7 +4,6 @@ import {
   BarChart, Bar
 } from "recharts";
 
-// Dummy data for Equity Graph
 const equityData = [
   { month: "Jan", value: 4000 },
   { month: "Feb", value: 4500 },
@@ -14,7 +13,6 @@ const equityData = [
   { month: "Jun", value: 6100 },
 ];
 
-// Dummy data for Monthly Performance Trends
 const performanceData = [
   { month: "Jan", profit: 20 },
   { month: "Feb", profit: 35 },

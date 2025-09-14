@@ -144,7 +144,8 @@ function Team() {
           <div className="page-header">
           <h2 className="page-titlees">
           Dashboard <span className="sub-titlees">› Teams</span>
-        </h2>                    </div>
+          </h2>                  
+          </div>
 
           <div className="filters-container">
             <div className="search-container">

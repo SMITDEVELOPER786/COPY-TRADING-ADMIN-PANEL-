@@ -7,12 +7,10 @@ const Users = () => {
   return (
     <div className="app">
       <main className="main-content">
-        {/* ---------- PAGE TITLE ---------- */}
         <h2 className="page-title">
           Users <span className="sub-title">› User Details</span>
         </h2>
 
-        {/* ---------- USER CARD + DETAILS ---------- */}
         <div className="user-info">
           <div className="user-card">
             <img
@@ -38,7 +36,6 @@ const Users = () => {
             </div>
           </div>
 
-          {/* ---------- USER DETAILS ---------- */}
           <div className="user-details">
             <div className="detail-row">
               <p>
@@ -80,7 +77,6 @@ const Users = () => {
           </div>
         </div>
 
-        {/* ---------- WRAPPED SECTIONS ---------- */}
         <div className="container">
           <h3>Trading Strategy</h3>
           <div className="tabs-container">

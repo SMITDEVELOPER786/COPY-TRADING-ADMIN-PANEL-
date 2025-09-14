@@ -8,7 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Default to hidden (dots)
+  const [showPassword, setShowPassword] = useState(false);
   const [theme, setTheme] = useState("dark");
   const [emailError, setEmailError] = useState("");
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ export default function Login() {
             <label htmlFor="password" className="sr-only">Password</label>
             <input
               id="password"
-              type={showPassword ? "text" : "password"} // Show text when true, dots when false
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
