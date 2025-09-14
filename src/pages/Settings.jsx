@@ -18,7 +18,9 @@ const Settings = () => {
   const renderMainSettings = () => (
     <div className="settings-main">
       <div className="page-header">
-        <h1>Settings</h1>
+      <h2 className="page-titlees">
+          Dashboard <span className="sub-titlees">› Settings</span>
+      </h2>                
       </div>
       
       <div className="settings-grid">
