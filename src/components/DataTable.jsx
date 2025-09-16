@@ -9,7 +9,6 @@ const DataTable = () => {
     const savedData = localStorage.getItem('tableData');
     try {
       const parsedData = savedData ? JSON.parse(savedData) : null;
-      // Validate parsed data structure
       if (
         parsedData &&
         typeof parsedData === 'object' &&
@@ -98,12 +97,10 @@ const DataTable = () => {
   const [moveRowId, setMoveRowId] = useState(null);
   const [moveToTab, setMoveToTab] = useState('');
 
-  // Update localStorage whenever tableData changes
   useEffect(() => {
     localStorage.setItem('tableData', JSON.stringify(tableData));
   }, [tableData]);
 
-  // Open edit dialog
   const openEditDialog = (rowId, field, value) => {
     setEditRowId(rowId);
     setEditField(field);
@@ -119,7 +116,6 @@ const DataTable = () => {
     setIsEditDialogOpen(true);
   };
 
-  // Handle edit dialog save
   const handleEditSave = () => {
     const value = editValue.trim();
     if (!value) {
@@ -179,7 +175,6 @@ const DataTable = () => {
     setEditField(null);
   };
 
-  // Open add user dialog
   const openAddDialog = () => {
     setNewUser({
       name: '',
@@ -192,7 +187,6 @@ const DataTable = () => {
     setIsAddDialogOpen(true);
   };
 
-  // Handle add user dialog save
   const handleAddSave = () => {
     const { name, portfolio, investment, recentInvestment, rank, avatar } = newUser;
 
@@ -252,14 +246,12 @@ const DataTable = () => {
     setCurrentPage(1);
   };
 
-  // Open move user dialog
   const openMoveDialog = (rowId) => {
     setMoveRowId(rowId);
-    setMoveToTab(activeTab); // Default to current tab
+    setMoveToTab(activeTab);
     setIsMoveDialogOpen(true);
   };
 
-  // Handle move user dialog save
   const handleMoveSave = () => {
     if (!moveToTab || moveToTab === activeTab) {
       alert('Please select a different tab to move the user to');
@@ -274,11 +266,9 @@ const DataTable = () => {
     }
 
     const user = { ...updatedData[activeTab][rowIndex] };
-    // Update rank for Awaiting Approvals
     if (moveToTab === 'Awaiting Approvals') {
       user.rank = 'N/A';
     } else {
-      // Assign a default rank if moving to Top Investors/Traders (can be edited later)
       const maxRank = Math.max(
         0,
         ...updatedData[moveToTab].map((row) => {
@@ -289,7 +279,6 @@ const DataTable = () => {
       user.rank = `${maxRank + 1}${maxRank + 1 === 1 ? 'st' : maxRank + 1 === 2 ? 'nd' : maxRank + 1 === 3 ? 'rd' : 'th'}`;
     }
 
-    // Remove from current tab and add to new tab
     updatedData[activeTab].splice(rowIndex, 1);
     updatedData[moveToTab].push(user);
 
@@ -297,10 +286,9 @@ const DataTable = () => {
     setIsMoveDialogOpen(false);
     setMoveRowId(null);
     setMoveToTab('');
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1);
   };
 
-  // Edit dialog component
   const EditDialog = () => (
     <div
       style={{
@@ -403,7 +391,6 @@ const DataTable = () => {
     </div>
   );
 
-  // Add user dialog component
   const AddDialog = () => (
     <div
       style={{
@@ -626,7 +613,6 @@ const DataTable = () => {
     </div>
   );
 
-  // Pagination logic
   const entriesPerPage = 10;
   const currentTableData = tableData[activeTab] || [];
   const totalPages = Math.max(1, Math.ceil(currentTableData.length / entriesPerPage));
