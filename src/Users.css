@@ -544,7 +544,6 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 
 
->>>>>>> kashaf
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;

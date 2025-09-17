@@ -98,7 +98,6 @@
   border: none;
   border-radius: 8px;
   padding: 2px;
-=======
 /* 📱 Mobile toggle button */
 .mobile-toggle {
   display: none;
@@ -119,7 +118,6 @@
 
 @media (max-width: 1024px) {
   .mobile-toggle {
-<<<<<<< HEAD
     display: flex;
     align-items: center;
     justify-content: center;
