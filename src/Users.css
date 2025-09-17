@@ -387,6 +387,164 @@ html, body {
 input:checked + .slider { background-color: #16a34a; }
 input:checked + .slider:before { transform: translateX(22px); }
 
+<<<<<<< HEAD
+=======
+/* ---------- Modal Overlay ---------- */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 10px;
+}
+
+/* ---------- Modal Box ---------- */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  padding: 25px 30px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #333;
+}
+
+/* ---------- Form Fields ---------- */
+.modal-content .form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.modal-content .form input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.2s;
+  width: 100%;
+}
+
+.modal-content .form input:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+/* ---------- Form Actions ---------- */
+.form-actions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.form-actions .btn {
+  min-width: 100px;
+}
+
+/* ---------- Add User Button ---------- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.add-user-btn {
+  margin-left: auto;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+/* ---------- Delete Confirm Box ---------- */
+.confirm-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px 30px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.3s ease;
+}
+
+.confirm-box p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Confirm actions (Delete + Cancel buttons) */
+.confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.confirm-actions .btn {
+  min-width: 100px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.confirm-actions .btn.red {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.confirm-actions .btn.outline {
+  border: 1px solid #ccc;
+  background: #f8f9fa;
+  color: #333;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---------- Responsive (Mobile) ---------- */
+@media (max-width: 600px) {
+  .confirm-box {
+    width: 95%;
+    padding: 20px;
+  }
+  .confirm-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .confirm-actions .btn {
+    width: 100%;
+  }
+}
+
+
+
+>>>>>>> kashaf
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;

@@ -412,6 +412,7 @@
       width: 100%;
     }
     
+   
     .table-container {
         width: 100%;
         overflow-x: auto;
@@ -447,7 +448,7 @@
         .investments-table {
           font-size: 12px;
         }
-      
+ 
         .investments-table th,
         .investments-table td {
           padding: 8px 10px;
