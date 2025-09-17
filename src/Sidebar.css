@@ -98,7 +98,8 @@
   display: none;
   position: fixed;
   top: 12px;
-  right: 12px; /* Changed from left: 12px to right: 12px */  z-index: 1200;
+  right: 12px; /* Changed from left: 12px to right: 12px */
+  z-index: 1200;
   background: #2d6b2d;
   border: none;
   border-radius: 6px;
