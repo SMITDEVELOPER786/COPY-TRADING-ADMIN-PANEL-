@@ -62,70 +62,6 @@
   padding: 0 24px;
 }
 
-@media (max-width: 1024px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-}
-<<<<<<< HEAD
-
-@media (max-width: 600px) {
-  .sidebar {
-    width: 240px;
-  }
-
-  .sidebar-item {
-    font-size: 14px;
-    padding: 10px 14px;
-  }
-
-  .sidebar-content {
-    padding: 24px 0;
-  }
-}
-
-.mobile-toggle {
-  display: none;
-  position: fixed;
-  top: 12px;
-  right: 5px;
-  z-index: 1200;
-  background: #2d6b2d;
-  border: none;
-  border-radius: 8px;
-  padding: 2px;
-/* 📱 Mobile toggle button */
-.mobile-toggle {
-  display: none;
-  position: fixed;   /* absolute ki jagah fixed, taki har page par sahi rahe */
-  top: 12px;
-  right: 5px;        /* 👈 right se hata kar left me kar do (header icons ko block nahi karega) */
-  z-index: 1200;     /* header ke upar rahe, sidebar se upar bhi */
-  background: #2d6b2d;
-  border: none;
-  border-radius: 6px;
-  padding: 2px;      /* 👈 size chhota kiya */
->>>>>>> kashaf
-  color: white;
-  
-
-  cursor: pointer;
-}
-
-@media (max-width: 1024px) {
-  .mobile-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 31px; 
-    margin-bottom: 110px;
-    height: 31px;
-  }
-}
 .logout-button {
   width: 100%;
   background: none;
@@ -153,26 +89,59 @@
   transform: translateY(1px);
 }
 
-/* Mobile responsive adjustments */
+.logout-button:focus {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  right: 12px; /* Changed from left: 12px to right: 12px */  z-index: 1200;
+  background: #2d6b2d;
+  border: none;
+  border-radius: 6px;
+  padding: 2px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 31px;
+  height: 31px;
+}
+
 @media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .mobile-toggle {
+    display: flex;
+  }
+
   .logout-button {
     padding: 14px 16px;
     font-size: 15px;
   }
 }
 
-/* Focus styles for accessibility */
-.logout-button:focus {
-  outline: 2px solid #dc2626;
-  outline-offset: 2px;
-}
-=======
-    display: flex;           /* flex kiya for center alignment */
-    align-items: center;
-    justify-content: center;
-    width: 24px; 
-    margin-bottom: 110px;            /* 👈 chhota round button */
-    height: 24px;
+@media (max-width: 600px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .sidebar-item {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+
+  .sidebar-content {
+    padding: 24px 0;
   }
 }
->>>>>>> kashaf
