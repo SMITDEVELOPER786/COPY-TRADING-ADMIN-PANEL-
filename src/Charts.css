@@ -142,8 +142,9 @@
 }
 
 .line-chart-container {
-  height: 180px;
-  width: 400px;
+  height: 200px; /* Increased base height for better visibility */
+  width: 100%; /* Use full width of parent container */
+  max-width: 400px; /* Cap width for larger screens */
   position: relative;
 }
 
@@ -190,6 +191,9 @@
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
+  width: 100%; /* Ensure pie chart scales with container */
+  max-width: 300px; /* Cap for readability */
+  height: auto; /* Allow height to adjust */
 }
 
 .pie-legend {
@@ -261,6 +265,15 @@
   .pie-chart-card {
     flex: 1;
   }
+
+  .line-chart-container {
+    max-width: 100%; /* Full width for medium screens */
+    height: 180px; /* Slightly smaller but still readable */
+  }
+
+  .pie-chart {
+    max-width: 250px; /* Adjust pie chart size */
+  }
 }
 
 @media (max-width: 768px) {
@@ -269,8 +282,13 @@
   }
 
   .line-chart-container {
-    height: 120px;
-    width: 300px;
+    height: 160px; /* Maintain readable height */
+    width: 100%; /* Full width */
+    max-width: none; /* Remove cap for flexibility */
+  }
+
+  .pie-chart {
+    max-width: 200px; /* Smaller but readable pie chart */
   }
 
   .chart-value {
@@ -330,8 +348,14 @@
   }
 
   .line-chart-container {
-    height: 100px;
-    width: 250px;
+    height: 140px; /* Prevent excessive shrinking */
+    width: 100%; /* Full width */
+    min-width: 250px; /* Minimum width to ensure readability */
+  }
+
+  .pie-chart {
+    max-width: 180px; /* Prevent pie chart from shrinking too much */
+    height: auto; /* Maintain aspect ratio */
   }
 }
 
