@@ -52,30 +52,17 @@ export default function Messages() {
 
   const [activeChat, setActiveChat] = useState(null);
 
-<<<<<<< HEAD
-  useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setActiveChat(users[0]);
-=======
-  // ✅ Page load par desktop view me pehli chat auto-open
   useEffect(() => {
     if (window.innerWidth >= 1024) {
       setActiveChat(users[0]); // Maria Khan default
->>>>>>> kashaf
     }
   }, []);
 
   return (
     <div className="messagePage">
       <div className="chatContainer">
-<<<<<<< HEAD
-        <div className={`userList ${activeChat ? "hide" : ""}`}>
-          <h3 className="sub-titlees">Messages</h3>
-=======
-        {/* Users List */}
         <div className={`userList ${activeChat ? "hide" : ""}`}>
           <h3 className="title">Messages</h3>
->>>>>>> kashaf
           <input type="text" className="search" placeholder="Search Name" />
 
           {users.map((user) => {
@@ -97,15 +84,10 @@ export default function Messages() {
           })}
         </div>
 
-        {/* Chat Window */}
         <div className={`chatWindow ${activeChat ? "active" : ""}`}>
           {activeChat && (
             <>
               <div className="chatHeader">
-<<<<<<< HEAD
-=======
-                {/* Back button (mobile only) */}
->>>>>>> kashaf
                 <button
                   className="backBtn"
                   onClick={() => setActiveChat(null)}
@@ -147,8 +129,4 @@ export default function Messages() {
       </div>
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> kashaf

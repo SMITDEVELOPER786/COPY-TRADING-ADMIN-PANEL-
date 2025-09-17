@@ -97,7 +97,6 @@ const Users = () => {
   return (
     <div className="app">
       <main className="main-content">
-<<<<<<< HEAD
         <h2 className="page-title">
           Users <span className="sub-title">› User Details</span>
         </h2>
@@ -168,7 +167,6 @@ const Users = () => {
           </div>
         </div>
 
-=======
         <div className="page-header">
           <h2 className="page-title">
             Users <span className="sub-title">› User Details</span>
@@ -283,7 +281,6 @@ const Users = () => {
         ))}
 
         {/* Trading Strategy + Metrics + Charts */}
->>>>>>> kashaf
         <div className="container">
           <h3>Trading Strategy</h3>
           <div className="tabs-container">
