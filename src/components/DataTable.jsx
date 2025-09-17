@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useNavigate } from 'react';
 import '../DataTable.css';
 import { MoreHorizontal, ChevronLeft, ChevronRight, UserPlus } from 'lucide-react';
 
 const DataTable = () => {
   const [activeTab, setActiveTab] = useState('Top Traders');
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [tableData, setTableData] = useState(() => {
     const savedData = localStorage.getItem('tableData');
@@ -100,6 +101,10 @@ const DataTable = () => {
   useEffect(() => {
     localStorage.setItem('tableData', JSON.stringify(tableData));
   }, [tableData]);
+
+  const handleViewProfile = () => {
+    navigate('/profile');
+  };
 
   const openEditDialog = (rowId, field, value) => {
     setEditRowId(rowId);
