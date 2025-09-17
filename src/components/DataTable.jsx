@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useNavigate } from 'react';
+import React, { useState, useEffect, } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../DataTable.css';
 import { MoreHorizontal, ChevronLeft, ChevronRight, UserPlus } from 'lucide-react';
 
 const DataTable = () => {
   const [activeTab, setActiveTab] = useState('Top Traders');
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
   const [tableData, setTableData] = useState(() => {
     const savedData = localStorage.getItem('tableData');
     try {
@@ -98,13 +99,15 @@ const DataTable = () => {
   const [moveRowId, setMoveRowId] = useState(null);
   const [moveToTab, setMoveToTab] = useState('');
 
+  const handleViewProfile = () => {
+    navigate('/users');
+  };
+
   useEffect(() => {
     localStorage.setItem('tableData', JSON.stringify(tableData));
   }, [tableData]);
 
-  const handleViewProfile = () => {
-    navigate('/profile');
-  };
+  
 
   const openEditDialog = (rowId, field, value) => {
     setEditRowId(rowId);
@@ -748,7 +751,7 @@ const DataTable = () => {
                           Edit
                         </button>
                         <button onClick={() => openMoveDialog(row.id)}>Move User</button>
-                        <button>View Profile</button>
+                        <button onClick={handleViewProfile}>View Profile</button>                       
                         <button>Send Email</button>
                       </div>
                     </div>

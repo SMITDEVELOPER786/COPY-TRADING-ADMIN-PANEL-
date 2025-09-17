@@ -71,6 +71,7 @@
     transform: translateX(0);
   }
 }
+<<<<<<< HEAD
 
 @media (max-width: 600px) {
   .sidebar {
@@ -97,12 +98,28 @@
   border: none;
   border-radius: 8px;
   padding: 2px;
+=======
+/* 📱 Mobile toggle button */
+.mobile-toggle {
+  display: none;
+  position: fixed;   /* absolute ki jagah fixed, taki har page par sahi rahe */
+  top: 12px;
+  right: 5px;        /* 👈 right se hata kar left me kar do (header icons ko block nahi karega) */
+  z-index: 1200;     /* header ke upar rahe, sidebar se upar bhi */
+  background: #2d6b2d;
+  border: none;
+  border-radius: 6px;
+  padding: 2px;      /* 👈 size chhota kiya */
+>>>>>>> kashaf
   color: white;
+  
+
   cursor: pointer;
 }
 
 @media (max-width: 1024px) {
   .mobile-toggle {
+<<<<<<< HEAD
     display: flex;
     align-items: center;
     justify-content: center;
@@ -151,3 +168,13 @@
   outline: 2px solid #dc2626;
   outline-offset: 2px;
 }
+=======
+    display: flex;           /* flex kiya for center alignment */
+    align-items: center;
+    justify-content: center;
+    width: 24px; 
+    margin-bottom: 110px;            /* 👈 chhota round button */
+    height: 24px;
+  }
+}
+>>>>>>> kashaf
