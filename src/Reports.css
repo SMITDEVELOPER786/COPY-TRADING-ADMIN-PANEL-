@@ -650,6 +650,11 @@
   padding: 5px;
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -658,23 +663,43 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  display: flex;
+  z-index: 1000; /* Ensure it stays above other elements */
+  display: none; /* Initially hidden, JavaScript will toggle this */
   flex-direction: column;
   min-width: 120px;
 }
 
-.dropdown-menu button {
-  background: none;
-  border: none;
-  padding: 8px 12px;
-  text-align: left;
-  cursor: pointer;
+/* Add this to show the menu when active (handled by JavaScript) */
+.dropdown-menu.active {
+  display: flex;
+}
+.status-toggle {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
 }
 
-.dropdown-menu button:hover {
-  background: #f0f0f0;
+.status-toggle.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-toggle.pending:hover {
+  background-color: #fdd835;
+}
+
+.status-toggle.resolved {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-toggle.resolved:hover {
+  background-color: #4caf50;
+  color: #fff;
 }

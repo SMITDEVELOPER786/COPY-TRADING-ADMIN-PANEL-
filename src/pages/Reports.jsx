@@ -116,29 +116,21 @@ function Reports() {
   const [selectedReportTitle, setSelectedReportTitle] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [showDropdown, setShowDropdown] = useState(null);
   const itemsPerPage = 5;
 
   useEffect(() => {
     localStorage.setItem("reports", JSON.stringify(reports));
   }, [reports]);
 
-  const handleResolve = (id) => {
+  // Handle status toggle
+  const handleToggleStatus = (id) => {
     setReports((prev) =>
       prev.map((report) =>
-        report.id === id ? { ...report, status: "Resolved" } : report
+        report.id === id
+          ? { ...report, status: report.status === "Pending" ? "Resolved" : "Pending" }
+          : report
       )
     );
-    setShowDropdown(null);
-  };
-
-  const handlePending = (id) => {
-    setReports((prev) =>
-      prev.map((report) =>
-        report.id === id ? { ...report, status: "Pending" } : report
-      )
-    );
-    setShowDropdown(null);
   };
 
   const filteredReports = reports.filter((report) => {
@@ -287,7 +279,7 @@ function Reports() {
                   <th>Reported Title</th>
                   <th>Reported on</th>
                   <th>Status</th>
-                  <th></th>
+                  <th>Action</th> {/* New column for toggle button */}
                 </tr>
               </thead>
               <tbody>
@@ -329,55 +321,20 @@ function Reports() {
                       </span>
                     </td>
                     <td>
-                      <div className="dropdown">
-                        <button
-                          className="more-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowDropdown(showDropdown === report.id ? null : report.id);
-                          }}
-                        >
-                          <MoreHorizontal size={16} />
-                        </button>
-                        {showDropdown === report.id && (
-                          <div className="dropdown-menu">
-                            <button
-                              onClick={() => handleResolve(report.id)}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                padding: "8px",
-                                width: "100%",
-                                textAlign: "left",
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <CheckCircle size={16} color="green" />
-                              Mark Resolved
-                            </button>
-                            <button
-                              onClick={() => handlePending(report.id)}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                padding: "8px",
-                                width: "100%",
-                                textAlign: "left",
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <XCircle size={16} color="red" />
-                              Mark Pending
-                            </button>
-                          </div>
+                      <button
+                        onClick={() => handleToggleStatus(report.id)}
+                        className={`status-toggle ${report.status.toLowerCase()}`}
+                      >
+                        {report.status === "Pending" ? (
+                          <>
+                            <CheckCircle size={16} color="green" /> Resolve
+                          </>
+                        ) : (
+                          <>
+                            <XCircle size={16} color="red" /> Pending
+                          </>
                         )}
-                      </div>
+                      </button>
                     </td>
                   </tr>
                 ))}
