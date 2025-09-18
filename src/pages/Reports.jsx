@@ -218,7 +218,7 @@ function Reports() {
             </div>
           </div>
 
-          <div className="table-container">
+          <div className="table-containers">
             <table className="reports-table">
               <thead>
                 <tr>

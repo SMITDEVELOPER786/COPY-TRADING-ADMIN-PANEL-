@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../DataTable.css';
 import { MoreHorizontal, ChevronLeft, ChevronRight, UserPlus } from 'lucide-react';
@@ -82,10 +82,6 @@ const DataTable = () => {
       };
     }
   });
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editRowId, setEditRowId] = useState(null);
-  const [editField, setEditField] = useState(null);
-  const [editValue, setEditValue] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newUser, setNewUser] = useState({
     name: '',
@@ -103,85 +99,16 @@ const DataTable = () => {
     navigate('/users');
   };
 
+  const handleSendEmail = (userName) => {
+    // Placeholder for email functionality
+    alert(`Sending email to ${userName}`);
+    // Implement actual email logic here, e.g., open mailto link or API call
+    // window.location.href = `mailto:${userName}@example.com?subject=Message from Dashboard`;
+  };
+
   useEffect(() => {
     localStorage.setItem('tableData', JSON.stringify(tableData));
   }, [tableData]);
-
-  
-
-  const openEditDialog = (rowId, field, value) => {
-    setEditRowId(rowId);
-    setEditField(field);
-    let cleanedValue = value;
-    if (field === 'portfolio') {
-      cleanedValue = value.replace(/[$,M]/g, '');
-    } else if (field === 'investment') {
-      cleanedValue = value;
-    } else if (field === 'recentInvestment') {
-      cleanedValue = value;
-    }
-    setEditValue(cleanedValue);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleEditSave = () => {
-    const value = editValue.trim();
-    if (!value) {
-      alert('Please enter a valid value');
-      return;
-    }
-
-    const updatedData = { ...tableData };
-    const rowIndex = updatedData[activeTab].findIndex((row) => row.id === editRowId);
-
-    if (rowIndex === -1) {
-      alert('Row not found');
-      return;
-    }
-
-    if (editField === 'name') {
-      updatedData[activeTab][rowIndex].name = value;
-    } else if (editField === 'portfolio') {
-      const numericValue = Number(value.replace(/,/g, ''));
-      if (isNaN(numericValue) || numericValue < 0) {
-        alert('Portfolio must be a valid non-negative number');
-        return;
-      }
-      updatedData[activeTab][rowIndex].portfolio = `$${numericValue.toLocaleString()}M`;
-    } else if (editField === 'investment') {
-      const numericValue = Number(value);
-      if (isNaN(numericValue) || numericValue < 0) {
-        alert('Investment must be a valid non-negative number');
-        return;
-      }
-      updatedData[activeTab][rowIndex].investment = numericValue.toString();
-    } else if (editField === 'recentInvestment') {
-      if (!value.match(/^\w{3} \d{1,2} \w+ \d{4}$/)) {
-        alert('Recent Investment must be in format like "Tue 29 Jun 2025"');
-        return;
-      }
-      updatedData[activeTab][rowIndex].recentInvestment = value;
-    } else if (editField === 'rank') {
-      if (activeTab !== 'Awaiting Approvals' && !value.match(/^\d+(st|nd|rd|th)$/)) {
-        alert('Rank must be in format like "1st", "2nd", "3rd", "4th"');
-        return;
-      }
-      if (activeTab === 'Awaiting Approvals' && value !== 'N/A') {
-        alert('Rank for Awaiting Approvals must be "N/A"');
-        return;
-      }
-      updatedData[activeTab][rowIndex].rank = value;
-    } else {
-      alert('Invalid field');
-      return;
-    }
-
-    setTableData(updatedData);
-    setIsEditDialogOpen(false);
-    setEditValue('');
-    setEditRowId(null);
-    setEditField(null);
-  };
 
   const openAddDialog = () => {
     setNewUser({
@@ -256,7 +183,7 @@ const DataTable = () => {
 
   const openMoveDialog = (rowId) => {
     setMoveRowId(rowId);
-    setMoveToTab(activeTab);
+    setMoveToTab('');
     setIsMoveDialogOpen(true);
   };
 
@@ -296,108 +223,6 @@ const DataTable = () => {
     setMoveToTab('');
     setCurrentPage(1);
   };
-
-  const EditDialog = () => (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000,
-      }}
-    >
-      <div
-        style={{
-          background: 'white',
-          padding: '24px',
-          borderRadius: '16px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          width: '300px',
-          textAlign: 'center',
-          fontFamily: 'inherit',
-        }}
-      >
-        <h3
-          style={{
-            fontSize: '18px',
-            fontWeight: 600,
-            color: '#1f2937',
-            marginBottom: '16px',
-          }}
-        >
-          Edit {editField.charAt(0).toUpperCase() + editField.slice(1)}
-        </h3>
-        <input
-          type={editField === 'portfolio' || editField === 'investment' ? 'number' : 'text'}
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          placeholder={`Enter ${editField}`}
-          autoFocus
-          style={{
-            width: '100%',
-            padding: '10px',
-            fontSize: '14px',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            marginBottom: '16px',
-            outline: 'none',
-            transition: 'border-color 0.2s ease',
-          }}
-          onFocus={(e) => (e.target.style.borderColor = '#2d6b2d')}
-          onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
-        />
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
-          <button
-            onClick={handleEditSave}
-            style={{
-              padding: '8px 20px',
-              background: '#2d6b2d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'background 0.2s ease',
-            }}
-            onMouseOver={(e) => (e.target.style.background = '#4ade80')}
-            onMouseOut={(e) => (e.target.style.background = '#2d6b2d')}
-          >
-            Save
-          </button>
-          <button
-            onClick={() => {
-              setIsEditDialogOpen(false);
-              setEditValue('');
-              setEditRowId(null);
-              setEditField(null);
-            }}
-            style={{
-              padding: '8px 20px',
-              background: '#f3f4f6',
-              color: '#6b7280',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'background 0.2s ease',
-            }}
-            onMouseOver={(e) => (e.target.style.background = '#e5e7eb')}
-            onMouseOut={(e) => (e.target.style.background = '#f3f4f6')}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 
   const AddDialog = () => (
     <div
@@ -511,7 +336,6 @@ const DataTable = () => {
     </div>
   );
 
-  // Move user dialog component
   const MoveDialog = () => (
     <div
       style={{
@@ -647,7 +471,6 @@ const DataTable = () => {
           ))}
         </div>
         <div className="table-actions">
-          {/* <button className="see-all-btn">See All</button> */}
           <button
             className="add-user-btn"
             onClick={openAddDialog}
@@ -697,49 +520,16 @@ const DataTable = () => {
                   <td data-label="Name">
                     <div className="name-cell">
                       <img src={row.avatar} alt={row.name} className="avatar" />
-                      <span
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => openEditDialog(row.id, 'name', row.name)}
-                        aria-label={`Edit name for ${row.name}`}
-                      >
-                        {row.name}
-                      </span>
+                      <span>{row.name}</span>
                     </div>
                   </td>
-                  <td
-                    data-label="Portfolio"
-                    className="portfolio-cell"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => openEditDialog(row.id, 'portfolio', row.portfolio)}
-                    aria-label={`Edit portfolio for ${row.name}`}
-                  >
+                  <td data-label="Portfolio" className="portfolio-cell">
                     {row.portfolio}
                   </td>
-                  <td
-                    data-label="Investment"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => openEditDialog(row.id, 'investment', row.investment)}
-                    aria-label={`Edit investment for ${row.name}`}
-                  >
-                    {row.investment}
-                  </td>
-                  <td
-                    data-label="Recent Investment"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => openEditDialog(row.id, 'recentInvestment', row.recentInvestment)}
-                    aria-label={`Edit recent investment for ${row.name}`}
-                  >
-                    {row.recentInvestment}
-                  </td>
+                  <td data-label="Investment">{row.investment}</td>
+                  <td data-label="Recent Investment">{row.recentInvestment}</td>
                   <td data-label="Rank">
-                    <span
-                      className="rank-badge"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => openEditDialog(row.id, 'rank', row.rank)}
-                      aria-label={`Edit rank for ${row.name}`}
-                    >
-                      {row.rank}
-                    </span>
+                    <span className="rank-badge">{row.rank}</span>
                   </td>
                   <td data-label="Actions">
                     <div className="actions-dropdown">
@@ -747,12 +537,9 @@ const DataTable = () => {
                         <MoreHorizontal size={16} />
                       </button>
                       <div className="dropdown-menu">
-                        <button onClick={() => openEditDialog(row.id, 'name', row.name)}>
-                          Edit
-                        </button>
+                        <button onClick={() => handleViewProfile()}>View Profile</button>
                         <button onClick={() => openMoveDialog(row.id)}>Move User</button>
-                        <button onClick={handleViewProfile}>View Profile</button>                       
-                        <button>Send Email</button>
+                        <button onClick={() => handleSendEmail(row.name)}>Send Email</button>
                       </div>
                     </div>
                   </td>
@@ -810,7 +597,6 @@ const DataTable = () => {
         </div>
       </div>
 
-      {isEditDialogOpen && <EditDialog />}
       {isAddDialogOpen && <AddDialog />}
       {isMoveDialogOpen && <MoveDialog />}
     </div>

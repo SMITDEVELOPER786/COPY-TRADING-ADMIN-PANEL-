@@ -189,7 +189,7 @@ function Team() {
             </div>
           </div>
 
-          <div className="table-container">
+          <div className="table-containers">
             <table className="team-table">
               <thead>
                 <tr>
