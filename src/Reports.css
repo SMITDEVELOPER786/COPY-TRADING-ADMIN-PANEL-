@@ -635,9 +635,10 @@
   }
 
   .reports-table .report-title {
-    font-size: 12px;
+    font-size: 8px;
     font-weight: 600;
-    line-height: 1.3;   
+    line-height: 1.3;  
+    text-align:right;
   }
 
   .reports-table .user-name {
