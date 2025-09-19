@@ -10,27 +10,12 @@
   margin-left: 280px;
 }
 
-.breadcrumb {
-  font-size: 14px;
-  color: #94a3b8;
-  margin-bottom: 24px;
-  font-weight: 400;
-}
-
 .reports-page {
   max-width: 1200px;
-  margin: 0 auto;
 }
 
 .page-header {
   margin-bottom: 32px;
-}
-
-.page-header h1 {
-  font-size: 32px;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 24px;
 }
 
 .page-titlees {
@@ -120,7 +105,7 @@
 
 .reports-search-container {
   flex: 1;
-  max-width: 300px;
+  max-width: 600px;
 }
 
 .reports-search-input-wrapper {
@@ -163,12 +148,14 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .reports-status-filter,
 .reports-report-filter,
 .reports-date-filter {
   position: relative;
+  min-width: 120px;
 }
 
 .reports-status-select,
@@ -204,7 +191,7 @@
 }
 
 .reports-date-input {
-  width: 140px;
+  width: 180px;
   height: 48px;
   padding: 0 40px 0 16px;
   border: 1px solid #e2e8f0;
@@ -215,6 +202,16 @@
   cursor: pointer;
   outline: none;
   transition: all 0.2s ease;
+  appearance: none;
+}
+
+.reports-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 
 .reports-date-input:focus {
@@ -236,7 +233,7 @@
   background-color: #ffffff;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
-  overflow: hidden;
+  overflow: visible; /* Allow dropdowns to appear outside container */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
@@ -328,39 +325,64 @@
   color: #92400e;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 8px;
+.action-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
-.status-button {
+.action-button {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  background: none;
+  background-color: #f8fafc;
   cursor: pointer;
-  font-size: 14px;
   transition: all 0.2s ease;
   color: #64748b;
 }
 
-.status-button:hover {
+.action-button:hover {
   border-color: #3b82f6;
+  background-color: #ffffff;
   color: #3b82f6;
 }
 
-.status-button.active {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-  color: #ffffff;
+.action-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  max-height: 200px; /* Prevent dropdown from extending too far */
+  overflow-y: auto; /* Scroll if content overflows */
+  z-index: 1000; /* High z-index to ensure visibility */
 }
 
-.status-button.active:hover {
-  background-color: #2563eb;
-  border-color: #2563eb;
+.action-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-dropdown-item:hover {
+  background-color: #f8fafc;
+  color: #3b82f6;
 }
 
 .reports-table-footer {
@@ -440,6 +462,7 @@
   border-color: #2563eb;
 }
 
+/* Responsive Adjustments */
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;
@@ -517,9 +540,28 @@
     gap: 10px;
   }
 
+  .reports-status-select,
+  .reports-report-select {
+    height: 44px;
+    font-size: 13px;
+    padding: 0 36px 0 12px;
+  }
+
+  .reports-date-input {
+    width: 100%;
+    height: 44px;
+    font-size: 13px;
+    padding: 0 36px 0 12px;
+  }
+
+  .reports-date-icon {
+    right: 10px;
+    font-size: 14px;
+  }
+
   .reports-table-container {
     border-radius: 12px;
-    overflow: visible;
+    overflow: visible; /* Ensure dropdowns aren't clipped */
     box-shadow: none;
   }
 
@@ -543,7 +585,8 @@
     border-radius: 12px;
     padding: 16px;
     background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative; /* Ensure dropdowns position relative to row */
   }
 
   .reports-table td {
@@ -563,7 +606,7 @@
     min-width: 100px;
     margin-right: 10px;
     text-align: left;
-    flex: 1;       
+    flex: 1;
   }
 
   .reports-table .user-cell {
@@ -586,12 +629,12 @@
 
   .report-title {
     font-size: 12px;
-    max-width: 100%;  
-    white-space: normal;    
-    overflow: visible;  
-    text-overflow: unset;   
+    max-width: 100%;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
     text-align: right;
-    line-height: 1.4;        
+    line-height: 1.4;
   }
 
   .reports-table .status-badge {
@@ -599,20 +642,26 @@
     padding: 4px 10px;
   }
 
+  .action-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .action-dropdown-menu {
+    min-width: 100px;
+    max-height: 150px; /* Smaller max-height for tablet */
+    font-size: 13px;
+  }
+
+  .action-dropdown-item {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
   .reports-table-footer {
     flex-direction: column;
     gap: 16px;
     text-align: center;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .status-button {
-    width: 100%;
-    padding: 8px;
   }
 }
 
@@ -637,8 +686,8 @@
   .reports-table .report-title {
     font-size: 8px;
     font-weight: 600;
-    line-height: 1.3;  
-    text-align:right;
+    line-height: 1.3;
+    text-align: right;
   }
 
   .reports-table .user-name {
@@ -658,20 +707,48 @@
     font-size: 11px;
   }
 
-  .status-button {
-    padding: 6px;
+  .reports-date-input {
+    height: 40px;
     font-size: 12px;
+    padding: 0 32px 0 10px;
+  }
+
+  .action-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .action-dropdown-menu {
+    min-width: 90px;
+    max-height: 120px; /* Smaller for mobile */
+    font-size: 12px;
+  }
+
+  .action-dropdown-item {
+    font-size: 12px;
+    padding: 5px 8px;
   }
 }
 
-/* Default (desktop) styles you already have */
-.reports-date-filter {
-  position: relative;
-  display: inline-block;
+/* Filter controls (already responsive, included for completeness) */
+.reports-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.reports-date-input {
-  width: 140px;
+.reports-status-filter,
+.reports-report-filter,
+.reports-date-filter {
+  position: relative;
+  min-width: 120px;
+}
+
+.reports-status-select,
+.reports-report-select {
+  appearance: none;
+  width: 120px;
   height: 48px;
   padding: 0 40px 0 16px;
   border: 1px solid #e2e8f0;
@@ -684,6 +761,44 @@
   transition: all 0.2s ease;
 }
 
+.reports-status-select:focus,
+.reports-report-select:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.reports-date-input {
+  width: 180px;
+  height: 48px;
+  padding: 0 40px 0 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  background-color: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  appearance: none;
+}
+
+.reports-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.reports-date-input:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.reports-select-icon,
 .reports-date-icon {
   position: absolute;
   right: 12px;
@@ -693,10 +808,26 @@
   pointer-events: none;
 }
 
-/* Tablet and below */
 @media (max-width: 768px) {
+  .reports-filter-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .reports-status-filter,
+  .reports-report-filter,
   .reports-date-filter {
     width: 100%;
+  }
+
+  .reports-status-select,
+  .reports-report-select {
+    width: 100%;
+    height: 44px;
+    font-size: 13px;
+    padding: 0 36px 0 12px;
   }
 
   .reports-date-input {
@@ -706,22 +837,39 @@
     padding: 0 36px 0 12px;
   }
 
+  .reports-select-icon,
   .reports-date-icon {
     right: 10px;
     font-size: 14px;
   }
 }
 
-/* Mobile under 480px */
 @media (max-width: 480px) {
-   .reports-date-filter {
-    width: 250px;
+  .reports-filter-controls {
+    gap: 10px;
   }
-  .reports-date-input {
+
+  .reports-status-filter,
+  .reports-report-filter,
+  .reports-date-filter {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .reports-status-select,
+  .reports-report-select {
+    height: 40px;
     font-size: 12px;
     padding: 0 32px 0 10px;
   }
 
+  .reports-date-input {
+    height: 40px;
+    font-size: 12px;
+    padding: 0 32px 0 10px;
+  }
+
+  .reports-select-icon,
   .reports-date-icon {
     right: 8px;
     font-size: 12px;

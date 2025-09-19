@@ -282,57 +282,29 @@ function KYC() {
             </h2>         
           </div>
           
-          <div className="filters-container">
-            <div className="search-container">
-              <div className="search-input-wrapper">
-                <Search className="search-icon" size={20} />
-                <input
-                  type="text"
-                  placeholder="Search User"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
+          <div className="kyc-filters-container">
+            <div className="kyc-search-container">
+              <div className="kyc-search-input-wrapper">
+                <Search className="kyc-search-icon" size={20} />
+                <input type="text" placeholder="Search User" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="kyc-search-input" />
               </div>
             </div>
-            
-            <div className="filter-controls">
-              <div className="status-filter">
-                <select 
-                  value={selectedStatus} 
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="status-select"
-                >
-                  <option value="">Status</option>
-                  <option value="Successful">Successful</option>
-                  <option value="Failed">Failed</option>
-                  <option value="Pending">Pending</option>
+            <div className="kyc-filter-controls">
+              <div className="kyc-status-filter">
+                <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} className="kyc-status-select">
+                  <option value="">Status</option><option value="Successful">Successful</option><option value="Failed">Failed</option><option value="Pending">Pending</option>
                 </select>
-                <ChevronDown className="select-icon" size={16} />
+                <ChevronDown className="kyc-select-icon" size={16} />
               </div>
-
-              <div className="report-filter">
-                <select 
-                  value={selectedReportTitle} 
-                  onChange={(e) => setSelectedReportTitle(e.target.value)}
-                  className="report-select"
-                >
-                  <option value="">Report Title</option>
-                  <option value="CNIC">CNIC</option>
-                  <option value="Face ID">Face ID</option>
+              <div className="kyc-report-filter">
+                <select value={selectedReportTitle} onChange={(e) => setSelectedReportTitle(e.target.value)} className="kyc-report-select">
+                  <option value="">Report Title</option><option value="CNIC">CNIC</option><option value="Face ID">Face ID</option>
                 </select>
-                <ChevronDown className="select-icon" size={16} />
+                <ChevronDown className="kyc-select-icon" size={16} />
               </div>
-              
-              <div className="date-filter">
-                <input
-                  type="text"
-                  placeholder="Select Date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="date-input"
-                />
-                <Calendar className="date-icon" size={16} />
+              <div className="kyc-date-filter">
+                <input type="text" placeholder="Select Date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="kyc-date-input" />
+                <Calendar className="kyc-date-icon" size={16} />
               </div>
             </div>
           </div>

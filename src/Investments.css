@@ -1,13 +1,5 @@
 .dashboard-container {
-  display: flex;
   min-height: 100vh;
-}
-
-.main-content {
-  flex: 1;
-  margin-left: 280px;
-  padding: 2rem;
-  background-color: #f8fafc;
 }
 
 .investments-page {
@@ -415,3 +407,46 @@
     gap: 1rem;
   }
 }
+
+.page-tittless {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.sub-tittless {
+  color: #16a34a;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* Tablet screens */
+@media (max-width: 768px) {
+  .page-tittless {
+    font-size: 22px;
+    text-align: center; /* optional for better look */
+  }
+
+  .sub-tittless {
+    font-size: 20px;
+    display: inline; /* move below main title on small screens */
+    margin-top: 4px;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 480px) {
+  .page-tittless {
+    font-size: 18px;
+  }
+
+  .sub-tittless {
+    font-size: 14px;
+  }
+}
+
+.report-select-icons,
+  .reports-date-icon {
+    right: 100px;
+    font-size: 12px;
+  }

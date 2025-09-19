@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Search,
   MoreHorizontal,
@@ -13,86 +13,145 @@ import {
 } from "lucide-react";
 import "../Reports.css";
 
-// initial data
 const initialReports = [
   {
     id: 1,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Scamming",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Resolved",
   },
   {
     id: 2,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Scamming",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Pending",
   },
   {
     id: 3,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Scamming",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Resolved",
   },
   {
     id: 4,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Impersonation",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Pending",
   },
   {
     id: 5,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Impersonation",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Resolved",
   },
   {
     id: 6,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Scamming",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Pending",
   },
   {
     id: 7,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Scamming",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Resolved",
   },
   {
     id: 8,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Scamming",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Pending",
   },
   {
     id: 9,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Scamming",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Resolved",
   },
   {
     id: 10,
-    reportedBy: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
-    reportedUser: { name: "Maria Khan", avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1" },
+    reportedBy: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
+    reportedUser: {
+      name: "Maria Khan",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    },
     reportedTitle: "Scamming",
-    reportedOn: "Tue 29 June",
+    reportedOn: "2025-06-29",
     status: "Resolved",
   },
 ];
@@ -116,6 +175,8 @@ function Reports() {
   const [selectedReportTitle, setSelectedReportTitle] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [openDropdown, setOpenDropdown] = useState(null); // Track open dropdown
+  const dropdownRefs = useRef({}); // Store refs for each dropdown button
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -129,36 +190,83 @@ function Reports() {
         report.id === id ? { ...report, status: newStatus } : report
       )
     );
+    setOpenDropdown(null); // Close dropdown after selection
   };
+
+  // Toggle dropdown and position it
+  const toggleDropdown = (id) => {
+    setOpenDropdown(openDropdown === id ? null : id);
+    if (openDropdown !== id) {
+      // Position dropdown when opening
+      const button = dropdownRefs.current[id];
+      if (button) {
+        const rect = button.getBoundingClientRect();
+        const dropdownMenu = button.querySelector(".action-dropdown-menu");
+        if (dropdownMenu) {
+          const viewportHeight = window.innerHeight;
+          const spaceBelow = viewportHeight - rect.bottom;
+          const dropdownHeight = dropdownMenu.offsetHeight || 100; // Approximate height if not rendered yet
+
+          // Flip dropdown above if there's not enough space below
+          if (spaceBelow < dropdownHeight) {
+            dropdownMenu.style.top = "auto";
+            dropdownMenu.style.bottom = "100%";
+            dropdownMenu.style.marginTop = "0";
+            dropdownMenu.style.marginBottom = "8px";
+          } else {
+            // Default: below the button
+            dropdownMenu.style.top = "100%";
+            dropdownMenu.style.bottom = "auto";
+            dropdownMenu.style.marginTop = "8px";
+            dropdownMenu.style.marginBottom = "0";
+          }
+
+          // Ensure dropdown doesn't overflow horizontally
+          const viewportWidth = window.innerWidth;
+          const spaceRight = viewportWidth - rect.right;
+          if (spaceRight < 120) { // 120px is min-width of dropdown
+            dropdownMenu.style.right = "auto";
+            dropdownMenu.style.left = "0";
+          } else {
+            dropdownMenu.style.right = "0";
+            dropdownMenu.style.left = "auto";
+          }
+        }
+      }
+    }
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".action-dropdown")) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
       report.reportedBy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.reportedUser.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
+      report.reportedUser.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.reportedTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.id.toString().includes(searchTerm);
 
-    const matchesStatus =
-      selectedStatus === "" || report.status === selectedStatus;
+    const matchesStatus = selectedStatus === "" || report.status === selectedStatus;
 
     const matchesTitle =
       selectedReportTitle === "" || report.reportedTitle === selectedReportTitle;
 
-    const matchesDate =
-      selectedDate === "" ||
-      new Date(report.reportedOn).toISOString().slice(0, 10) === selectedDate;
+    const matchesDate = selectedDate === "" || report.reportedOn === selectedDate;
 
     return matchesSearch && matchesStatus && matchesTitle && matchesDate;
   });
 
   const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentReports = filteredReports.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const currentReports = filteredReports.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -175,6 +283,11 @@ function Reports() {
     <div className="dashboard-container">
       <div className="main-content">
         <div className="reports-page">
+          <div className="page-header">
+            <h2 className="page-titlees">
+              Dashboard <span className="sub-titlees">› Reports</span>
+            </h2>
+          </div>
           {/* Stats */}
           <div className="stats-container">
             <div className="stat-card">
@@ -245,10 +358,9 @@ function Reports() {
                   onChange={(e) => setSelectedReportTitle(e.target.value)}
                   className="reports-report-select"
                 >
-                  <option value="">Report Title</option>
-                  <option value="Scamming and Impersonation">
-                    Scamming and Impersonation
-                  </option>
+                  <option value="">Title</option>
+                  <option value="Scamming">Scamming</option>
+                  <option value="Impersonation">Impersonation</option>
                   <option value="Fraud">Fraud</option>
                   <option value="Harassment">Harassment</option>
                 </select>
@@ -290,9 +402,7 @@ function Reports() {
                           alt={report.reportedBy.name}
                           className="user-avatar"
                         />
-                        <span className="user-name">
-                          {report.reportedBy.name}
-                        </span>
+                        <span className="user-name">{report.reportedBy.name}</span>
                       </div>
                     </td>
                     <td data-label="Reported User">
@@ -302,36 +412,47 @@ function Reports() {
                           alt={report.reportedUser.name}
                           className="user-avatar"
                         />
-                        <span className="user-name">
-                          {report.reportedUser.name}
-                        </span>
+                        <span className="user-name">{report.reportedUser.name}</span>
                       </div>
                     </td>
                     <td data-label="Reported Title">{report.reportedTitle}</td>
-                    <td data-label="Reported on">{new Date(report.reportedOn).toDateString()}</td>
+                    <td data-label="Reported on">
+                      {new Date(report.reportedOn).toDateString()}
+                    </td>
                     <td data-label="Status">
-                      <span
-                        className={`status-badge ${getStatusClass(
-                          report.status
-                        )}`}
-                      >
+                      <span className={`status-badge ${getStatusClass(report.status)}`}>
                         {report.status}
                       </span>
                     </td>
-                    <td data-label="Action">
-                      <div className="action-buttons">
+                    <td data-label="Action" className="action-dropdown">
+                      <div
+                        className="action-wrapper"
+                        ref={(el) => (dropdownRefs.current[report.id] = el)}
+                      >
                         <button
-                          onClick={() => handleStatusChange(report.id, "Resolved")}
-                          className={`status-button ${report.status === "Resolved" ? "active" : ""}`}
+                          onClick={() => toggleDropdown(report.id)}
+                          className="action-button"
                         >
-                          <CheckCircle size={16} color="green" /> Resolve
+                          <MoreHorizontal size={16} />
                         </button>
-                        <button
-                          onClick={() => handleStatusChange(report.id, "Pending")}
-                          className={`status-button ${report.status === "Pending" ? "active" : ""}`}
-                        >
-                          <XCircle size={16} color="red" /> Pending
-                        </button>
+                        {openDropdown === report.id && (
+                          <div className="action-dropdown-menu">
+                            <button
+                              onClick={() => handleStatusChange(report.id, "Resolved")}
+                              className="action-dropdown-item"
+                            >
+                              <CheckCircle size={16} color="#166534" />
+                              Resolve
+                            </button>
+                            <button
+                              onClick={() => handleStatusChange(report.id, "Pending")}
+                              className="action-dropdown-item"
+                            >
+                              <XCircle size={16} color="#92400e" />
+                              Pending
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>

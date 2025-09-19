@@ -1,28 +1,56 @@
-import React, { useState } from 'react';
-import { 
-  FileText, 
-  Shield, 
-  Info, 
-  Phone, 
-  ChevronRight, 
-  Mail, 
-  MapPin, 
+import React, { useState, useEffect } from 'react';
+import {
+  FileText,
+  Shield,
+  Info,
+  Phone,
+  ChevronRight,
+  Mail,
+  MapPin,
   Clock,
-  ArrowLeft
+  ArrowLeft,
+  Edit3
 } from 'lucide-react';
+import EditDialog from '../components/EditDialog';
+import { ContentManager } from '../data/contentManager';
 import '../Settings.css';
 
 const Settings = () => {
   const [activeSection, setActiveSection] = useState('main');
+  const [content, setContent] = useState(ContentManager.getContent());
+  const [editDialog, setEditDialog] = useState({
+    isOpen: false,
+    type: null,
+    title: ''
+  });
+
+  useEffect(() => {
+    setContent(ContentManager.getContent());
+  }, []);
+
+  const handleOpenEdit = (type, title) => {
+    setEditDialog({
+      isOpen: true,
+      type,
+      title
+    });
+  };
+
+  const handleSaveContent = (type, newContent) => {
+    const updatedContent = { ...content };
+    updatedContent[type] = newContent;
+    setContent(updatedContent);
+    ContentManager.saveContent(updatedContent);
+  };
 
   const renderMainSettings = () => (
     <div className="settings-main">
       <div className="page-header">
-      <h2 className="page-titlees">
+        <h2 className="page-titlees">
           Dashboard <span className="sub-titlees">› Settings</span>
-      </h2>                
+        </h2>
       </div>
-      
+
       <div className="settings-grid">
         <div className="setting-card" onClick={() => setActiveSection('terms')}>
           <div className="setting-icon">
@@ -77,37 +105,27 @@ const Settings = () => {
         <button className="back-btn" onClick={() => setActiveSection('main')}>
           <ArrowLeft /> Back to Settings
         </button>
-        <h2 className='heading-h2'>Terms & Conditions</h2>
+        <div className="header-actions">
+          <h2 className='heading-h2'>Terms & Conditions</h2>
+          <button
+            className="edit-btn"
+            onClick={() => handleOpenEdit('terms', 'Terms & Conditions')}
+          >
+            <Edit3 /> Edit
+          </button>
+        </div>
       </div>
-      
+
       <div className="detail-content">
-        <div className="content-section">
-          <h3>1. Acceptance of Terms</h3>
-          <p>By accessing and using the Turtle Trades platform, you accept and agree to be bound by the terms and provision of this agreement.</p>
-        </div>
-
-        <div className="content-section">
-          <h3>2. Trading Services</h3>
-          <p>Turtle Trades provides algorithmic trading services and market analysis tools. Our platform is designed for experienced traders and investors.</p>
-        </div>
-
-        <div className="content-section">
-          <h3>3. Risk Disclosure</h3>
-          <p>Trading involves substantial risk of loss and is not suitable for all investors. Past performance is not indicative of future results.</p>
-        </div>
-
-        <div className="content-section">
-          <h3>4. User Responsibilities</h3>
-          <p>Users are responsible for maintaining the confidentiality of their account information and for all activities under their account.</p>
-        </div>
-
-        <div className="content-section">
-          <h3>5. Prohibited Activities</h3>
-          <p>Users may not engage in market manipulation, fraudulent activities, or any actions that violate applicable laws and regulations.</p>
-        </div>
+        {content.terms.sections.map((section, index) => (
+          <div key={index} className="content-section">
+            <h3>{section.title}</h3>
+            <p>{section.content}</p>
+          </div>
+        ))}
 
         <div className="update-info">
-          <p><strong>Last updated:</strong> January 15, 2025</p>
+          <p><strong>Last updated:</strong> {content.terms.lastUpdated}</p>
         </div>
       </div>
     </div>
@@ -119,37 +137,27 @@ const Settings = () => {
         <button className="back-btn" onClick={() => setActiveSection('main')}>
           <ArrowLeft /> Back to Settings
         </button>
-        <h2 className='heading-h2'>Privacy Policy</h2>
+        <div className="header-actions">
+          <h2 className='heading-h2'>Privacy Policy</h2>
+          <button
+            className="edit-btn"
+            onClick={() => handleOpenEdit('privacy', 'Privacy Policy')}
+          >
+            <Edit3 /> Edit
+          </button>
+        </div>
       </div>
-      
+
       <div className="detail-content">
-        <div className="content-section">
-          <h3>Information We Collect</h3>
-          <p>We collect information you provide directly to us, such as when you create an account, make trades, or contact us for support.</p>
-        </div>
-
-        <div className="content-section">
-          <h3>How We Use Your Information</h3>
-          <ul>
-            <li>To provide and maintain our trading services</li>
-            <li>To process transactions and send related information</li>
-            <li>To send technical notices and security alerts</li>
-            <li>To provide customer support</li>
-          </ul>
-        </div>
-
-        <div className="content-section">
-          <h3>Data Security</h3>
-          <p>We implement industry-standard security measures to protect your personal and financial information, including encryption and secure data transmission protocols.</p>
-        </div>
-
-        <div className="content-section">
-          <h3>Information Sharing</h3>
-          <p>We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as described in this policy.</p>
-        </div>
+        {content.privacy.sections.map((section, index) => (
+          <div key={index} className="content-section">
+            <h3>{section.title}</h3>
+            <p>{section.content}</p>
+          </div>
+        ))}
 
         <div className="update-info">
-          <p><strong>Last updated:</strong> January 15, 2025</p>
+          <p><strong>Last updated:</strong> {content.privacy.lastUpdated}</p>
         </div>
       </div>
     </div>
@@ -161,28 +169,34 @@ const Settings = () => {
         <button className="back-btn" onClick={() => setActiveSection('main')}>
           <ArrowLeft /> Back to Settings
         </button>
-        <h2 className='heading-h2'>About Turtle Trades</h2>
+        <div className="header-actions">
+          <h2 className='heading-h2'>About Turtle Trades</h2>
+          <button
+            className="edit-btn"
+            onClick={() => handleOpenEdit('about', 'About Details')}
+          >
+            <Edit3 /> Edit
+          </button>
+        </div>
       </div>
-      
+
       <div className="detail-content">
         <div className="about-hero">
           <h3>About Turtle Trades Platform</h3>
-          <p>Turtle Trades is a cutting-edge algorithmic trading platform designed for serious traders and investors who demand precision, reliability, and performance.</p>
+          <p>{content.about.description}</p>
         </div>
 
         <div className="content-section">
           <h3>Our Mission</h3>
-          <p>To democratize access to sophisticated trading algorithms and provide retail traders with institutional-grade tools and strategies.</p>
+          <p>{content.about.mission}</p>
         </div>
 
         <div className="content-section">
           <h3>Key Features</h3>
           <ul>
-            <li>Advanced algorithmic trading strategies</li>
-            <li>Real-time market analysis and insights</li>
-            <li>Comprehensive risk management tools</li>
-            <li>Portfolio optimization algorithms</li>
-            <li>24/7 automated trading capabilities</li>
+            {content.about.features.map((feature, index) => (
+              <li key={index}>{feature}</li>
+            ))}
           </ul>
         </div>
 
@@ -190,15 +204,15 @@ const Settings = () => {
           <h3>Platform Statistics</h3>
           <div className="stats-grid">
             <div className="stat-item">
-              <div className="stat-number">10,000+</div>
+              <div className="stat-number">{content.about.stats.activeTraders}</div>
               <div className="stat-label">Active Traders</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">$50M+</div>
+              <div className="stat-number">{content.about.stats.aum}</div>
               <div className="stat-label">Assets Under Management</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">99.9%</div>
+              <div className="stat-number">{content.about.stats.uptime}</div>
               <div className="stat-label">Uptime Guarantee</div>
             </div>
           </div>
@@ -213,9 +227,17 @@ const Settings = () => {
         <button className="back-btn" onClick={() => setActiveSection('main')}>
           <ArrowLeft /> Back to Settings
         </button>
-        <h2 className='heading-h2'>Contact Details</h2>
+        <div className="header-actions">
+          <h2 className='heading-h2'>Contact Details</h2>
+          <button
+            className="edit-btn"
+            onClick={() => handleOpenEdit('contact', 'Contact Details')}
+          >
+            <Edit3 /> Edit
+          </button>
+        </div>
       </div>
-      
+
       <div className="detail-content">
         <div className="contact-grid">
           <div className="contact-card">
@@ -223,8 +245,8 @@ const Settings = () => {
               <Mail />
             </div>
             <h4>Email Support</h4>
-            <p>support@turtletrades.com</p>
-            <span className="contact-sub">Response time: 2-4 hours</span>
+            <p>{content.contact.email}</p>
+            <span className="contact-sub">Response time: {content.contact.emailResponseTime}</span>
           </div>
 
           <div className="contact-card">
@@ -232,7 +254,7 @@ const Settings = () => {
               <Phone />
             </div>
             <h4>Phone Support</h4>
-            <p>+1 (555) 123-TRADE</p>
+            <p>{content.contact.phone}</p>
             <span className="contact-sub">24/7 Trading Support</span>
           </div>
 
@@ -241,7 +263,7 @@ const Settings = () => {
               <MapPin />
             </div>
             <h4>Headquarters</h4>
-            <p>123 Financial District<br />New York, NY 10004<br />United States</p>
+            <p style={{ whiteSpace: 'pre-line' }}>{content.contact.address}</p>
           </div>
 
           <div className="contact-card">
@@ -249,7 +271,7 @@ const Settings = () => {
               <Clock />
             </div>
             <h4>Business Hours</h4>
-            <p>Monday - Friday: 6AM - 6PM EST<br />Weekend: Emergency Support Only</p>
+            <p style={{ whiteSpace: 'pre-line' }}>{content.contact.businessHours}</p>
           </div>
         </div>
 
@@ -293,6 +315,21 @@ const Settings = () => {
       {activeSection === 'privacy' && renderPrivacyPolicy()}
       {activeSection === 'about' && renderAboutDetails()}
       {activeSection === 'contact' && renderContactDetails()}
+
+      {editDialog.isOpen && (
+        <EditDialog
+          isOpen={editDialog.isOpen}
+          onClose={() => setEditDialog({ isOpen: false, type: null, title: '' })}
+          title={editDialog.title}
+          content={editDialog.type ? content[editDialog.type] : null}
+          onSave={(newContent) => {
+            if (editDialog.type) {
+              handleSaveContent(editDialog.type, newContent);
+            }
+          }}
+          type={editDialog.type}
+        />
+      )}
     </div>
   );
 };

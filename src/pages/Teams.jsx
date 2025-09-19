@@ -200,21 +200,21 @@ function Team() {
 
           {/* Filters */}
           <div className="filters-container">
-            <div className="search-container">
-              <div className="search-input-wrapper">
+            <div className="reports-search-container">
+              <div className="reports-search-input-wrapper">
                 <Search className="search-icon" size={20} />
                 <input
                   type="text"
                   placeholder="Search by Name or Email"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
+                  className="reports-search-input"
                 />
               </div>
             </div>
 
             <div className="filter-controls">
-              <div className="date-filter">
+              <div className="reports-date-filter">
                 <input
                   type="text"
                   placeholder="Select Date"
@@ -225,18 +225,18 @@ function Team() {
                 <Calendar className="date-icon" size={16} />
               </div>
 
-              <div className="status-filter">
+              <div className="kyc-status-filter">
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="status-select"
+                  className="kyc-status-select"
                 >
                   <option value="">All Status</option>
                   <option value="Active">Active</option>
                   <option value="Deactivate">Deactivate</option>
                   <option value="Delete">Delete</option>
                 </select>
-                <ChevronDown className="select-icon" size={16} />
+                <ChevronDown className="kyc-select-icon" size={16} />
               </div>
             </div>
           </div>

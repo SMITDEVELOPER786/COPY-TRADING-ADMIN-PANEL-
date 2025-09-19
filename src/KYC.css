@@ -546,3 +546,130 @@
     padding: 6px 12px;
   }
 }
+
+.kyc-filters-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.kyc-search-container {
+  flex: 1;
+  width: 100%;
+}
+
+.kyc-search-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.kyc-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  z-index: 1;
+}
+
+.kyc-search-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 40px 0 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  background-color: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.kyc-search-input:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.kyc-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.kyc-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.kyc-status-filter,
+.kyc-report-filter,
+.kyc-date-filter {
+  position: relative;
+  flex: 1;
+  min-width: 120px;
+}
+
+.kyc-status-select,
+.kyc-report-select {
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  padding: 0 36px 0 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  background-color: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.kyc-status-select:focus,
+.kyc-report-select:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.kyc-select-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+}
+
+.kyc-date-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 36px 0 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  background-color: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.kyc-date-input:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.kyc-date-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+}

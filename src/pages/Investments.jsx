@@ -265,42 +265,42 @@ function Investments() {
           </div>
           
           <div className="filters-container">
-            <div className="search-container">
-              <div className="search-input-wrapper">
+            <div className="reports-search-container">
+              <div className="reports-search-input-wrapper">
                 <Search className="search-icon" size={20} />
                 <input
                   type="text"
                   placeholder="Search Investor or Trader Name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
+                  className="reports-search-input"
                 />
               </div>
             </div>
             
             <div className="filter-controls">
-              <div className="status-filter">
+              <div className="kyc-status-filter">
                 <select 
                   value={selectedStatus} 
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="status-select"
+                  className="reports-report-select"
                 >
-                  <option value="">Status</option>
+                  <option value="">Status </option>
                   <option value="Active">Active</option>
                   <option value="Pending">Pending</option>
                   <option value="Withdraw">Withdraw</option>
                   <option value="Successful">Successful</option>
                 </select>
-                <ChevronDown className="select-icon" size={16} />
+               <ChevronDown className="kyc-select-icon" size={16} />  
               </div>
               
-              <div className="date-filter">
+              <div className="reports-date-filter">
                 <input
                   type="text"
                   placeholder="Select Date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="date-input"
+                  className="reports-date-input"
                 />
                 <Calendar className="date-icon" size={16} />
               </div>
