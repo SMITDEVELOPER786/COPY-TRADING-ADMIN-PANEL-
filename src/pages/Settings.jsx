@@ -77,7 +77,7 @@ const Settings = () => {
         <button className="back-btn" onClick={() => setActiveSection('main')}>
           <ArrowLeft /> Back to Settings
         </button>
-        <h2>Terms & Conditions</h2>
+        <h2 className='heading-h2'>Terms & Conditions</h2>
       </div>
       
       <div className="detail-content">
@@ -119,7 +119,7 @@ const Settings = () => {
         <button className="back-btn" onClick={() => setActiveSection('main')}>
           <ArrowLeft /> Back to Settings
         </button>
-        <h2>Privacy Policy</h2>
+        <h2 className='heading-h2'>Privacy Policy</h2>
       </div>
       
       <div className="detail-content">
@@ -161,7 +161,7 @@ const Settings = () => {
         <button className="back-btn" onClick={() => setActiveSection('main')}>
           <ArrowLeft /> Back to Settings
         </button>
-        <h2>About Turtle Trades</h2>
+        <h2 className='heading-h2'>About Turtle Trades</h2>
       </div>
       
       <div className="detail-content">
@@ -213,7 +213,7 @@ const Settings = () => {
         <button className="back-btn" onClick={() => setActiveSection('main')}>
           <ArrowLeft /> Back to Settings
         </button>
-        <h2>Contact Details</h2>
+        <h2 className='heading-h2'>Contact Details</h2>
       </div>
       
       <div className="detail-content">

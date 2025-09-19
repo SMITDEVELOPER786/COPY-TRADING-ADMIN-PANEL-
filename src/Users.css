@@ -387,8 +387,7 @@ html, body {
 input:checked + .slider { background-color: #16a34a; }
 input:checked + .slider:before { transform: translateX(22px); }
 
-<<<<<<< HEAD
-=======
+
 /* ---------- Modal Overlay ---------- */
 .modal {
   position: fixed;
@@ -544,6 +543,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 
 
+
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;
@@ -575,7 +575,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   }
 
   .user-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .metrics-grid {
@@ -592,15 +592,144 @@ input:checked + .slider:before { transform: translateX(22px); }
     min-width: auto;
   }
 
-  .tabs-container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
+ .tabs-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* tabs left, switch right */
+  gap: 12px;
+  flex-wrap: wrap; /* mobile pe neeche chale jayein */
+  width: 100%;
+}
 
-  .tabs {
-    flex-wrap: wrap;
-    gap: 8px;
-    width: 100%;
-  }
+.tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap; /* agar jagah kam ho to neeche chale */
+}
+
+}
+
+
+
+/* Modal background */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* dim background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* hamesha upar rahe */
+}
+
+/* Modal content box */
+.modal-content,
+.confirm-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  animation: popup 0.3s ease;
+}
+
+/* Confirm box thoda chhota */
+.confirm-box {
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Animation effect */
+@keyframes popup {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Tabs Container - sirf buttons aur switch ke liye */
+.tabs-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Tabs Buttons */
+.tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tab {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+.tab.active {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+
+/* Tab Content - neeche centre aligned */
+.tab-content {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+
+}
+.tabs-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #6d4949;
+  cursor: pointer;
+  font-size: 14px;
+}
+.tab.active {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+
+.tab-content {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }

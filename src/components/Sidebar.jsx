@@ -19,14 +19,15 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(true); // default open on desktop
 
+  // ✅ Detect screen size (desktop vs mobile)
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 1024) {
-        setIsOpen(false);
+        setIsOpen(false); // mobile: closed by default
       } else {
-        setIsOpen(true);
+        setIsOpen(true); // desktop: always open
       }
     };
     handleResize();
@@ -34,17 +35,22 @@ const Sidebar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Handle logout functionality
   const handleLogout = () => {
+    // Clear authentication data
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('token');
     
+    // Clear any other stored user data if needed
     localStorage.removeItem('userData');
     localStorage.removeItem('userRole');
     
+    // Close mobile sidebar if open
     if (window.innerWidth <= 1024) {
       setIsOpen(false);
     }
     
+    // Navigate to login page
     navigate('/login');
   };
 
@@ -69,13 +75,14 @@ const Sidebar = () => {
       handleLogout();
     } else {
       if (window.innerWidth <= 1024) {
-        setIsOpen(false);
+        setIsOpen(false); // close on mobile click
       }
     }
   };
 
   return (
     <>
+      {/* 📱 Mobile Hamburger Button */}
       <button 
          className="mobile-toggle"
          onClick={() => setIsOpen(!isOpen)}
@@ -83,6 +90,7 @@ const Sidebar = () => {
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
+      {/* Sidebar */}
       <div className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-content">
           <nav className="sidebar-nav">
