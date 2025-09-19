@@ -81,7 +81,6 @@
   background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   padding: 1rem;
   border-radius: 1rem;
-  color: #ffffff;
   flex-shrink: 0;
   transition: transform 0.3s ease;
 }
