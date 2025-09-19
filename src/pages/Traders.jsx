@@ -167,7 +167,7 @@ function Traders() {
           <h2 className="page-titlees">
             Dashboard <span className="sub-titlees">› Traders</span>
           </h2>
-          <div className="time-filters">
+          <div className="times-filters">
             {['Months', '30 Days', '7 Days', '24 Hour'].map((period) => (
               <button 
                 key={period}

@@ -11,6 +11,7 @@ import Messages from "./pages/Messages";
 import Settings from "./pages/Settings";
 import Sidebar from "./components/Sidebar";
 import Login from "./pages/Login";
+import TraderProfile from "./pages/TraderProfile"; 
 import "./App.css";
 
 function PrivateRoute({ children }) {
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/kyc" element={<KYC />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/trader" element={<Traders />} />
+                <Route path="/trader/:id" element={<TraderProfile />} />
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/settings" element={<Settings />} />
               </Routes>

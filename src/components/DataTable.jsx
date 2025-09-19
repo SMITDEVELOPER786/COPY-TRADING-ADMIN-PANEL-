@@ -94,16 +94,21 @@ const DataTable = () => {
   const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false);
   const [moveRowId, setMoveRowId] = useState(null);
   const [moveToTab, setMoveToTab] = useState('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  const handleViewProfile = () => {
-    navigate('/users');
+  useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth <= 768);
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleViewProfile = (userId) => {
+    navigate(`/trader/${userId}`);
   };
+  
 
   const handleSendEmail = (userName) => {
-    // Placeholder for email functionality
     alert(`Sending email to ${userName}`);
-    // Implement actual email logic here, e.g., open mailto link or API call
-    // window.location.href = `mailto:${userName}@example.com?subject=Message from Dashboard`;
   };
 
   useEffect(() => {
@@ -471,6 +476,7 @@ const DataTable = () => {
           ))}
         </div>
         <div className="table-actions">
+        {!isMobile && (
           <button
             className="add-user-btn"
             onClick={openAddDialog}
@@ -494,6 +500,7 @@ const DataTable = () => {
             <UserPlus size={16} />
             Add User
           </button>
+        )}
         </div>
       </div>
 
@@ -537,8 +544,7 @@ const DataTable = () => {
                         <MoreHorizontal size={16} />
                       </button>
                       <div className="dropdown-menu">
-                        <button onClick={() => handleViewProfile()}>View Profile</button>
-                        <button onClick={() => openMoveDialog(row.id)}>Move User</button>
+                        <button onClick={() => handleViewProfile(row.id)}>View Profile</button>                        <button onClick={() => openMoveDialog(row.id)}>Move User</button>
                         <button onClick={() => handleSendEmail(row.name)}>Send Email</button>
                       </div>
                     </div>

@@ -35,6 +35,14 @@
   font-weight: 700;
 }
 
+.times-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;               
+  justify-content: center;
+  margin-top:2rem;
+}
+
 .time-filter-group {
   margin-top: 1rem;
   display: flex;
