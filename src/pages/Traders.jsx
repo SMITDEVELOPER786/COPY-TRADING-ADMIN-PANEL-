@@ -167,11 +167,11 @@ function Traders() {
           <h2 className="page-titlees">
             Dashboard <span className="sub-titlees">› Traders</span>
           </h2>
-          <div className="time-filter-group">
+          <div className="time-filters">
             {['Months', '30 Days', '7 Days', '24 Hour'].map((period) => (
               <button 
                 key={period}
-                className={`time-filter-item ${activeTab === period ? 'active' : ''}`}
+                className={`time-filter ${activeTab === period ? 'active' : ''}`}
                 onClick={() => setActiveTab(period)}
               >
                 {period}
