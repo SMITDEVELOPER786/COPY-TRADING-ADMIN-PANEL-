@@ -10,7 +10,7 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-} from "lucide-react"; // Added XCircle for Reject
+} from "lucide-react";
 import "../Reports.css";
 
 // initial data
@@ -122,13 +122,11 @@ function Reports() {
     localStorage.setItem("reports", JSON.stringify(reports));
   }, [reports]);
 
-  // Handle status toggle
-  const handleToggleStatus = (id) => {
+  // Handle status change
+  const handleStatusChange = (id, newStatus) => {
     setReports((prev) =>
       prev.map((report) =>
-        report.id === id
-          ? { ...report, status: report.status === "Pending" ? "Resolved" : "Pending" }
-          : report
+        report.id === id ? { ...report, status: newStatus } : report
       )
     );
   };
@@ -213,39 +211,39 @@ function Reports() {
           </div>
 
           {/* Filters */}
-          <div className="filters-container">
-            <div className="search-container">
-              <div className="search-input-wrapper">
-                <Search className="search-icon" size={20} />
+          <div className="reports-filter-container">
+            <div className="reports-search-container">
+              <div className="reports-search-input-wrapper">
+                <Search className="reports-search-icon" size={20} />
                 <input
                   type="text"
                   placeholder="Search Name or Report ID"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
+                  className="reports-search-input"
                 />
               </div>
             </div>
 
-            <div className="filter-controls">
-              <div className="status-filter">
+            <div className="reports-filter-controls">
+              <div className="reports-status-filter">
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="status-select"
+                  className="reports-status-select"
                 >
                   <option value="">Status</option>
                   <option value="Resolved">Resolved</option>
                   <option value="Pending">Pending</option>
                 </select>
-                <ChevronDown className="select-icon" size={16} />
+                <ChevronDown className="reports-select-icon" size={16} />
               </div>
 
-              <div className="report-filter">
+              <div className="reports-report-filter">
                 <select
                   value={selectedReportTitle}
                   onChange={(e) => setSelectedReportTitle(e.target.value)}
-                  className="report-select"
+                  className="reports-report-select"
                 >
                   <option value="">Report Title</option>
                   <option value="Scamming and Impersonation">
@@ -254,23 +252,23 @@ function Reports() {
                   <option value="Fraud">Fraud</option>
                   <option value="Harassment">Harassment</option>
                 </select>
-                <ChevronDown className="select-icon" size={16} />
+                <ChevronDown className="reports-select-icon" size={16} />
               </div>
 
-              <div className="date-filter">
+              <div className="reports-date-filter">
                 <input
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="date-input"
+                  className="reports-date-input"
                 />
-                <Calendar className="date-icon" size={16} />
+                <Calendar className="reports-date-icon" size={16} />
               </div>
             </div>
           </div>
 
           {/* Table */}
-          <div className="table-containers">
+          <div className="reports-table-container">
             <table className="reports-table">
               <thead>
                 <tr>
@@ -279,13 +277,13 @@ function Reports() {
                   <th>Reported Title</th>
                   <th>Reported on</th>
                   <th>Status</th>
-                  <th>Action</th> {/* New column for toggle button */}
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {currentReports.map((report) => (
                   <tr key={report.id}>
-                    <td>
+                    <td data-label="Reported by">
                       <div className="user-cell">
                         <img
                           src={report.reportedBy.avatar}
@@ -297,7 +295,7 @@ function Reports() {
                         </span>
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Reported User">
                       <div className="user-cell">
                         <img
                           src={report.reportedUser.avatar}
@@ -309,9 +307,9 @@ function Reports() {
                         </span>
                       </div>
                     </td>
-                    <td>{report.reportedTitle}</td>
-                    <td>{new Date(report.reportedOn).toDateString()}</td>
-                    <td>
+                    <td data-label="Reported Title">{report.reportedTitle}</td>
+                    <td data-label="Reported on">{new Date(report.reportedOn).toDateString()}</td>
+                    <td data-label="Status">
                       <span
                         className={`status-badge ${getStatusClass(
                           report.status
@@ -320,21 +318,21 @@ function Reports() {
                         {report.status}
                       </span>
                     </td>
-                    <td>
-                      <button
-                        onClick={() => handleToggleStatus(report.id)}
-                        className={`status-toggle ${report.status.toLowerCase()}`}
-                      >
-                        {report.status === "Pending" ? (
-                          <>
-                            <CheckCircle size={16} color="green" /> Resolve
-                          </>
-                        ) : (
-                          <>
-                            <XCircle size={16} color="red" /> Pending
-                          </>
-                        )}
-                      </button>
+                    <td data-label="Action">
+                      <div className="action-buttons">
+                        <button
+                          onClick={() => handleStatusChange(report.id, "Resolved")}
+                          className={`status-button ${report.status === "Resolved" ? "active" : ""}`}
+                        >
+                          <CheckCircle size={16} color="green" /> Resolve
+                        </button>
+                        <button
+                          onClick={() => handleStatusChange(report.id, "Pending")}
+                          className={`status-button ${report.status === "Pending" ? "active" : ""}`}
+                        >
+                          <XCircle size={16} color="red" /> Pending
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -350,7 +348,7 @@ function Reports() {
           </div>
 
           {/* Pagination */}
-          <div className="table-footer">
+          <div className="reports-table-footer">
             <div className="showing-info">
               Showing {currentReports.length} of {filteredReports.length} entries
             </div>
@@ -358,17 +356,23 @@ function Reports() {
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
+                className="pagination-button"
               >
                 <ChevronLeft size={16} />
               </button>
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`pagination-number ${currentPage === page ? "active" : ""}`}
+                >
+                  {page}
+                </button>
+              ))}
               <button
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
+                className="pagination-button"
               >
                 <ChevronRight size={16} />
               </button>

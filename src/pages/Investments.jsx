@@ -113,7 +113,7 @@ function Investments() {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showDropdown, setShowDropdown] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(null);
   const [selectedInvestment, setSelectedInvestment] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const itemsPerPage = 10;
@@ -126,13 +126,13 @@ function Investments() {
     setInvestmentsData(prev => prev.map(item => 
       item.id === id ? { ...item, status: newStatus } : item
     ));
-    setShowDropdown(null);
+    setMenuOpen(null);
   };
 
   const handleViewDetails = (investment) => {
     setSelectedInvestment(investment);
     setIsDetailsModalOpen(true);
-    setShowDropdown(null);
+    setMenuOpen(null);
   };
 
   const filteredInvestments = investmentsData.filter(investment =>
@@ -317,11 +317,11 @@ function Investments() {
                   <th>ROI</th>
                   <th>Date Invested</th>
                   <th>Status</th>
-                  <th></th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {currentInvestments.map((investment) => (
+                {currentInvestments.map((investment, index) => (
                   <tr key={investment.id}>
                     <td data-label="Investor">
                       <div className="user-cell">
@@ -351,56 +351,34 @@ function Investments() {
                         {investment.status}
                       </span>
                     </td>
-                    <td data-label="Actions">
-                      <div className="actions-dropdown">
+                    <td data-label="Actions" className="investments-actions">
+                      <div className="investments-action-menu">
                         <button 
-                          className="more-button"
-                          onClick={() => setShowDropdown(showDropdown === investment.id ? null : investment.id)}
+                          className="investments-action-btn"
+                          onClick={() => setMenuOpen(menuOpen === investment.id ? null : investment.id)}
+                          aria-label="More actions"
                         >
                           <MoreHorizontal size={16} />
                         </button>
-                        {showDropdown === investment.id && (
-                          <div className="dropdown-menu">
-                            {['Active', 'Pending', 'Withdraw', 'Successful'].map(status => (
+                        {menuOpen === investment.id && (
+                          <div
+                            className={`investments-dropdown-menu ${index >= currentInvestments.length - 2 ? 'drop-up' : ''}`}
+                          >
+                            {[
+                              { status: 'Active', icon: <CheckCircle size={16} color="#166534" /> },
+                              { status: 'Pending', icon: <CheckCircle size={16} color="#92400e" /> },
+                              { status: 'Withdraw', icon: <XCircle size={16} color="red" /> },
+                              { status: 'Successful', icon: <CheckCircle size={16} color="green" /> }
+                            ].filter(({ status }) => status !== investment.status).map(({ status, icon }) => (
                               <button 
                                 key={status}
                                 onClick={() => handleStatusChange(investment.id, status)}
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '8px',
-                                  padding: '8px',
-                                  width: '100%',
-                                  textAlign: 'left',
-                                  background: 'none',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  color: investment.status === status ? '#6b7280' : '#1f2937',
-                                  pointerEvents: investment.status === status ? 'none' : 'auto',
-                                  opacity: investment.status === status ? 0.5 : 1,
-                                }}
                               >
-                                {status === 'Successful' && <CheckCircle size={16} color="green" />}
-                                {status === 'Withdraw' && <XCircle size={16} color="red" />}
-                                {status === 'Active' && <CheckCircle size={16} color="#166534" />}
-                                {status === 'Pending' && <CheckCircle size={16} color="#92400e" />}
+                                {icon}
                                 Set to {status}
                               </button>
                             ))}
-                            <button 
-                              onClick={() => handleViewDetails(investment)}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                padding: '8px',
-                                width: '100%',
-                                textAlign: 'left',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                              }}
-                            >
+                            <button onClick={() => handleViewDetails(investment)}>
                               <Eye size={16} />
                               View Details
                             </button>

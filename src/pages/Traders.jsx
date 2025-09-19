@@ -27,7 +27,7 @@ function Traders() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
-  const [showDropdown, setShowDropdown] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(null);
   const [selectedMetric, setSelectedMetric] = useState(null);
 
   const [traders, setTraders] = useState(() => {
@@ -53,7 +53,7 @@ function Traders() {
         trader.id === id ? { ...trader, tag: newStatus, tagColor: newTagColor } : trader
       )
     );
-    setShowDropdown(null);
+    setMenuOpen(null);
   };
 
   const filteredTraders = traders.filter(trader =>
@@ -87,9 +87,8 @@ function Traders() {
 
   const metricCards = selectedMetric ? calculateMetrics().filter(card => card.title === selectedMetric) : calculateMetrics();
 
-  // ✅ Chart data + options
   const chartData = {
-    labels: ['Jan 2025','Feb 2025','Mar 2025','Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025'],
+    labels: ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025', 'Oct 2025', 'Nov 2025', 'Dec 2025'],
     datasets: [
       {
         label: roiTab,
@@ -242,7 +241,6 @@ function Traders() {
             </div>
           </div>
 
-          {/* ✅ Fixed Chart */}
           <div className="chart-wrapper" style={{ height: '300px' }}>
             <Line data={chartData} options={chartOptions} />
           </div>
@@ -296,11 +294,11 @@ function Traders() {
                   <th>Avg ROI</th>
                   <th>Avg Drawdown</th>
                   <th>Tag</th>
-                  <th></th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredTraders.map((trader) => (
+                {filteredTraders.map((trader, index) => (
                   <tr key={trader.id}>
                     <td data-label="Trader Name">
                       <div className="trader-details">
@@ -317,25 +315,27 @@ function Traders() {
                         {trader.tag}
                       </span>
                     </td>
-                    <td data-label="">
-                      <div className="actions-dropdown">
+                    <td data-label="Actions" className="traders-actions">
+                      <div className="traders-action-menu">
                         <button 
-                          className="action-button"
-                          onClick={() => setShowDropdown(showDropdown === trader.id ? null : trader.id)}
+                          className="traders-action-btn"
+                          onClick={() => setMenuOpen(menuOpen === trader.id ? null : trader.id)}
+                          aria-label="More actions"
                         >
                           <MoreHorizontal size={16} />
                         </button>
-                        {showDropdown === trader.id && (
-                          <div className="dropdown-menu">
+                        {menuOpen === trader.id && (
+                          <div
+                            className={`traders-dropdown-menu ${index >= filteredTraders.length - 2 ? 'drop-up' : ''}`}
+                          >
                             {[
                               { status: 'Profitable', color: 'green' },
                               { status: 'Average', color: 'orange' },
                               { status: 'Unprofitable', color: 'red' }
-                            ].map(({ status, color }) => (
+                            ].filter(({ status }) => status !== trader.tag).map(({ status, color }) => (
                               <button 
                                 key={status}
                                 onClick={() => handleStatusChange(trader.id, status, color)}
-                                disabled={trader.tag === status}
                               >
                                 Set to {status}
                               </button>
@@ -355,7 +355,6 @@ function Traders() {
   );
 }
 
-// Default traders
 function defaultTraders() {
   return [
     { 

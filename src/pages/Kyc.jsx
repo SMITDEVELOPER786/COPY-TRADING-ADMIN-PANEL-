@@ -124,7 +124,7 @@ function KYC() {
   const [selectedReportTitle, setSelectedReportTitle] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showDropdown, setShowDropdown] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(null);
   const [selectedKYC, setSelectedKYC] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const itemsPerPage = 10;
@@ -133,24 +133,21 @@ function KYC() {
     localStorage.setItem('kycData', JSON.stringify(kycData));
   }, [kycData]);
 
-  const handleApprove = (id) => {
+  const handleStatusChange = (id, newStatus) => {
     setKycData(prev => prev.map(item => 
-      item.id === id ? { ...item, status: 'Successful' } : item
+      item.id === id ? { ...item, status: newStatus } : item
     ));
-    setShowDropdown(null);
-  };
-
-  const handleReject = (id) => {
-    setKycData(prev => prev.map(item => 
-      item.id === id ? { ...item, status: 'Failed' } : item
-    ));
-    setShowDropdown(null);
+    setMenuOpen(null);
   };
 
   const handleViewDetails = (kyc) => {
     setSelectedKYC(kyc);
     setIsDetailsModalOpen(true);
-    setShowDropdown(null);
+    setMenuOpen(null);
+  };
+
+  const toggleMenu = (id) => {
+    setMenuOpen(menuOpen === id ? null : id);
   };
 
   const filteredKYC = kycData.filter(kyc =>
@@ -350,11 +347,11 @@ function KYC() {
                   <th>Document</th>
                   <th>Date</th>
                   <th>Status</th>
-                  <th></th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {currentKYC.map((kyc) => (
+                {currentKYC.map((kyc, index) => (
                   <tr key={kyc.id}>
                     <td data-label="User">
                       <div className="user-cell">
@@ -375,67 +372,37 @@ function KYC() {
                         {kyc.status}
                       </span>
                     </td>
-                    <td data-label="Actions">
-                      <div className="actions-dropdown">
+                    <td data-label="Actions" className="kyc-actions">
+                      <div className="kyc-action-menu">
                         <button 
-                          className="more-button"
-                          onClick={() => setShowDropdown(showDropdown === kyc.id ? null : kyc.id)}
+                          className="kyc-action-btn"
+                          onClick={() => toggleMenu(kyc.id)}
+                          aria-label="More actions"
                         >
                           <MoreHorizontal size={16} />
                         </button>
-                        {showDropdown === kyc.id && (
-                          <div className="dropdown-menu">
-                            <button 
-                              onClick={() => handleApprove(kyc.id)}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                padding: '8px',
-                                width: '100%',
-                                textAlign: 'left',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                              }}
-                            >
-                              <CheckCircle size={16} color="green" />
-                              Approve
+                        {menuOpen === kyc.id && (
+                          <div
+                            className={`kyc-dropdown-menu ${index >= currentKYC.length - 2 ? 'drop-up' : ''}`}
+                          >
+                            <button onClick={() => handleViewDetails(kyc)}>
+                              <Eye size={14} /> View Details
                             </button>
-                            <button 
-                              onClick={() => handleReject(kyc.id)}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                padding: '8px',
-                                width: '100%',
-                                textAlign: 'left',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                              }}
-                            >
-                              <XCircle size={16} color="red" />
-                              Reject
-                            </button>
-                            <button 
-                              onClick={() => handleViewDetails(kyc)}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                padding: '8px',
-                                width: '100%',
-                                textAlign: 'left',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                              }}
-                            >
-                              <Eye size={16} />
-                              View Details
-                            </button>
+                            {kyc.status !== 'Pending' && (
+                              <button onClick={() => handleStatusChange(kyc.id, 'Pending')}>
+                                <CheckCircle size={14} color="#d97706" /> Pending
+                              </button>
+                            )}
+                            {kyc.status !== 'Successful' && (
+                              <button onClick={() => handleStatusChange(kyc.id, 'Successful')}>
+                                <CheckCircle size={14} color="green" /> Approve
+                              </button>
+                            )}
+                            {kyc.status !== 'Failed' && (
+                              <button onClick={() => handleStatusChange(kyc.id, 'Failed')}>
+                                <XCircle size={14} color="red" /> Reject
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>

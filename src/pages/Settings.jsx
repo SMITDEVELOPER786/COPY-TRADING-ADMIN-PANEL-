@@ -254,7 +254,7 @@ const Settings = () => {
         </div>
 
         <div className="contact-form-section">
-          <h3>Send us a Message</h3>
+          <h3 className='heading-h3'>Send us a Message</h3>
           <form className="contact-form">
             <div className="form-row">
               <div className="form-group">
