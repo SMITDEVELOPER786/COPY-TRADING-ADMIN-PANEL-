@@ -21,57 +21,57 @@ const DataTable = () => {
         return parsedData;
       }
       return {
-        'Top Investors': [
-          {
-            id: 1,
-            name: 'Maria Khan',
-            portfolio: '2.4M',
-            investment: '25',
-            recentInvestment: 'Tue 29 Jun 2025',
-            rank: '1st',
-            avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-          {
-            id: 2,
-            name: 'John Doe',
-            portfolio: '1.8M',
-            investment: '20',
-            recentInvestment: 'Mon 28 Jun 2025',
-            rank: '2nd',
-            avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-        ],
-        'Top Traders': [
-          {
-            id: 1,
-            name: 'Jane Smith',
-            portfolio: '1.5M',
-            investment: '15',
-            recentInvestment: 'Sun 27 Jun 2025',
-            rank: '1st',
-            avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-          {
-            id: 2,
-            name: 'Alex Johnson',
-            portfolio: '1.2M',
-            investment: '10',
-            recentInvestment: 'Sat 26 Jun 2025',
-            rank: '2nd',
-            avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-        ],
-        'Awaiting Approvals': [
-          {
-            id: 1,
-            name: 'Emily Davis',
-            portfolio: '0.5M',
-            investment: '5',
-            recentInvestment: 'Fri 25 Jun 2025',
-            rank: 'N/A',
-            avatar: 'https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-        ],
+      'Top Investors': [
+    {
+      id: 'investor-1',
+      name: 'Maria Khan',
+      portfolio: '2.4M',
+      investment: '25',
+      recentInvestment: 'Tue 29 Jun 2025',
+      rank: '1st',
+      avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=400',
+    },
+    {
+      id: 'investor-2',
+      name: 'John Doe',
+      portfolio: '1.8M',
+      investment: '20',
+      recentInvestment: 'Mon 28 Jun 2025',
+      rank: '2nd',
+      avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400',
+    },
+  ],
+  'Top Traders': [
+    {
+      id: 'trader-1',
+      name: 'Jane Smith',
+      portfolio: '1.5M',
+      investment: '15',
+      recentInvestment: 'Sun 27 Jun 2025',
+      rank: '1st',
+      avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400',
+    },
+    {
+      id: 'trader-2',
+      name: 'Alex Johnson',
+      portfolio: '1.2M',
+      investment: '10',
+      recentInvestment: 'Sat 26 Jun 2025',
+      rank: '2nd',
+      avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
+    },
+  ],
+  'Awaiting Approvals': [
+    {
+      id: 'approval-1',
+      name: 'Emily Davis',
+      portfolio: '0.5M',
+      investment: '5',
+      recentInvestment: 'Fri 25 Jun 2025',
+      rank: 'N/A',
+      avatar: 'https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=400',
+    },
+  ],
       };
     } catch (e) {
       console.error('Error parsing localStorage data:', e);
