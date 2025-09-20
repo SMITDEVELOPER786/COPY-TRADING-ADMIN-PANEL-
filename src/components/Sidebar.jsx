@@ -19,15 +19,16 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true); // default open on desktop
+  const [isOpen, setIsOpen] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showDoorAnimation, setShowDoorAnimation] = useState(false);
 
-  // ✅ Detect screen size (desktop vs mobile)
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 1024) {
-        setIsOpen(false); // mobile: closed by default
+        setIsOpen(false);
       } else {
-        setIsOpen(true); // desktop: always open
+        setIsOpen(true);
       }
     };
     handleResize();
@@ -35,23 +36,27 @@ const Sidebar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Handle logout functionality
   const handleLogout = () => {
-    // Clear authentication data
+    setIsLoggingOut(true);
+
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('token');
-
-    // Clear any other stored user data if needed
     localStorage.removeItem('userData');
     localStorage.removeItem('userRole');
 
-    // Close mobile sidebar if open
     if (window.innerWidth <= 1024) {
       setIsOpen(false);
     }
 
-    // Navigate to login page
-    navigate('/login');
+    setTimeout(() => {
+      setShowDoorAnimation(true);
+    }, 5500);
+
+    setTimeout(() => {
+      setIsLoggingOut(false);
+      setShowDoorAnimation(false);
+      navigate('/login');
+    }, 6500);
   };
 
   const menuItems = [
@@ -75,19 +80,17 @@ const Sidebar = () => {
       handleLogout();
     } else {
       if (window.innerWidth <= 1024) {
-        setIsOpen(false); // close on mobile click
+        setIsOpen(false);
       }
     }
   };
 
   return (
     <>
-      {/* 📱 Mobile Hamburger Button */}
       <button className="sidebar-mobile-toggle" onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Sidebar */}
       <div className={`sidebar-container ${isOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-content">
           <nav className="sidebar-nav">
@@ -121,7 +124,8 @@ const Sidebar = () => {
                   <button
                     key={item.name}
                     onClick={() => handleItemClick(item)}
-                    className="sidebar-logout-button"
+                    className={`sidebar-logout-button ${isLoggingOut ? 'logging-out' : ''}`}
+                    disabled={isLoggingOut}
                   >
                     <Icon size={20} />
                     <span>{item.name}</span>
@@ -144,6 +148,24 @@ const Sidebar = () => {
           </nav>
         </div>
       </div>
+
+      {isLoggingOut && (
+        <div className="logout-overlay">
+          {!showDoorAnimation ? (
+            <div className="loading-container">
+              <div className="loading-splash">
+                <div className="person-icon"></div>
+              </div>
+              <div className="logout-text">Logging Out</div>
+            </div>
+          ) : (
+            <div className="door-container">
+              <div className="door"></div>
+              <div className="person-exit"></div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };
