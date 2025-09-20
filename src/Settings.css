@@ -15,7 +15,7 @@
   background: var(--background);
   min-height: 100vh;
   padding: 2.5rem;
-  margin-left: 280px;
+  margin-left: 260px;
   transition: all 0.3s ease-in-out;
   position: relative;
   overflow: hidden;
