@@ -149,13 +149,6 @@ function Team() {
     }
   }, [teamData]);
 
-  const toggleDropdown = (id) => {
-    setOpenDropdown(openDropdown === id ? null : id);
-  };
-
-  const handleAction = (member, action) => {
-    navigate("/team/detail", { state: { member, action } });
-  };
 
   const filteredTeam = teamData.filter(
     (member) =>
