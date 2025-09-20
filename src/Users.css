@@ -14,9 +14,7 @@ html, body {
 .main-content {
   flex: 1;
   padding: 32px;
-  margin-left: 280px;
-  max-width: 1200px;
-  margin-right: auto;
+  margin-left: 260px;
 }
 
 .page-title {
@@ -81,6 +79,13 @@ html, body {
   gap: 12px;
   font-size: 14px;
   color: #374151;
+}
+
+/* Responsive adjustment to hide on mobile */
+@media (max-width: 768px) {
+  .btn.green.add-user-btn {
+    display: none; /* Hide the button on mobile */
+  }
 }
 
 .card-actions {
@@ -178,6 +183,78 @@ html, body {
   box-shadow: 0 4px 12px rgba(22,163,74,0.4);
 }
 
+/* Existing styles (if any) - adjust as needed */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #ddd; /* Optional: Add a border */
+}
+
+/* Back button styling */
+.back-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Page title styling */
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  .back-btn {
+    width:30px;
+    height:30px;
+    border-radius:999px;
+    margin-bottom: 10px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .page-title {
+    font-size: 20px;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    padding: 10px;
+  }
+
+  .back-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+}
+
 .actions {
   margin-top: 20px;
   display: flex;
@@ -216,6 +293,24 @@ html, body {
   border-bottom: 2px solid #16a34a;
   display: inline-block;
   padding-bottom: 4px;
+}
+
+@media (max-width: 768px) {
+  .container h3 {
+    display: block; /* Change to block for centering */
+    text-align: center; /* Center the text */
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%; /* Ensure it takes full width for centering */
+  }
+}
+
+@media (max-width: 480px) {
+  .container h3 {
+    font-size: 18px; /* Optional: Reduce font size for smaller screens */
+    margin-bottom: 10px; /* Optional: Adjust margin */
+    padding-bottom: 3px; /* Optional: Adjust padding */
+  }
 }
 
 .tabs-container {
@@ -733,3 +828,178 @@ input:checked + .slider:before { transform: translateX(22px); }
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
+
+/* Existing Users.css content... */
+/* Add the following to integrate Team table styles */
+
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.team-table th,
+.team-table td {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.team-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+}
+
+.team-table tr:hover {
+  background: #f3f4f6;
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+.status-badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.status-pending {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.status-withdraw {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.team-actions {
+  position: relative;
+}
+
+.team-action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.team-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  min-width: 140px;
+}
+
+.team-dropdown-menu button {
+  padding: 10px 14px;
+  border: none;
+  background: #fff;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.team-dropdown-menu button:hover {
+  background: #f9fafb;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.showing-info {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-button {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 5px;
+}
+
+.pagination-number {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-number.active {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+
+.pagination-number:hover {
+  background: #f3f4f6;
+}
+
+/* Ensure existing modal and button styles are preserved... */

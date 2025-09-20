@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   MoreHorizontal,
@@ -125,6 +126,8 @@ function Team() {
   const [editMember, setEditMember] = useState(null);
   const [viewMember, setViewMember] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const navigate = useNavigate();
 
   const itemsPerPage = 10;
 
@@ -145,6 +148,14 @@ function Team() {
       localStorage.setItem("teamData", JSON.stringify(teamData));
     }
   }, [teamData]);
+
+  const toggleDropdown = (id) => {
+    setOpenDropdown(openDropdown === id ? null : id);
+  };
+
+  const handleAction = (member, action) => {
+    navigate("/team/detail", { state: { member, action } });
+  };
 
   const filteredTeam = teamData.filter(
     (member) =>

@@ -37,6 +37,7 @@ function App() {
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/kyc" element={<KYC />} />
                 <Route path="/users" element={<Users />} />
+                <Route path="/users/:id" element={<Users />} /> 
                 <Route path="/trader" element={<Traders />} />
                 <Route path="/trader/:id" element={<TraderProfile />} />
                 <Route path="/messages" element={<Messages />} />

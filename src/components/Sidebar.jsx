@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import '../Sidebar.css';
 import {
-   LayoutDashboard,
-   TrendingUp,
-   Users,
-   User,
-   MessageSquare,
-   FileText,
-   Shield,
-   Settings,
-   LogOut,
-   UsersIcon,
-   Menu,
-   X      
+  LayoutDashboard,
+  TrendingUp,
+  Users,
+  User,
+  MessageSquare,
+  FileText,
+  Shield,
+  Settings,
+  LogOut,
+  UsersIcon,
+  Menu,
+  X,
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -40,16 +40,16 @@ const Sidebar = () => {
     // Clear authentication data
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('token');
-    
+
     // Clear any other stored user data if needed
     localStorage.removeItem('userData');
     localStorage.removeItem('userRole');
-    
+
     // Close mobile sidebar if open
     if (window.innerWidth <= 1024) {
       setIsOpen(false);
     }
-    
+
     // Navigate to login page
     navigate('/login');
   };
@@ -83,15 +83,12 @@ const Sidebar = () => {
   return (
     <>
       {/* 📱 Mobile Hamburger Button */}
-      <button 
-         className="mobile-toggle"
-         onClick={() => setIsOpen(!isOpen)}
-      >
+      <button className="sidebar-mobile-toggle" onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
       {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? 'open' : ''}`}>
+      <div className={`sidebar-container ${isOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-content">
           <nav className="sidebar-nav">
             {menuItems.map((item) => {
@@ -100,9 +97,9 @@ const Sidebar = () => {
 
               return (
                 <Link
-                   key={item.name}
-                   to={item.path}
-                   className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  key={item.name}
+                  to={item.path}
+                  className={`sidebar-item ${isActive ? 'sidebar-active' : ''}`}
                   onClick={() => handleItemClick(item)}
                 >
                   <Icon size={20} />
@@ -111,9 +108,9 @@ const Sidebar = () => {
               );
             })}
           </nav>
-                     
+
           <div className="sidebar-divider"></div>
-                     
+
           <nav className="sidebar-bottom">
             {bottomItems.map((item) => {
               const Icon = item.icon;
@@ -122,9 +119,9 @@ const Sidebar = () => {
               if (item.isLogout) {
                 return (
                   <button
-                     key={item.name}
-                     onClick={() => handleItemClick(item)}
-                     className="sidebar-item logout-button"
+                    key={item.name}
+                    onClick={() => handleItemClick(item)}
+                    className="sidebar-logout-button"
                   >
                     <Icon size={20} />
                     <span>{item.name}</span>
@@ -134,9 +131,9 @@ const Sidebar = () => {
 
               return (
                 <Link
-                   key={item.name}
-                   to={item.path}
-                   className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  key={item.name}
+                  to={item.path}
+                  className={`sidebar-item ${isActive ? 'sidebar-active' : ''}`}
                   onClick={() => handleItemClick(item)}
                 >
                   <Icon size={20} />
