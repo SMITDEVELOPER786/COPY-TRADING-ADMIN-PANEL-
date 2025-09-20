@@ -13,7 +13,7 @@ import {
   FaEdit,
   FaPlus,
 } from "react-icons/fa";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Search, Calendar, ChevronDown, } from "lucide-react";
 
 const STORAGE_KEY = "users_data";
 
@@ -779,44 +779,52 @@ const Users = () => {
           </button>
         </div>
 
+  
         <div className="filters-container">
-          <div className="reports-search-container">
-            <div className="reports-search-input-wrapper">
-              <input
-                type="text"
-                placeholder="Search by Name or Email"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="reports-search-input"
-              />
-            </div>
-          </div>
+  {/* 🔍 Search */}
+  <div className="reports-search-container">
+    <div className="reports-search-input-wrapper">
+      <Search className="search-icon" size={18} />
+      <input
+        type="text"
+        placeholder="Search by Name or Email"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="reports-search-input"
+      />
+    </div>
+  </div>
 
-          <div className="filter-controls">
-            <div className="reports-date-filter">
-              <input
-                type="text"
-                placeholder="Select Date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="date-input"
-              />
-            </div>
+  <div className="filter-controls">
+    {/* 📅 Date Filter */}
+    <div className="reports-date-filter">
+      <input
+        type="text"
+        placeholder="YYYY-MM-DD"
+        value={selectedDate}
+        onChange={(e) => setSelectedDate(e.target.value)}
+        className="date-input"
+      />
+      <Calendar className="date-icon" size={16} />
+    </div>
 
-            <div className="kyc-status-filter">
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="kyc-status-select"
-              >
-                <option value="">All Status</option>
-                <option value="Active">Active</option>
-                <option value="Deactivate">Deactivate</option>
-                <option value="Delete">Delete</option>
-              </select>
-            </div>
-          </div>
-        </div>
+    {/* ⬇️ Status Filter */}
+    <div className="kyc-status-filter">
+      <select
+        value={selectedStatus}
+        onChange={(e) => setSelectedStatus(e.target.value)}
+        className="kyc-status-select"
+      >
+        <option value="">All Status</option>
+        <option value="Active">Active</option>
+        <option value="Deactivate">Deactivate</option>
+        <option value="Delete">Delete</option>
+      </select>
+      <ChevronDown className="kyc-select-icon" size={16} />
+    </div>
+  </div>
+</div>
+
 
         <div className="table-container">
           <table className="team-table">
@@ -861,7 +869,7 @@ const Users = () => {
                         className="team-action-btn"
                         onClick={() => toggleMenu(user.id)}
                       >
-                        <MoreHorizontal size={16} /> {/* Placeholder for dropdown icon */}
+                        <MoreHorizontal size={16} /> 
                       </button>
                       {menuOpen === user.id && (
                         <div className="team-dropdown-menu">
