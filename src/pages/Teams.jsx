@@ -441,7 +441,7 @@ function Team() {
             <p><b>Status:</b> {viewMember.status}</p>
             <p><b>Date Joined:</b> {viewMember.dateJoined}</p>
             <button
-              className="close-btn"
+              className="team-close-btn"
               style={{ marginTop: "10px" }}
               onClick={() => setViewMember(null)}
             >

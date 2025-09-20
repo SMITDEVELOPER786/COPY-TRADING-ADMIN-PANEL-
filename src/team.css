@@ -279,13 +279,13 @@
   font-size: 14px;
 }
 
-.close-btn {
+.team-close-btn {
   padding: 8px 14px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  background: #166534;
-  color: #fff;
+  background:#ffffff
+  color: #000000;
   font-size: 14px;
 }
 
