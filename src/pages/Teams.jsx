@@ -149,14 +149,25 @@ function Team() {
     }
   }, [teamData]);
 
+ 
+  const filteredTeam = teamData.filter((member) => {
+  const searchMatch =
+    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const filteredTeam = teamData.filter(
-    (member) =>
-      (member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (selectedStatus === "" || member.status === selectedStatus) &&
-      (selectedDate === "" || member.dateJoined === selectedDate)
-  );
+  const statusMatch =
+    selectedStatus === "" || member.status === selectedStatus;
+
+  // Allow YYYY, YYYY-MM, or YYYY-MM-DD
+    const isValidDate = /^\d{4}(-\d{2}){0,2}$/;
+    const dateMatch =
+    selectedDate === "" ||
+    (isValidDate.test(selectedDate) &&
+      member.dateJoined.startsWith(selectedDate));
+
+     return searchMatch && statusMatch && dateMatch;
+    });
+
 
   const totalPages = Math.ceil(filteredTeam.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
