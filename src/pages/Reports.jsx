@@ -259,7 +259,10 @@ function Reports() {
     const matchesTitle =
       selectedReportTitle === "" || report.reportedTitle === selectedReportTitle;
 
-    const matchesDate = selectedDate === "" || report.reportedOn === selectedDate;
+    const isValidDate = /^\d{4}(-\d{2}){0,2}$/;
+    const matchesDate = selectedDate === "" ||  (isValidDate.test(selectedDate) &&
+    report.reportedOn.startsWith(selectedDate));
+    //report.reportedOn === selectedDate;
 
     return matchesSearch && matchesStatus && matchesTitle && matchesDate;
   });
@@ -369,7 +372,8 @@ function Reports() {
 
               <div className="reports-date-filter">
                 <input
-                  type="date"
+                  type="text"
+                  placeholder="Select Date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
                   className="reports-date-input"

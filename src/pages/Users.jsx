@@ -800,7 +800,7 @@ const Users = () => {
     <div className="reports-date-filter">
       <input
         type="text"
-        placeholder="YYYY-MM-DD"
+        placeholder="Search Date"
         value={selectedDate}
         onChange={(e) => setSelectedDate(e.target.value)}
         className="date-input"

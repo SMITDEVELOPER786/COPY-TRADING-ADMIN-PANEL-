@@ -298,7 +298,7 @@ function KYC() {
               </div>
               <div className="kyc-report-filter">
                 <select value={selectedReportTitle} onChange={(e) => setSelectedReportTitle(e.target.value)} className="kyc-report-select">
-                  <option value="">Report Title</option><option value="CNIC">CNIC</option><option value="Face ID">Face ID</option>
+                  <option value="">Document Type</option><option value="CNIC">CNIC</option><option value="Face ID">Face ID</option>
                 </select>
                 <ChevronDown className="kyc-select-icon" size={16} />
               </div>
