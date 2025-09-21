@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../Users.css";
 import UserCharts from "../components/UserCharts";
-import PerformanceChart from "../components/Performancechart";
 import {
   FaEnvelope,
   FaBan,
@@ -13,7 +12,7 @@ import {
   FaEdit,
   FaPlus,
 } from "react-icons/fa";
-import { MoreHorizontal, Search, Calendar, ChevronDown, } from "lucide-react";
+import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2 } from "lucide-react";
 
 const STORAGE_KEY = "users_data";
 
@@ -234,8 +233,6 @@ const Users = () => {
       setUsers(defaultUsers);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUsers));
     }
-    console.log("Loaded users:", users); // Debug log
-
     const storedMetrics = localStorage.getItem("metrics_data");
     if (storedMetrics) {
       setMetrics(JSON.parse(storedMetrics));
@@ -334,20 +331,22 @@ const Users = () => {
   };
 
   // Filtered users for table
-  const filteredUsers = users.filter(
-    (user) =>
-      (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (selectedStatus === "" || user.status === selectedStatus) &&
-      (selectedDate === "" || user.joined === selectedDate)
-  );
-  console.log("Filtered users:", filteredUsers); // Debug log
+  const filteredUsers = users.filter((user) => {
+    const searchMatch =
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const statusMatch = selectedStatus === "" || user.status === selectedStatus;
+    const isValidDate = /^\d{4}(-\d{2}){0,2}$/;
+    const dateMatch =
+      selectedDate === "" ||
+      (isValidDate.test(selectedDate) && user.joined.includes(selectedDate));
+    return searchMatch && statusMatch && dateMatch;
+  });
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentUsers = filteredUsers.slice(startIndex, endIndex);
-  console.log("Current users:", currentUsers); // Debug log
 
   // Get status class
   const getStatusClass = (status) => {
@@ -765,7 +764,7 @@ const Users = () => {
 
   // Table View
   return (
-    <div className="app">
+    <div className="app users-component">
       <main className="main-content">
         <div className="page-header">
           <h2 className="page-title">
@@ -779,52 +778,46 @@ const Users = () => {
           </button>
         </div>
 
-  
         <div className="filters-container">
-  {/* 🔍 Search */}
-  <div className="reports-search-container">
-    <div className="reports-search-input-wrapper">
-      <Search className="search-icon" size={18} />
-      <input
-        type="text"
-        placeholder="Search by Name or Email"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="reports-search-input"
-      />
-    </div>
-  </div>
+          <div className="reports-search-container">
+            <div className="reports-search-input-wrapper">
+              <Search className="search-icon" size={18} />
+              <input
+                type="text"
+                placeholder="Search by Name or Email"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="reports-search-input"
+              />
+            </div>
+          </div>
 
-  <div className="filter-controls">
-    {/* 📅 Date Filter */}
-    <div className="reports-date-filter">
-      <input
-        type="text"
-        placeholder="Search Date"
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-        className="date-input"
-      />
-      <Calendar className="date-icon" size={16} />
-    </div>
-
-    {/* ⬇️ Status Filter */}
-    <div className="kyc-status-filter">
-      <select
-        value={selectedStatus}
-        onChange={(e) => setSelectedStatus(e.target.value)}
-        className="kyc-status-select"
-      >
-        <option value="">All Status</option>
-        <option value="Active">Active</option>
-        <option value="Deactivate">Deactivate</option>
-        <option value="Delete">Delete</option>
-      </select>
-      <ChevronDown className="kyc-select-icon" size={16} />
-    </div>
-  </div>
-</div>
-
+          <div className="filter-controls">
+            <div className="reports-date-filter">
+              <input
+                type="text"
+                placeholder="Search Date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="date-input"
+              />
+              <Calendar className="date-icon" size={16} />
+            </div>
+            <div className="kyc-status-filter">
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="kyc-status-select"
+              >
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Deactivate">Deactivate</option>
+                <option value="Delete">Delete</option>
+              </select>
+              <ChevronDown className="kyc-select-icon" size={16} />
+            </div>
+          </div>
+        </div>
 
         <div className="table-container">
           <table className="team-table">
@@ -841,7 +834,7 @@ const Users = () => {
               </tr>
             </thead>
             <tbody>
-              {currentUsers.map((user) => (
+              {currentUsers.map((user, index) => (
                 <tr key={user.id}>
                   <td data-label="Member">
                     <div className="user-cell">
@@ -869,18 +862,22 @@ const Users = () => {
                         className="team-action-btn"
                         onClick={() => toggleMenu(user.id)}
                       >
-                        <MoreHorizontal size={16} /> 
+                        <MoreHorizontal size={16} />
                       </button>
                       {menuOpen === user.id && (
-                        <div className="team-dropdown-menu">
+                        <div
+                          className={`team-dropdown-menu ${
+                            index >= currentUsers.length - 2 ? "drop-up" : ""
+                          }`}
+                        >
                           <button onClick={() => handleAction(user, "view")}>
-                            View Profile
+                            <Eye size={14} /> View Profile
                           </button>
                           <button onClick={() => handleAction(user, "edit")}>
-                            Edit
+                            <Edit size={14} /> Edit
                           </button>
                           <button onClick={() => handleAction(user, "remove")}>
-                            Remove
+                            <Trash2 size={14} /> Remove
                           </button>
                         </div>
                       )}
