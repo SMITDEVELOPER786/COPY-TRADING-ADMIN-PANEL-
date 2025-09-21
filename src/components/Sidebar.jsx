@@ -43,6 +43,7 @@ const Sidebar = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userData');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('hasSeenLoading');
 
     if (window.innerWidth <= 1024) {
       setIsOpen(false);

@@ -180,6 +180,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
 }
 
 .revenue-card {
@@ -192,6 +193,9 @@
   flex-direction: column;
   justify-content: center;
   min-height: 120px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .revenue-value {
@@ -217,6 +221,8 @@
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .pie-chart {
@@ -291,15 +297,16 @@
   }
 
   .revenue-section {
-    flex-direction: row;
+    flex-direction: column;
     gap: 20px;
-    flex-wrap: wrap;
+    width: 100%;
   }
 
+  .chart-card,
   .revenue-card,
   .pie-chart-card {
-    flex: 1;
-    min-width: 250px;
+    width: 100%;
+    min-width: 0;
   }
 
   .line-chart-container {
@@ -321,50 +328,102 @@
 
   .revenue-section {
     flex-direction: column;
-    gap: 12px; /* Reduced gap for better stacking */
+    gap: 18px;
+    width: 100%;
   }
 
-  .revenue-card,
-  .pie-chart-card {
-    padding: 16px; /* Reduced padding */
+  .chart-card {
+    padding: 20px;
     border-radius: 12px;
+  }
+
+  .revenue-card {
+    padding: 20px;
+    border-radius: 12px;
+    min-height: 110px;
+    background: linear-gradient(135deg, #4ade80 0%, #2d6b2d 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .revenue-value {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .revenue-label {
+    font-size: 14px;
+    opacity: 1;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .revenue-growth {
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+
+  .pie-chart-card {
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .pie-chart {
+    max-width: 220px;
+    margin: 0 auto 18px;
+  }
+
+  .pie-chart svg {
+    width: 140px;
+    height: 140px;
+  }
+
+  .pie-chart svg g {
+    transform: translate(70, 70);
+  }
+
+  .pie-legend {
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .legend-item {
+    font-size: 13px;
+    font-weight: 500;
+    color: #4b5563;
+  }
+
+  .legend-color {
+    width: 14px;
+    height: 14px;
   }
 
   .chart-controls {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px; /* Tighter spacing */
+    gap: 10px;
     width: 100%;
   }
 
   .chart-stats {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px; /* Reduced gap */
+    gap: 8px;
   }
 
   .line-chart-container {
-    height: 160px; /* Reduced height for better fit */
+    height: 160px;
     width: 100%;
     max-width: none;
   }
 
-  .pie-chart {
-    max-width: 180px; /* Smaller pie chart */
-  }
-
-  .chart-value,
-  .revenue-value {
-    font-size: 20px; /* Smaller font size */
-  }
-
-  .revenue-label {
-    font-size: 13px;
-  }
-
-  .chart-tabs {
-    justify-content: center;
-    gap: 6px;
+  .chart-value {
+    font-size: 24px;
   }
 
   .chart-tab {
@@ -376,31 +435,96 @@
 /* Mobile screens (≤480px) */
 @media (max-width: 480px) {
   .charts-section {
-    gap: 10px; /* Minimal gap */
-    margin-bottom: 16px; /* Reduced margin */
+    gap: 12px;
+    margin-bottom: 12px;
   }
 
-  .chart-card,
-  .revenue-card,
-  .pie-chart-card {
-    padding: 12px; /* Minimal padding */
-    border-radius: 8px; /* Smaller radius */
+  .revenue-section {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
   }
 
-  .chart-tabs {
+  .chart-card {
+    padding: 12px; /* Reduced padding */
+    border-radius: 10px;
+    min-height: 140px; /* Adjusted height for smaller size */
+  }
+
+  .revenue-card {
+    padding: 12px; /* Reduced padding */
+    border-radius: 10px;
+    min-height: 80px; /* Smaller height */
+    background: linear-gradient(135deg, #2d6b2d 0%, #1e4a1e 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    gap: 4px; /* Tighter spacing */
-    flex-wrap: wrap;
+    align-items: center;
   }
 
-  .chart-tab {
-    padding: 4px 10px; /* Smaller touch targets, but still usable */
-    font-size: 11px;
-    min-width: 70px; /* Adjusted for touch */
+  .revenue-value {
+    font-size: 18px; /* Smaller font */
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #ffffff;
+  }
+
+  .revenue-label {
+    font-size: 10px; /* Smaller font */
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #e5e7eb;
+  }
+
+  .revenue-growth {
+    font-size: 9px; /* Smaller font */
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #ffffff;
+  }
+
+  .pie-chart-card {
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .pie-chart {
+    max-width: 160px;
+    margin: 0 auto 12px;
+  }
+
+  .pie-chart svg {
+    width: 100px;
+    height: 100px;
+  }
+
+  .pie-chart svg g {
+    transform: translate(50, 50);
+  }
+
+  .pie-legend {
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .legend-item {
+    font-size: 10px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  .legend-color {
+    width: 10px;
+    height: 10px;
   }
 
   .chart-controls {
-    gap: 6px; /* Tighter spacing */
+    gap: 6px;
     flex-direction: column;
     align-items: center;
   }
@@ -415,42 +539,37 @@
   .view-mode-btn,
   .year-select-small,
   .band-selector select {
-    padding: 6px 10px; /* Reduced but touch-friendly */
-    font-size: 11px;
+    padding: 4px 8px;
+    font-size: 10px;
   }
 
   .chart-stats {
     flex-direction: column;
     align-items: center;
-    gap: 6px; /* Minimal gap */
+    gap: 4px;
   }
 
-  .chart-value,
-  .revenue-value {
-    font-size: 18px; /* Further reduced */
+  .chart-value {
+    font-size: 18px;
   }
 
-  .revenue-label {
-    font-size: 12px;
-    margin-bottom: 4px; /* Reduced margin */
+  .chart-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    justify-content: center
   }
 
-  .revenue-growth {
+  .chart-tab {
+    padding: 3px 8px;
     font-size: 10px;
+    min-width: 60px;
   }
 
   .line-chart-container {
-    height: 140px; /* Smaller height */
+    height: 120px; /* Reduced height */
     width: 100%;
     min-width: 0;
-  }
-
-  .pie-chart {
-    max-width: 160px; /* Even smaller pie chart */
-    margin: 0 auto;
-  }
-
-  .revenue-card {
-    min-height: 70px; /* Reduced height */
   }
 }

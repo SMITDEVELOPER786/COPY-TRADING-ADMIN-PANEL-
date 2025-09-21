@@ -12,6 +12,69 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  transition: filter 0.3s ease;
+}
+
+.main-content.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent; /* Darker backdrop for better contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px; /* Space between spinner and text */
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3; /* Light border */
+  border-top: 4px solid #007bff; /* Blue accent to match time-filter active color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 28px;               /* good size for emphasis */
+  font-weight: 700;              /* bolder for clarity */
+  color: #111;                   /* dark gray for good contrast on light bg */
+  text-align: center;
+  letter-spacing: 0.5px;         /* subtle spacing for readability */
+  text-transform: uppercase;     /* makes it feel stronger (optional) */
+  
+  /* Add some modern flair */
+  background: linear-gradient(90deg, #16a34a, #15803d); /* green gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  animation: pulse 1.5s ease-in-out infinite; /* gentle breathing effect */
+}
+
+/* Pulse animation for subtle attention */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .time-filters {
