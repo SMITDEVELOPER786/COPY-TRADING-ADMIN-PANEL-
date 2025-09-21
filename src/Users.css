@@ -909,9 +909,10 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 .team-action-btn {
   background: transparent;
-  border: none;
+  border: 1px solid ;
   cursor: pointer;
   padding: 4px;
+  color:black
 }
 
 .team-dropdown-menu {
@@ -1002,76 +1003,41 @@ input:checked + .slider:before { transform: translateX(22px); }
   background: #f3f4f6;
 }
 
-/* Ensure existing modal and button styles are preserved... */
 
 /* Base styles for team action menu */
 .team-action-menu {
   position: relative; /* Ensure dropdown positions relative to this */
 }
 
-/* Action button styling */
 .team-action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px; /* Fixed width for consistency */
-  height: 30px; /* Fixed height for consistency */
-  background: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  background: #fff;           /* visible on all themes */
+  border: 1px solid #ccc;     /* light gray border */
+  border-radius: 6px;         /* rounded corners */
   cursor: pointer;
+  color: black;               /* ensures icon stays black */
+  transition: background-color 0.2s ease, transform 0.1s ease;
   padding: 0;
-  transition: background-color 0.3s;
 }
 
 .team-action-btn:hover {
-  background-color: #e0e0e0;
+  background-color: #f3f4f6;  /* light hover */
+  transform: scale(1.05);     /* subtle tap feedback */
 }
 
-/* Dropdown menu styling */
-.team-dropdown-menu {
-  position: absolute;
-  top: 100%; /* Position below the button */
-  right: 0; /* Align to the right of the button */
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-width: 120px;
-  z-index: 10; /* Ensure it appears above other elements */
-  display: flex;
-  flex-direction: column;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
-}
 
-.team-action-menu:hover .team-dropdown-menu,
-.team-action-menu:focus-within .team-dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  transition-delay: 0s;
-}
 
-.team-dropdown-menu button {
-  padding: 8px 12px;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  width: 100%;
-}
 
-.team-dropdown-menu button:hover {
-  background-color: #f5f5f5;
-}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .team-action-btn {
-    width: 25px; /* Slightly smaller button */
-    height: 25px; /* Slightly smaller button */
+    width: 44px; /* Slightly smaller button */
+    height: 44px; /* Slightly smaller button */
   }
 
   .team-dropdown-menu {
@@ -1089,8 +1055,8 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 @media (max-width: 480px) {
   .team-action-btn {
-    width: 20px; /* Even smaller on very small screens */
-    height: 20px; /* Even smaller on very small screens */
+    width: 44px; /* Even smaller on very small screens */
+    height: 44px; /* Even smaller on very small screens */
   }
 
   .team-dropdown-menu {
