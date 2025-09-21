@@ -461,7 +461,7 @@
 
   .header-section {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
   }
 
@@ -472,6 +472,12 @@
 
   .search-box {
     max-width: none;
+  }
+
+  .page-titlees, 
+  .sub-titlees {
+    text-align: center;
+    width: 100%;
   }
 
   .filter-group {
@@ -682,5 +688,4 @@
   .traders-dropdown-menu button {
     font-size: 12px;
     padding: 4px 8px;
-  }
-}
+  }}
