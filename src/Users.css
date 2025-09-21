@@ -1131,7 +1131,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 
 /* Mobile-specific styles */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .team-actions {
     padding: 4px;
   }
