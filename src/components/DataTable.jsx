@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../DataTable.css';
 import { MoreHorizontal, ChevronLeft, ChevronRight, UserPlus } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const DataTable = () => {
   const [activeTab, setActiveTab] = useState('Top Traders');
@@ -60,6 +61,15 @@ const DataTable = () => {
             rank: '2nd',
             avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
           },
+             {
+            id: 'trader-3',
+            name: 'Maria Khan',
+            portfolio: '2.4M',
+            investment: '25',
+            recentInvestment: 'Tue 29 Jun 2025',
+            rank: '1st',
+            avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=400',
+          },
         ],
         'Awaiting Approvals': [
           {
@@ -107,7 +117,7 @@ const DataTable = () => {
   };
 
   const handleSendEmail = (userName) => {
-    alert(`Sending email to ${userName}`);
+    toast.success(`Sending email to ${userName}`);
   };
 
   useEffect(() => {
@@ -546,7 +556,6 @@ const DataTable = () => {
                       </button>
                       <div className="dropdown-menu">
                         <button onClick={() => handleViewProfile(row.id)}>View Profile</button>
-                        <button onClick={() => openMoveDialog(row.id)}>Move User</button>
                         <button onClick={() => handleSendEmail(row.name)}>Send Email</button>
                       </div>
                     </div>

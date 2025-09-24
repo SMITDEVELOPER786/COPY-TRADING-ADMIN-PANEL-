@@ -182,11 +182,25 @@
     0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px; /* optional, spacing below name */
+}
+
+
 .trader-name {
   font-size: 32px;
   font-weight: 800;
   color: #0f172a;
-  margin: 0 0 8px 0;
+  margin: 0;
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
@@ -200,6 +214,7 @@
   letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
+  width: fit-content;
 }
 
 .status-badge.active {
@@ -219,6 +234,241 @@
   border-radius: 50%;
   transform: translateY(-50%);
   animation: pulse 2s infinite;
+}
+
+/* Trading Metrics Button */
+.metrics-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  position: relative;
+  overh: fit-content;
+}flow: hidden;
+  widt
+
+.metrics-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.metrics-btn:hover::before {
+  left: 100%;
+}
+
+.metrics-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.metrics-btn:active {
+  transform: translateY(0);
+}
+
+/* Dialog Styles */
+.metrics-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.metrics-dialog {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  padding: 32px;
+  border-radius: 24px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 20px 20px -5px rgba(0, 0, 0, 0.1);
+  width: 95%;
+  max-width: 1000px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f1f5f9;
+  position: relative;
+}
+
+.dialog-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: 1px;
+}
+
+.dialog-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.dialog-close-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.dialog-close-icon:hover {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  border-color: #dc2626;
+  transform: scale(1.05);
+}
+
+.advanced-metrics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.metrics-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.metrics-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border-color: #10b981;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: 1px;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.advanced-metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.advanced-metric-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.advanced-metric-item:hover::before {
+  transform: scaleX(1);
+}
+
+.advanced-metric-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  border-color: #10b981;
+  background: rgba(255, 255, 255, 0.95);
 }
 
 @keyframes pulse {
@@ -293,7 +543,7 @@
 }
 
 .stat-number {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
   color: #0f172a;
   line-height: 1.2;
@@ -301,11 +551,11 @@
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 12px;
   color: #64748b;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
 .profile-secondary-stats {
@@ -633,6 +883,48 @@
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
 }
 
+.dialog-close-btn {
+  display: block;
+  margin: 24px auto 0;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.dialog-close-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.dialog-close-btn:hover::before {
+  left: 100%;
+}
+
+.dialog-close-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.dialog-close-btn:active {
+  transform: translateY(0);
+}
+
 /* Enhanced Responsive Design */
 @media (max-width: 1200px) {
   .profile-content {
@@ -643,6 +935,15 @@
   .trader-profile-container {
     margin-left: 0;
     padding: 24px;
+  }
+
+  .metrics-dialog {
+    width: 95%;
+    max-width: 800px;
+  }
+
+  .metrics-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 }
 
@@ -716,6 +1017,27 @@
   .stat-number {
     font-size: 20px;
   }
+
+  .metrics-dialog {
+    width: 95%;
+    max-width: none;
+    padding: 24px;
+    margin: 10px;
+  }
+
+  .metrics-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dialog-title {
+    font-size: 22px;
+  }
+
+  .metrics-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 480px) {
@@ -768,6 +1090,29 @@
   .trading-strategy {
     padding: 20px;
   }
+
+  .metrics-dialog {
+    padding: 20px;
+    margin: 5px;
+    max-height: 90vh;
+  }
+
+  .dialog-title {
+    font-size: 20px;
+  }
+
+  .advanced-metrics-grid {
+    gap: 24px;
+  }
+
+  .metrics-section {
+    padding: 20px;
+  }
+
+  .metrics-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
 }
 
 /* Smooth scrolling and focus states */
@@ -790,4 +1135,23 @@
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200px 100%;
   animation: shimmer 1.5s infinite;
+}
+
+/* Custom scrollbar for dialog */
+.metrics-dialog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.metrics-dialog::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.metrics-dialog::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 4px;
+}
+
+.metrics-dialog::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #059669, #047857);
 }

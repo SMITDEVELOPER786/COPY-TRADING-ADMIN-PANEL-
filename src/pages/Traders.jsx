@@ -17,6 +17,8 @@ import {
   Legend
 } from 'chart.js';
 import '../Traders.css';
+import { useNavigate } from 'react-router-dom';
+
 
 // Register chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -29,6 +31,11 @@ function Traders() {
   const [selectedDate, setSelectedDate] = useState('');
   const [menuOpen, setMenuOpen] = useState(null);
   const [selectedMetric, setSelectedMetric] = useState(null);
+  const navigate = useNavigate();
+
+  const handleViewProfile = (id) => {
+    navigate(`/trader/trader-${id}`);
+  };
 
   const [traders, setTraders] = useState(() => {
     const savedData = localStorage.getItem('tradersData');
@@ -328,6 +335,9 @@ function Traders() {
                           <div
                             className={`traders-dropdown-menu ${index >= filteredTraders.length - 2 ? 'drop-up' : ''}`}
                           >
+                             <button onClick={() => handleViewProfile(trader.id)}>
+                                View Profile
+                              </button>
                             {[
                               { status: 'Profitable', color: 'green' },
                               { status: 'Average', color: 'orange' },
@@ -358,7 +368,7 @@ function Traders() {
 function defaultTraders() {
   return [
     { 
-      id: 1,
+      id: 3,
       name: 'Maria Khan', 
       avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=400', 
       amountSecured: '$750k', 
@@ -371,8 +381,8 @@ function defaultTraders() {
     },
     { 
       id: 2,
-      name: 'John Doe', 
-      avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400', 
+      name: 'Alex Johnson', 
+      avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400', 
       amountSecured: '$500k', 
       netProfit: '150k', 
       avgROI: '30.2%', 
@@ -382,7 +392,7 @@ function defaultTraders() {
       date: 'Feb 2025'
     },
     { 
-      id: 3,
+      id: 1,
       name: 'Jane Smith', 
       avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400', 
       amountSecured: '$300k', 

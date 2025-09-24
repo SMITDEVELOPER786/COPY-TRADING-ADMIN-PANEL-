@@ -4,6 +4,8 @@ import Header from "../components/Header"
 import StatsCards from "../components/StatsCards"
 import Charts from "../components/Charts"
 import DataTable from "../components/DataTable"
+import { Toaster } from "react-hot-toast"
+
 
 export default function Home() {
   const [activeTimeFilter, setActiveTimeFilter] = useState("12 Months")
@@ -158,8 +160,50 @@ export default function Home() {
     }
   }, [])
 
+  
+
   return (
     <div className="app">
+<Toaster
+  position="top-right"
+  reverseOrder={false}
+  toastOptions={{
+    // Default style
+    style: {
+      fontSize: "14px",
+      borderRadius: "8px",
+      padding: "12px 16px",
+      fontWeight: 500,
+    },
+    success: {
+      style: {
+        background: "#2d6b2d", // dark green
+        color: "#fff",
+      },
+      iconTheme: {
+        primary: "#4ade80", // light green
+        secondary: "#fff",
+      },
+    },
+    error: {
+      style: {
+        background: "#dc2626", // red
+        color: "#fff",
+      },
+      iconTheme: {
+        primary: "#f87171", // lighter red
+        secondary: "#fff",
+      },
+    },
+    loading: {
+      style: {
+        background: "#374151", // gray
+        color: "#f3f4f6",
+      },
+    },
+  }}
+/>
+
       {isLoading && (
         <div className="loading-overlay">
           {/* <div className="loading-text">Loading Admin Dashboard...</div> */}
