@@ -34,7 +34,8 @@ function Traders() {
   const navigate = useNavigate();
 
   const handleViewProfile = (id) => {
-    navigate(`/trader/trader-${id}`);
+    // navigate(`/trader/trader-${id}`);
+    navigate(`/trader/${id}`);    
   };
 
   const [traders, setTraders] = useState(() => {
