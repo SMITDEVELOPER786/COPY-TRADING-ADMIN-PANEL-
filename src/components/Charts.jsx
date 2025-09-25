@@ -375,8 +375,27 @@ const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
   const currentData = getCurrentDisplayData()
   const maxValue = Math.max(...currentData.barData.map((d) => d.value))
   const minValue = Math.min(...currentData.barData.map((d) => d.value))
-  const chartHeight = 180
-  const chartWidth = 400
+const [chartSize, setChartSize] = useState({ width: 580, height: 380 })
+
+useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth < 768) {
+      setChartSize({ width: window.innerWidth - 40, height: 200 }) // Mobile
+    } else if (window.innerWidth < 1024) {
+      setChartSize({ width: window.innerWidth - 80, height: 300 }) // Tablet
+    } else {
+      setChartSize({ width: Math.min(window.innerWidth - 160, 590), height: 420 }) // Desktop, max 900px
+    }
+  }
+
+  handleResize()
+  window.addEventListener("resize", handleResize)
+  return () => window.removeEventListener("resize", handleResize)
+}, [])
+
+const chartWidth = chartSize.width
+const chartHeight = chartSize.height
+
   const padding = 20
   const xStep = (chartWidth - 2 * padding) / (currentData.barData.length - 1)
   const yRange = maxValue - minValue
@@ -687,6 +706,7 @@ const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
               y2={chartHeight - padding}
               stroke="#6b7280"
               strokeWidth="1"
+            
             />
             {/* X-axis labels */}
             {currentData.barData.map((data, index) => (
