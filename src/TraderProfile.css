@@ -1241,3 +1241,117 @@
 .metrics-dialog::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #059669, #047857);
 }
+/* Existing styles for .status-badge (unchanged) */
+.status-badge {
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.status-badge.active {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #15803d;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.status-badge.active::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  background: #15803d;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  animation: pulse 2s infinite;
+}
+
+/* Updated responsive styles for mobile */
+@media (max-width: 768px) {
+  .profile-top {
+    flex-direction: column; /* Stack avatar, details, and actions vertically */
+    align-items: center; /* Center all items horizontally */
+    gap: 16px;
+    padding-bottom: 16px;
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto; /* Center avatar */
+  }
+
+  .profile-details {
+    align-items: center; /* Center contents of profile-details */
+    text-align: center; /* Center text */
+    width: 100%;
+  }
+
+  .trader-name {
+    font-size: 24px;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    align-items: center; /* Center all action items */
+    width: 100%;
+    gap: 10px;
+  }
+
+  .status-badge {
+    margin: 0 auto; /* Explicitly center the status badge */
+    width: fit-content; /* Maintain fit-content width */
+  }
+
+  .action-btn,
+  .metrics-btn {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+    justify-content: center;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 5px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-top {
+    gap: 12px;
+    padding-bottom: 12px;
+  }
+
+  .profile-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .trader-name {
+    font-size: 20px;
+  }
+
+  .profile-actions {
+    gap: 8px;
+  }
+
+  .action-btn,
+  .metrics-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .status-badge {
+    font-size: 10px;
+    padding: 4px 10px;
+    margin: 0 auto; /* Ensure centering on smaller screens */
+  }
+}

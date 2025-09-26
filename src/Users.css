@@ -1751,3 +1751,189 @@ input:checked + .slider:before { transform: translateX(22px); }
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Existing styles for transactions-table (unchanged where not modified) */
+.transactions-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.transactions-table:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.transactions-table th,
+.transactions-table td {
+  padding: 14px 20px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+  transition: background 0.2s ease;
+}
+
+.transactions-table th {
+  background: rgba(249, 250, 251, 0.9);
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transactions-table .status-actives {
+  color: #34d399;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-block; /* Ensure badge-like appearance */
+}
+
+.transactions-table .status-pendings {
+  color: #f87171;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-block; /* Ensure badge-like appearance */
+}
+
+.premium-btn {
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #34d399, #10b981);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(52, 211, 153, 0.3);
+}
+
+.premium-btn:hover {
+  background: linear-gradient(90deg, #10b981, #065f46);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.premium-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+}
+
+/* Updated Responsive Adjustments */
+@media (max-width: 768px) {
+  .transactions-table {
+    display: block; /* Enable horizontal scrolling */
+    overflow-x: auto; /* Allow horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .transactions-table thead {
+    display: table; /* Keep thead as table for sticky headers */
+    width: 100%;
+  }
+
+  .transactions-table tbody {
+    display: table; /* Keep tbody as table for scrolling */
+    width: 100%;
+  }
+
+  .transactions-table th,
+  .transactions-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: 100px; /* Prevent columns from collapsing too much */
+  }
+
+  .transactions-table th {
+    position: sticky;
+    top: 0;
+    background: rgba(249, 250, 251, 0.9);
+    z-index: 1;
+  }
+
+  .transactions-table .status-actives,
+  .transactions-table .status-pendings {
+    text-align: center; /* Center status badges */
+    width: 100%; /* Ensure badges take full cell width */
+    margin: 0 auto;
+  }
+
+  .premium-btn {
+    width: 100%; /* Full-width button for touch-friendliness */
+    padding: 8px 16px;
+    font-size: 12px;
+    min-height: 44px; /* Ensure touch target size */
+  }
+}
+
+@media (max-width: 480px) {
+  .transactions-table {
+    display: block; /* Switch to block for card-like layout */
+    overflow-x: visible; /* Disable horizontal scrolling for stacked layout */
+  }
+
+  .transactions-table thead {
+    display: none; /* Hide headers for stacked layout */
+  }
+
+  .transactions-table tbody {
+    display: block; /* Block layout for rows */
+  }
+
+  .transactions-table tr {
+    display: block; /* Each row as a card */
+    background: rgba(249, 250, 251, 0.9);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .transactions-table td {
+    display: flex; /* Flex for label-value pair */
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    font-size: 12px;
+    text-align: left;
+    border-bottom: none; /* Remove cell borders */
+  }
+
+  /* Add pseudo-elements for column labels */
+  .transactions-table td:before {
+    content: attr(data-label); /* Use data-label for column name */
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    font-size: 11px;
+    flex: 1; /* Take up space for alignment */
+  }
+
+  .transactions-table td:not(:last-child) {
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5); /* Separator between fields */
+  }
+
+  .transactions-table .status-actives,
+  .transactions-table .status-pendings {
+    padding: 4px 8px;
+    font-size: 11px;
+    text-align: center;
+    width: auto; /* Adjust width for stacked layout */
+  }
+
+  .premium-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+    min-height: 44px; /* Ensure touch target size */
+    width: 100%;
+  }
+}

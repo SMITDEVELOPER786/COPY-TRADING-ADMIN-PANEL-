@@ -16,7 +16,7 @@ import {
   Activity,
 } from "lucide-react";
 import "../TraderProfile.css";
-import { FaBan, FaEdit, FaEnvelope, FaSnowflake, FaTrash } from "react-icons/fa";
+import { FaBan, FaEnvelope, FaSnowflake, FaTrash, FaEdit } from "react-icons/fa";
 
 const TraderProfile = ({ user }) => {
   const navigate = useNavigate();
