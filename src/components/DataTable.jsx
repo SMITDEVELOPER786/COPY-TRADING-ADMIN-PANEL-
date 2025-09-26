@@ -21,11 +21,142 @@ const DataTable = () => {
       ) {
         return parsedData;
       }
+
+      // Default users data from Users.jsx, filtered for traders
+      const defaultUsers = [
+        {
+          id: 2,
+          name: 'Ali Raza',
+          email: 'ali.raza@example.com',
+          phone: '+923341111111',
+          type: 'Trader',
+          wallet: 'xyz789abc123',
+          market: 'Stocks',
+          broker: 'E*TRADE',
+          joined: '02 July 2023',
+          status: 'Deactivate',
+          investors: 8,
+          profit: '$900K',
+          equity: '25%',
+          exp: '1-2 years',
+          avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+        },
+        {
+          id: 3,
+          name: 'John Smith',
+          email: 'john.smith@example.com',
+          phone: '+923351111111',
+          type: 'Trader',
+          wallet: 'jhs789kdkd9393',
+          market: 'Crypto',
+          broker: 'Coinbase',
+          joined: '10 July 2023',
+          status: 'Active',
+          investors: 20,
+          profit: '$3.2M',
+          equity: '50%',
+          exp: '5+ years',
+          avatar: 'https://randomuser.me/api/portraits/men/12.jpg',
+        },
+        {
+          id: 5,
+          name: 'David Johnson',
+          email: 'david.j@example.com',
+          phone: '+923371111111',
+          type: 'Trader',
+          wallet: 'dj789kdkd1234',
+          market: 'Stocks',
+          broker: 'TD Ameritrade',
+          joined: '20 July 2023',
+          status: 'Deactivate',
+          investors: 5,
+          profit: '$600K',
+          equity: '20%',
+          exp: '1 year',
+          avatar: 'https://randomuser.me/api/portraits/men/28.jpg',
+        },
+        {
+          id: 7,
+          name: 'William Lee',
+          email: 'william.lee@example.com',
+          phone: '+923391111111',
+          type: 'Trader',
+          wallet: 'wl456kdkd789',
+          market: 'Forex',
+          broker: 'IG',
+          joined: '25 July 2023',
+          status: 'Delete',
+          investors: 3,
+          profit: '$400K',
+          equity: '15%',
+          exp: '6 months',
+          avatar: 'https://randomuser.me/api/portraits/men/41.jpg',
+        },
+        {
+          id: 9,
+          name: 'James Wilson',
+          email: 'james.wilson@example.com',
+          phone: '+923411111111',
+          type: 'Trader',
+          wallet: 'jw123kdkd456',
+          market: 'Crypto',
+          broker: 'Binance',
+          joined: '01 August 2023',
+          status: 'Active',
+          investors: 25,
+          profit: '$4.1M',
+          equity: '60%',
+          exp: '6+ years',
+          avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
+        },
+      ];
+
+      // Filter traders and sort by profit for Top Traders
+      const traders = defaultUsers
+        .filter((user) => user.type === 'Trader')
+        .sort((a, b) => {
+          const profitA = parseFloat(a.profit.replace('$', '').replace('M', '')) * 1e6;
+          const profitB = parseFloat(b.profit.replace('$', '').replace('M', '')) * 1e6;
+          return profitB - profitA;
+        });
+
+      // Assign ranks to active traders
+      const topTraders = traders
+        .filter((user) => user.status === 'Active')
+        .map((user, index) => ({
+          id: `${user.id}`,
+          name: user.name,
+          userType: user.type,
+          market: user.market,
+          portfolio: user.profit,
+          investment: user.investors.toString(),
+          recentInvestment: user.joined,
+          rank: `${index + 1}${index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'}`,
+          avatar: user.avatar,
+        }));
+
+      // Awaiting Approvals for Deactivate or Delete status
+      const awaitingApprovals = traders
+        .filter((user) => user.status === 'Deactivate' || user.status === 'Delete')
+        .map((user) => ({
+          id: `${user.id}`,
+          name: user.name,
+          userType: user.type,
+          market: user.market,
+          portfolio: user.profit,
+          investment: user.investors.toString(),
+          recentInvestment: user.joined,
+          rank: 'N/A',
+          avatar: user.avatar,
+        }));
+
       return {
         'Top Investors': [
           {
-            id: 'investor-1',
+            id: '1',
             name: 'Maria Khan',
+            userType: 'Investor',
+            market: '',
             portfolio: '2.4M',
             investment: '25',
             recentInvestment: 'Tue 29 Jun 2025',
@@ -33,8 +164,10 @@ const DataTable = () => {
             avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=400',
           },
           {
-            id: 'investor-2',
-            name: 'John Doe',
+            id: '4',
+            name: 'Emma Brown',
+            userType: 'Investor',
+            market: '',
             portfolio: '1.8M',
             investment: '20',
             recentInvestment: 'Mon 28 Jun 2025',
@@ -42,46 +175,8 @@ const DataTable = () => {
             avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400',
           },
         ],
-        'Top Traders': [
-          {
-            id: 'trader-1',
-            name: 'Jane Smith',
-            portfolio: '1.5M',
-            investment: '15',
-            recentInvestment: 'Sun 27 Jun 2025',
-            rank: '1st',
-            avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-          {
-            id: 'trader-2',
-            name: 'Alex Johnson',
-            portfolio: '1.2M',
-            investment: '10',
-            recentInvestment: 'Sat 26 Jun 2025',
-            rank: '2nd',
-            avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-             {
-            id: 'trader-3',
-            name: 'Maria Khan',
-            portfolio: '2.4M',
-            investment: '25',
-            recentInvestment: 'Tue 29 Jun 2025',
-            rank: '1st',
-            avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-        ],
-        'Awaiting Approvals': [
-          {
-            id: 'approval-1',
-            name: 'Emily Davis',
-            portfolio: '0.5M',
-            investment: '5',
-            recentInvestment: 'Fri 25 Jun 2025',
-            rank: 'N/A',
-            avatar: 'https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=400',
-          },
-        ],
+        'Top Traders': topTraders,
+        'Awaiting Approvals': awaitingApprovals,
       };
     } catch (e) {
       console.error('Error parsing localStorage data:', e);
@@ -95,6 +190,8 @@ const DataTable = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newUser, setNewUser] = useState({
     name: '',
+    userType: 'Trader',
+    market: '',
     portfolio: '',
     investment: '',
     recentInvestment: '',
@@ -112,8 +209,8 @@ const DataTable = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleViewProfile = (userId) => {
-    navigate(`/trader/${userId}`);
+  const handleViewProfile = (row) => {
+    navigate(`/profile/${row.id}`);
   };
 
   const handleSendEmail = (userName) => {
@@ -127,6 +224,8 @@ const DataTable = () => {
   const openAddDialog = () => {
     setNewUser({
       name: '',
+      userType: 'Trader',
+      market: '',
       portfolio: '',
       investment: '',
       recentInvestment: '',
@@ -137,44 +236,61 @@ const DataTable = () => {
   };
 
   const handleAddSave = () => {
-    const { name, portfolio, investment, recentInvestment, rank, avatar } = newUser;
+    const { name, userType, market, portfolio, investment, recentInvestment, rank, avatar } = newUser;
 
     if (!name.trim()) {
-      alert('Please enter a valid name');
+      toast.error('Please enter a valid name');
+      return;
+    }
+    if (!['Trader', 'Investor'].includes(userType)) {
+      toast.error('User Type must be either "Trader" or "Investor"');
+      return;
+    }
+    if (userType === 'Trader' && !market.trim()) {
+      toast.error('Market is required for Traders');
+      return;
+    }
+    if (userType === 'Investor' && market.trim()) {
+      toast.error('Market should be empty for Investors');
       return;
     }
     const portfolioValue = Number(portfolio.replace(/,/g, ''));
     if (isNaN(portfolioValue) || portfolioValue < 0) {
-      alert('Portfolio must be a valid non-negative number');
+      toast.error('Portfolio must be a valid non-negative number');
       return;
     }
     const investmentValue = Number(investment);
     if (isNaN(investmentValue) || investmentValue < 0) {
-      alert('Investment must be a valid non-negative number');
+      toast.error('Investment must be a valid non-negative number');
       return;
     }
     if (!recentInvestment.match(/^\w{3} \d{1,2} \w+ \d{4}$/)) {
-      alert('Recent Investment must be in format like "Tue 29 Jun 2025"');
+      toast.error('Recent Investment must be in format like "Tue 29 Jun 2025"');
       return;
     }
     if (activeTab !== 'Awaiting Approvals' && !rank.match(/^\d+(st|nd|rd|th)$/)) {
-      alert('Rank must be in format like "1st", "2nd", "3rd", "4th"');
+      toast.error('Rank must be in format like "1st", "2nd", "3rd", "4th"');
       return;
     }
     if (activeTab === 'Awaiting Approvals' && rank !== 'N/A') {
-      alert('Rank for Awaiting Approvals must be "N/A"');
+      toast.error('Rank for Awaiting Approvals must be "N/A"');
       return;
     }
     if (avatar && !avatar.match(/^https?:\/\/.*\.(?:png|jpg|jpeg|gif)$/)) {
-      alert('Avatar must be a valid image URL (png, jpg, jpeg, gif)');
+      toast.error('Avatar must be a valid image URL (png, jpg, jpeg, gif)');
       return;
     }
 
-    const newId = Math.max(0, ...tableData[activeTab].map((row) => Number(row.id.split('-')[1]) || 0)) + 1;
+    const allIds = Object.values(tableData)
+      .flat()
+      .map((row) => Number(row.id) || 0);
+    const newId = Math.max(0, ...allIds) + 1;
     const updatedData = { ...tableData };
     updatedData[activeTab].push({
-      id: `${activeTab.toLowerCase().replace(' ', '-')}-${newId}`,
+      id: `${newId}`,
       name: name.trim(),
+      userType: userType,
+      market: userType === 'Investor' ? '' : market.trim(),
       portfolio: `$${portfolioValue.toLocaleString()}M`,
       investment: investmentValue.toString(),
       recentInvestment: recentInvestment.trim(),
@@ -186,6 +302,8 @@ const DataTable = () => {
     setIsAddDialogOpen(false);
     setNewUser({
       name: '',
+      userType: 'Trader',
+      market: '',
       portfolio: '',
       investment: '',
       recentInvestment: '',
@@ -203,14 +321,14 @@ const DataTable = () => {
 
   const handleMoveSave = () => {
     if (!moveToTab || moveToTab === activeTab) {
-      alert('Please select a different tab to move the user to');
+      toast.error('Please select a different tab to move the user to');
       return;
     }
 
     const updatedData = { ...tableData };
     const rowIndex = updatedData[activeTab].findIndex((row) => row.id === moveRowId);
     if (rowIndex === -1) {
-      alert('User not found');
+      toast.error('User not found');
       return;
     }
 
@@ -275,7 +393,7 @@ const DataTable = () => {
         >
           Add New User
         </h3>
-        {['name', 'portfolio', 'investment', 'recentInvestment', 'rank', 'avatar'].map((field) => (
+        {['name', 'userType', 'market', 'portfolio', 'investment', 'recentInvestment', 'rank', 'avatar'].map((field) => (
           <div key={field} style={{ marginBottom: '12px' }}>
             <label
               style={{
@@ -286,26 +404,48 @@ const DataTable = () => {
                 display: 'block',
               }}
             >
-              {field.charAt(0).toUpperCase() + field.slice(1)}
+              {field === 'userType' ? 'User Type' : field === 'market' ? 'Market' : field.charAt(0).toUpperCase() + field.slice(1)}
             </label>
-            <input
-              type={field === 'portfolio' || field === 'investment' ? 'number' : 'text'}
-              value={newUser[field]}
-              onChange={(e) => setNewUser({ ...newUser, [field]: e.target.value })}
-              placeholder={`Enter ${field}`}
-              disabled={field === 'rank' && activeTab === 'Awaiting Approvals'}
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontSize: '14px',
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px',
-                outline: 'none',
-                transition: 'border-color 0.2s ease',
-              }}
-              onFocus={(e) => (e.target.style.borderColor = '#2d6b2d')}
-              onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
-            />
+            {field === 'userType' ? (
+              <select
+                value={newUser.userType}
+                onChange={(e) => setNewUser({ ...newUser, userType: e.target.value, market: e.target.value === 'Investor' ? '' : newUser.market })}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  fontSize: '14px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  outline: 'none',
+                  transition: 'border-color 0.2s ease',
+                }}
+                onFocus={(e) => (e.target.style.borderColor = '#2d6b2d')}
+                onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
+              >
+                <option value="Trader">Trader</option>
+                <option value="Investor">Investor</option>
+              </select>
+            ) : (
+              <input
+                type={field === 'portfolio' || field === 'investment' ? 'number' : 'text'}
+                value={newUser[field]}
+                onChange={(e) => setNewUser({ ...newUser, [field]: e.target.value })}
+                placeholder={`Enter ${field}`}
+                disabled={(field === 'rank' && activeTab === 'Awaiting Approvals') || (field === 'market' && newUser.userType === 'Investor')}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  fontSize: '14px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  outline: 'none',
+                  transition: 'border-color 0.2s ease',
+                  background: field === 'market' && newUser.userType === 'Investor' ? '#f3f4f6' : 'white',
+                }}
+                onFocus={(e) => (e.target.style.borderColor = '#2d6b2d')}
+                onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
+              />
+            )}
           </div>
         ))}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
@@ -525,6 +665,8 @@ const DataTable = () => {
             <thead>
               <tr>
                 <th>Name</th>
+                <th>User Type</th>
+                <th>Market</th>
                 <th>Portfolio</th>
                 <th>Investment</th>
                 <th>Recent Investment</th>
@@ -541,6 +683,8 @@ const DataTable = () => {
                       <span>{row.name}</span>
                     </div>
                   </td>
+                  <td data-label="User Type">{row.userType}</td>
+                  <td data-label="Market">{row.market || '-'}</td>
                   <td data-label="Portfolio" className="portfolio-cell">
                     {row.portfolio}
                   </td>
@@ -555,7 +699,7 @@ const DataTable = () => {
                         <MoreHorizontal size={16} />
                       </button>
                       <div className="dropdown-menu">
-                        <button onClick={() => handleViewProfile(row.id)}>View Profile</button>
+                        <button onClick={() => handleViewProfile(row)}>View Profile</button>
                         <button onClick={() => handleSendEmail(row.name)}>Send Email</button>
                       </div>
                     </div>
@@ -611,3 +755,4 @@ const DataTable = () => {
 };
 
 export default DataTable;
+

@@ -373,3 +373,18 @@
   
   }
   
+  .data-table th:nth-child(2),
+.data-table td:nth-child(2),
+.data-table th:nth-child(3),
+.data-table td:nth-child(3) {
+  width: 15%;
+}
+
+@media (max-width: 768px) {
+  .data-table td[data-label="User Type"]::before {
+    content: "User Type: ";
+  }
+  .data-table td[data-label="Market"]::before {
+    content: "Market: ";
+  }
+}

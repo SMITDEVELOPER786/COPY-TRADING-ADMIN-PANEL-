@@ -1,4 +1,3 @@
-// src/App.js
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Investments from "./pages/Investments";
@@ -11,7 +10,7 @@ import Messages from "./pages/Messages";
 import Settings from "./pages/Settings";
 import Sidebar from "./components/Sidebar";
 import Login from "./pages/Login";
-import TraderProfile from "./pages/TraderProfile"; 
+import Profile from "./pages/Profile";
 import "./App.css";
 
 function PrivateRoute({ children }) {
@@ -24,7 +23,6 @@ function App() {
     <>
       <Routes>
         <Route path="/login" element={<Login />} />
-
         <Route
           path="/*"
           element={
@@ -37,9 +35,9 @@ function App() {
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/kyc" element={<KYC />} />
                 <Route path="/users" element={<Users />} />
-                <Route path="/users/:id" element={<Users />} /> 
+                <Route path="/users/:id" element={<Users />} />
                 <Route path="/trader" element={<Traders />} />
-                <Route path="/trader/:id" element={<TraderProfile />} />
+                <Route path="/profile/:id" element={<Profile />} />
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/settings" element={<Settings />} />
               </Routes>

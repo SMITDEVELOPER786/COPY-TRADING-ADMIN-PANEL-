@@ -19,7 +19,6 @@ import {
 import '../Traders.css';
 import { useNavigate } from 'react-router-dom';
 
-
 // Register chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -34,7 +33,7 @@ function Traders() {
   const navigate = useNavigate();
 
   const handleViewProfile = (id) => {
-    navigate(`/trader/trader-${id}`);
+    navigate(`/profile/${id}`); // Updated to match DataTable and Users routing
   };
 
   const [traders, setTraders] = useState(() => {
@@ -335,9 +334,9 @@ function Traders() {
                           <div
                             className={`traders-dropdown-menu ${index >= filteredTraders.length - 2 ? 'drop-up' : ''}`}
                           >
-                             <button onClick={() => handleViewProfile(trader.id)}>
-                                View Profile
-                              </button>
+                            <button onClick={() => handleViewProfile(trader.id)}>
+                              View Profile
+                            </button>
                             {[
                               { status: 'Profitable', color: 'green' },
                               { status: 'Average', color: 'orange' },
@@ -366,44 +365,76 @@ function Traders() {
 }
 
 function defaultTraders() {
-  return [
-    { 
-      id: 3,
-      name: 'Maria Khan', 
-      avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=400', 
-      amountSecured: '$750k', 
-      netProfit: '240k', 
-      avgROI: '45.7%', 
-      avgDrawdown: '2.4%', 
-      tag: 'Profitable',
-      tagColor: 'green',
-      date: 'Jan 2025'
-    },
-    { 
+  // Trader data from Users.jsx
+  const tradersData = [
+    {
       id: 2,
-      name: 'Alex Johnson', 
-      avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400', 
-      amountSecured: '$500k', 
-      netProfit: '150k', 
-      avgROI: '30.2%', 
-      avgDrawdown: '3.1%', 
+      name: 'Ali Raza',
+      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+      amountSecured: '$800k', // Estimated based on profit and investors
+      netProfit: '900k',
+      avgROI: '30.2%', // Assigned based on original data inspiration
+      avgDrawdown: '3.1%',
       tag: 'Average',
       tagColor: 'orange',
-      date: 'Feb 2025'
+      date: 'Jul 2023'
     },
-    { 
-      id: 1,
-      name: 'Jane Smith', 
-      avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400', 
-      amountSecured: '$300k', 
-      netProfit: '50k', 
-      avgROI: '15.5%', 
-      avgDrawdown: '5.0%', 
+    {
+      id: 3,
+      name: 'John Smith',
+      avatar: 'https://randomuser.me/api/portraits/men/12.jpg',
+      amountSecured: '$2.5M',
+      netProfit: '3200k',
+      avgROI: '45.7%',
+      avgDrawdown: '2.4%',
+      tag: 'Profitable',
+      tagColor: 'green',
+      date: 'Jul 2023'
+    },
+    {
+      id: 5,
+      name: 'David Johnson',
+      avatar: 'https://randomuser.me/api/portraits/men/28.jpg',
+      amountSecured: '$500k',
+      netProfit: '600k',
+      avgROI: '15.5%',
+      avgDrawdown: '5.0%',
+      tag: 'Average',
+      tagColor: 'orange',
+      date: 'Jul 2023'
+    },
+    {
+      id: 7,
+      name: 'William Lee',
+      avatar: 'https://randomuser.me/api/portraits/men/41.jpg',
+      amountSecured: '$300k',
+      netProfit: '400k',
+      avgROI: '10.0%',
+      avgDrawdown: '6.0%',
       tag: 'Unprofitable',
       tagColor: 'red',
-      date: 'Mar 2025'
+      date: 'Jul 2023'
+    },
+    {
+      id: 9,
+      name: 'James Wilson',
+      avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
+      amountSecured: '$3.0M',
+      netProfit: '4100k',
+      avgROI: '50.0%',
+      avgDrawdown: '2.0%',
+      tag: 'Profitable',
+      tagColor: 'green',
+      date: 'Aug 2023'
     }
   ];
+
+  // Sort by netProfit in descending order
+  return tradersData.sort((a, b) => {
+    const profitA = parseFloat(a.netProfit.replace('k', '')) * 1000;
+    const profitB = parseFloat(b.netProfit.replace('k', '')) * 1000;
+    return profitB - profitA;
+  });
 }
 
 export default Traders;

@@ -12,7 +12,7 @@ import {
   FaEdit,
   FaPlus,
 } from "react-icons/fa";
-import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2, Activity, X } from "lucide-react";
 
 const STORAGE_KEY = "users_data";
 
@@ -22,10 +22,10 @@ const defaultUsers = [
     name: "Maria Khan",
     email: "maria.khan@example.com",
     phone: "+923331111111",
-    type: "Super Admin",
+    type: "Investor",
     wallet: "fkdjf9393kdkd9393",
-    market: "Forex",
-    broker: "Binance",
+    market: "",
+    broker: "Fidelity",
     joined: "29 June 2023",
     status: "Active",
     investors: 15,
@@ -39,7 +39,7 @@ const defaultUsers = [
     name: "Ali Raza",
     email: "ali.raza@example.com",
     phone: "+923341111111",
-    type: "Admin",
+    type: "Trader",
     wallet: "xyz789abc123",
     market: "Stocks",
     broker: "E*TRADE",
@@ -56,7 +56,7 @@ const defaultUsers = [
     name: "John Smith",
     email: "john.smith@example.com",
     phone: "+923351111111",
-    type: "Manager",
+    type: "Trader",
     wallet: "jhs789kdkd9393",
     market: "Crypto",
     broker: "Coinbase",
@@ -73,10 +73,10 @@ const defaultUsers = [
     name: "Emma Brown",
     email: "emma.brown@example.com",
     phone: "+923361111111",
-    type: "Editor",
+    type: "Investor",
     wallet: "emmb987xyz456",
-    market: "Forex",
-    broker: "OANDA",
+    market: "",
+    broker: "Vanguard",
     joined: "15 July 2023",
     status: "Active",
     investors: 10,
@@ -90,7 +90,7 @@ const defaultUsers = [
     name: "David Johnson",
     email: "david.j@example.com",
     phone: "+923371111111",
-    type: "Admin",
+    type: "Trader",
     wallet: "dj789kdkd1234",
     market: "Stocks",
     broker: "TD Ameritrade",
@@ -107,10 +107,10 @@ const defaultUsers = [
     name: "Sophia Martinez",
     email: "sophia.martinez@example.com",
     phone: "+923381111111",
-    type: "Support",
+    type: "Investor",
     wallet: "sm987xyz789",
-    market: "Crypto",
-    broker: "Kraken",
+    market: "",
+    broker: "Schwab",
     joined: "22 July 2023",
     status: "Active",
     investors: 7,
@@ -124,7 +124,7 @@ const defaultUsers = [
     name: "William Lee",
     email: "william.lee@example.com",
     phone: "+923391111111",
-    type: "Admin",
+    type: "Trader",
     wallet: "wl456kdkd789",
     market: "Forex",
     broker: "IG",
@@ -141,10 +141,10 @@ const defaultUsers = [
     name: "Olivia Davis",
     email: "olivia.davis@example.com",
     phone: "+923401111111",
-    type: "Manager",
+    type: "Investor",
     wallet: "od789xyz123",
-    market: "Stocks",
-    broker: "Schwab",
+    market: "",
+    broker: "Fidelity",
     joined: "28 July 2023",
     status: "Active",
     investors: 18,
@@ -158,7 +158,7 @@ const defaultUsers = [
     name: "James Wilson",
     email: "james.wilson@example.com",
     phone: "+923411111111",
-    type: "Super Admin",
+    type: "Trader",
     wallet: "jw123kdkd456",
     market: "Crypto",
     broker: "Binance",
@@ -175,9 +175,9 @@ const defaultUsers = [
     name: "Ava Thompson",
     email: "ava.thompson@example.com",
     phone: "+923421111111",
-    type: "Editor",
+    type: "Investor",
     wallet: "at456xyz789",
-    market: "Forex",
+    market: "",
     broker: "FXCM",
     joined: "05 August 2023",
     status: "Deactivate",
@@ -201,28 +201,38 @@ const Users = () => {
   const [deleteUserId, setDeleteUserId] = useState(null);
   const [activeTab, setActiveTab] = useState("about");
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showMetricsDialog, setShowMetricsDialog] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
 
   const itemsPerPage = 10;
 
-  // Performance Metrics State
-  const [metrics, setMetrics] = useState({
-    winRate: "78%",
-    profitFactor: "2.14",
-    sharpeRatio: "1.67",
-    roi: "+42.8%",
-    maxDrawdown: "-8.2%",
-    totalTrades: "127",
-    avgWin: "$285.5",
-    avgLoss: "$142.3",
-    bestTrade: "1250.4",
-    worstTrade: "890",
-    riskReward: "2.3:1",
-  });
-
-  const [editingMetric, setEditingMetric] = useState(null);
-  const [newMetricValue, setNewMetricValue] = useState("");
+  // Investor Metrics for Dialog
+  const investorMetrics = {
+    portfolioValue: selectedUser ? parseFloat(selectedUser.profit.replace('$', '').replace('M', '')) * 1000000 : 0,
+    annualizedReturn: 12.5,
+    roi: 28.3,
+    diversificationScore: 75,
+    totalInvestments: selectedUser ? parseInt(selectedUser.investors) : 0,
+    averageInvestmentSize: 150000,
+    largestInvestment: 500000,
+    largestInvestmentDate: "15 Mar 2023",
+    smallestInvestment: 20000,
+    smallestInvestmentDate: "10 Jan 2023",
+    sharpeRatio: 1.8,
+    volatility: 10.2,
+    maxDrawdown: -5.6,
+    averageInvestmentDuration: "18 months",
+    positiveReturnMonths: 20,
+    negativeReturnMonths: 4,
+    averageMonthlyReturn: 1.2,
+    sectorAllocation: {
+      technology: 40,
+      realEstate: 25,
+      healthcare: 20,
+      others: 15,
+    },
+  };
 
   // Load from localStorage
   useEffect(() => {
@@ -233,10 +243,6 @@ const Users = () => {
       setUsers(defaultUsers);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUsers));
     }
-    const storedMetrics = localStorage.getItem("metrics_data");
-    if (storedMetrics) {
-      setMetrics(JSON.parse(storedMetrics));
-    }
   }, []);
 
   // Save to localStorage
@@ -245,10 +251,6 @@ const Users = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
     }
   }, [users]);
-
-  useEffect(() => {
-    localStorage.setItem("metrics_data", JSON.stringify(metrics));
-  }, [metrics]);
 
   // Dynamic Profile: Check if viewing a specific user
   useEffect(() => {
@@ -272,7 +274,7 @@ const Users = () => {
       phone: form.get("phone") || "",
       type: form.get("type"),
       wallet: form.get("wallet"),
-      market: form.get("market"),
+      market: form.get("type") === "Investor" ? "" : form.get("market"),
       broker: form.get("broker"),
       joined: form.get("joined"),
       status: form.get("status"),
@@ -301,17 +303,6 @@ const Users = () => {
     }
   };
 
-  // Metric Update
-  const handleMetricUpdate = () => {
-    if (!editingMetric) return;
-    setMetrics({
-      ...metrics,
-      [editingMetric]: newMetricValue,
-    });
-    setEditingMetric(null);
-    setNewMetricValue("");
-  };
-
   // Toggle dropdown menu
   const toggleMenu = (id) => {
     setMenuOpen(menuOpen === id ? null : id);
@@ -320,7 +311,11 @@ const Users = () => {
   // Handle actions (View, Edit, Remove)
   const handleAction = (user, action) => {
     if (action === "view") {
-      navigate(`/users/${user.id}`);
+      if (user.type === "Trader") {
+        navigate(`/profile/${user.id}`);
+      } else {
+        navigate(`/users/${user.id}`);
+      }
     } else if (action === "edit") {
       setEditingUser(user);
       setShowForm(true);
@@ -362,8 +357,8 @@ const Users = () => {
     }
   };
 
-  if (selectedUser) {
-    // Profile View
+  if (selectedUser && selectedUser.type === "Investor") {
+    // Investor Profile View
     return (
       <div className="app">
         <main className="main-content">
@@ -393,10 +388,10 @@ const Users = () => {
               </div>
               <div className="user-stats">
                 <p>
-                  <strong>{selectedUser.investors}</strong> Investors
+                  <strong>{selectedUser.investors}</strong> Investments
                 </p>
                 <p>
-                  <strong>{selectedUser.profit}</strong> Net Profit
+                  <strong>{selectedUser.profit}</strong> Portfolio Value
                 </p>
                 <p>
                   <strong>{selectedUser.equity}</strong> Equity
@@ -430,6 +425,13 @@ const Users = () => {
                 >
                   <FaEdit /> Edit
                 </button>
+                <button
+                  className="btn green"
+                  onClick={() => setShowMetricsDialog(true)}
+                  title="View Investor Metrics"
+                >
+                  <Activity size={18} /> Investor Metrics
+                </button>
               </div>
             </div>
 
@@ -454,7 +456,7 @@ const Users = () => {
                 </p>
                 <p>
                   <span className="label">Market:</span>
-                  <span className="value">{selectedUser.market}</span>
+                  <span className="value">{selectedUser.market || '-'}</span>
                 </p>
               </div>
               <div className="detail-row">
@@ -478,124 +480,118 @@ const Users = () => {
             </div>
           </div>
 
-          {/* Trading Strategy */}
-          <div className="container">
-            <h3>Trading Strategy</h3>
-            <div className="tabs-container">
-              <div className="tabs">
-                <button
-                  className={`tab ${activeTab === "about" ? "active" : ""}`}
-                  onClick={() => setActiveTab("about")}
-                >
-                  About Trader
+{/* Investment Strategy */}
+<div className="container">
+  <h3 className="strategy-title">Investment Strategy</h3>
+  <div className="tabs-container">
+    <div className="tabs">
+      <button
+        className={`tabs ${activeTab === "investments" ? "active" : ""}`}
+        onClick={() => setActiveTab("investments")}
+      >
+        Investments
+      </button>
+      <button
+        className={`tabs ${activeTab === "transactions" ? "active" : ""}`}
+        onClick={() => setActiveTab("transactions")}
+      >
+        Transactions
+      </button>
+    </div>
+    <label className="switch">
+      <input
+        type="checkbox"
+        onChange={(e) => handleToggle(e.target.checked)}
+      />
+      <span className="slider"></span>
+    </label>
+  </div>
+
+  <div className={`tab-content-wrapper ${activeTab === "investments" ? "active" : ""}`}>
+    {activeTab === "investments" && (
+      <div className="tab-content">
+        <h4 className="content-title">Top Investments</h4>
+        <ul className="investment-list">
+          <li className="investment-item">
+            <span className="investment-name">Tech Fund — $50,000</span>
+            <button className="premium-btn" onClick={() => handleViewDetails("Tech Fund")}>
+              View Details
+            </button>
+          </li>
+          <li className="investment-item">
+            <span className="investment-name">Real Estate Trust — $32,500</span>
+            <button className="premium-btn" onClick={() => handleViewDetails("Real Estate Trust")}>
+              View Details
+            </button>
+          </li>
+          <li className="investment-item">
+            <span className="investment-name">Healthcare ETF — $21,000</span>
+            <button className="premium-btn" onClick={() => handleViewDetails("Healthcare ETF")}>
+              View Details
+            </button>
+          </li>
+        </ul>
+      </div>
+    )}
+  </div>
+
+  <div className={`tab-content-wrapper ${activeTab === "transactions" ? "active" : ""}`}>
+    {activeTab === "transactions" && (
+      <div className="tab-content">
+        <h4 className="content-title">Recent Transactions</h4>
+        <table className="transactions-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>15 Sep 2025</td>
+              <td>Investment</td>
+              <td>$5,000</td>
+              <td className="status-actives">Completed</td>
+              <td>
+                <button className="premium-btn" onClick={() => handleViewDetails("Investment - 15 Sep 2025")}>
+                  View Details
                 </button>
-                <button
-                  className={`tab ${activeTab === "investor" ? "active" : ""}`}
-                  onClick={() => setActiveTab("investor")}
-                >
-                  Investor
+              </td>
+            </tr>
+            <tr>
+              <td>12 Sep 2025</td>
+              <td>Withdrawal</td>
+              <td>$2,300</td>
+              <td className="status-pendings">Pending</td>
+              <td>
+                <button className="premium-btn" onClick={() => handleViewDetails("Withdrawal - 12 Sep 2025")}>
+                  View Details
                 </button>
-                <button
-                  className={`tab ${activeTab === "transactions" ? "active" : ""}`}
-                  onClick={() => setActiveTab("transactions")}
-                >
-                  Transactions
+              </td>
+            </tr>
+            <tr>
+              <td>10 Sep 2025</td>
+              <td>Dividend</td>
+              <td>$1,250</td>
+              <td className="status-actives">Completed</td>
+              <td>
+                <button className="premium-btn" onClick={() => handleViewDetails("Dividend - 10 Sep 2025")}>
+                  View Details
                 </button>
-              </div>
-              <label className="switch">
-                <input type="checkbox" />
-                <span className="slider"></span>
-              </label>
-            </div>
-
-            {activeTab === "about" && (
-              <div className="tab-content">
-                <p>
-                  Momentum based Swing trader focusing on major currency pairs
-                  during high volatility periods. Strategy involves capturing
-                  short- to medium-term gains during high volatility periods.
-                </p>
-              </div>
-            )}
-
-            {activeTab === "investor" && (
-              <div className="tab-content">
-                <h4>Top Investors</h4>
-                <ul>
-                  <li>Ali Raza — $50,000</li>
-                  <li>Sara Ahmed — $32,500</li>
-                  <li>John Doe — $21,000</li>
-                </ul>
-              </div>
-            )}
-
-            {activeTab === "transactions" && (
-              <div className="tab-content">
-                <h4>Recent Transactions</h4>
-                <table className="transactions-table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Type</th>
-                      <th>Amount</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>15 Sep 2025</td>
-                      <td>Deposit</td>
-                      <td>$5,000</td>
-                      <td>Completed</td>
-                    </tr>
-                    <tr>
-                      <td>12 Sep 2025</td>
-                      <td>Withdrawal</td>
-                      <td>$2,300</td>
-                      <td>Pending</td>
-                    </tr>
-                    <tr>
-                      <td>10 Sep 2025</td>
-                      <td>Profit Share</td>
-                      <td>$1,250</td>
-                      <td>Completed</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {/* Performance Metrics */}
-            <h3>Performance Metrics</h3>
-            <div className="metrics-grid">
-              {Object.entries(metrics).map(([key, value]) => (
-                <p
-                  key={key}
-                  onClick={() => {
-                    setEditingMetric(key);
-                    setNewMetricValue(value);
-                  }}
-                >
-                  {key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}{" "}
-                  <span
-                    className={
-                      value.includes("+") || value.includes("green")
-                        ? "green"
-                        : value.includes("-")
-                        ? "red"
-                        : ""
-                    }
-                  >
-                    {value}
-                  </span>
-                </p>
-              ))}
-            </div>
-
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
             {/* Charts */}
             <div className="charts-section" style={{ marginTop: "70px" }}>
               <div className="chart-box">
-                <h3>Equity Graph</h3>
+                <h3>Portfolio Growth</h3>
                 <UserCharts type="equity" />
               </div>
               <div className="chart-box">
@@ -604,6 +600,152 @@ const Users = () => {
               </div>
             </div>
           </div>
+
+          {/* Investor Metrics Dialog */}
+{/* Investor Metrics Dialog */}
+{showMetricsDialog && (
+  <div className="modal" onClick={() => setShowMetricsDialog(false)}>
+    <div className="modal-content metrics-dialog" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-header">
+        <h3 className="dialog-title">Investor Metrics</h3>
+        <button className="modal-close" onClick={() => setShowMetricsDialog(false)}>
+          <X size={20} />
+        </button>
+      </div>
+      <div className="metrics-grid">
+        {/* Portfolio Metrics */}
+        <div className="metrics-section">
+          <h4>Portfolio Metrics</h4>
+          <div className="metrics-row">
+            <p>
+              <span className="label">Portfolio Value:</span>
+              <span className="value">${investorMetrics.portfolioValue.toLocaleString()}</span>
+            </p>
+            <p>
+              <span className="label">Annualized Return:</span>
+              <span className={`value ${investorMetrics.annualizedReturn >= 0 ? 'status-active' : 'status-withdraw'}`}>
+                {investorMetrics.annualizedReturn.toFixed(2)}%
+              </span>
+            </p>
+            <p>
+              <span className="label">ROI:</span>
+              <span className={`value ${investorMetrics.roi >= 0 ? 'status-active' : 'status-withdraw'}`}>
+                {investorMetrics.roi.toFixed(2)}%
+              </span>
+            </p>
+            <p>
+              <span className="label">Diversification Score:</span>
+              <span className="value">{investorMetrics.diversificationScore.toFixed(2)}</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Investment Activity */}
+        <div className="metrics-section">
+          <h4>Investment Activity</h4>
+          <div className="metrics-row">
+            <p>
+              <span className="label">Total Investments:</span>
+              <span className="value">{investorMetrics.totalInvestments}</span>
+            </p>
+            <p>
+              <span className="label">Average Investment Size:</span>
+              <span className="value">${investorMetrics.averageInvestmentSize.toLocaleString()}</span>
+            </p>
+            <p>
+              <span className="label">Largest Investment:</span>
+              <span className="value">${investorMetrics.largestInvestment.toLocaleString()}</span>
+            </p>
+            <p>
+              <span className="label">Largest Investment Date:</span>
+              <span className="value">{investorMetrics.largestInvestmentDate}</span>
+            </p>
+            <p>
+              <span className="label">Smallest Investment:</span>
+              <span className="value">${investorMetrics.smallestInvestment.toLocaleString()}</span>
+            </p>
+            <p>
+              <span className="label">Smallest Investment Date:</span>
+              <span className="value">{investorMetrics.smallestInvestmentDate}</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Risk Metrics */}
+        <div className="metrics-section">
+          <h4>Risk Metrics</h4>
+          <div className="metrics-row">
+            <p>
+              <span className="label">Sharpe Ratio:</span>
+              <span className="value">{investorMetrics.sharpeRatio.toFixed(2)}</span>
+            </p>
+            <p>
+              <span className="label">Volatility:</span>
+              <span className="value">{investorMetrics.volatility.toFixed(2)}%</span>
+            </p>
+            <p>
+              <span className="label">Max Drawdown:</span>
+              <span className={`value ${investorMetrics.maxDrawdown >= 0 ? 'status-active' : 'status-withdraw'}`}>
+                {investorMetrics.maxDrawdown.toFixed(2)}%
+              </span>
+            </p>
+          </div>
+        </div>
+
+        {/* Performance Metrics */}
+        <div className="metrics-section">
+          <h4>Performance Metrics</h4>
+          <div className="metrics-row">
+            <p>
+              <span className="label">Average Investment Duration:</span>
+              <span className="value">{investorMetrics.averageInvestmentDuration}</span>
+            </p>
+            <p>
+              <span className="label">Positive Return Months:</span>
+              <span className="value">{investorMetrics.positiveReturnMonths}</span>
+            </p>
+            <p>
+              <span className="label">Negative Return Months:</span>
+              <span className="value">{investorMetrics.negativeReturnMonths}</span>
+            </p>
+            <p>
+              <span className="label">Average Monthly Return:</span>
+              <span className={`value ${investorMetrics.averageMonthlyReturn >= 0 ? 'status-active' : 'status-withdraw'}`}>
+                {investorMetrics.averageMonthlyReturn.toFixed(2)}%
+              </span>
+            </p>
+          </div>
+        </div>
+
+        {/* Sector Allocation */}
+        <div className="metrics-section">
+          <h4>Sector Allocation</h4>
+          <div className="metrics-row">
+            <p>
+              <span className="label">Technology:</span>
+              <span className="value">{investorMetrics.sectorAllocation.technology}%</span>
+            </p>
+            <p>
+              <span className="label">Real Estate:</span>
+              <span className="value">{investorMetrics.sectorAllocation.realEstate}%</span>
+            </p>
+            <p>
+              <span className="label">Healthcare:</span>
+              <span className="value">{investorMetrics.sectorAllocation.healthcare}%</span>
+            </p>
+            <p>
+              <span className="label">Others:</span>
+              <span className="value">{investorMetrics.sectorAllocation.others}%</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <button className="dialog-close-btn" onClick={() => setShowMetricsDialog(false)}>
+        Close
+      </button>
+    </div>
+  </div>
+)}
         </main>
 
         {/* Modals */}
@@ -630,12 +772,19 @@ const Users = () => {
                   defaultValue={editingUser?.phone}
                   required
                 />
-                <input
+                <select
                   name="type"
-                  placeholder="User Type"
                   defaultValue={editingUser?.type}
                   required
-                />
+                  onChange={(e) => {
+                    if (e.target.value === "Investor") {
+                      document.getElementsByName("market")[0].value = "";
+                    }
+                  }}
+                >
+                  <option value="Trader">Trader</option>
+                  <option value="Investor">Investor</option>
+                </select>
                 <input
                   name="wallet"
                   placeholder="Wallet ID"
@@ -646,7 +795,7 @@ const Users = () => {
                   name="market"
                   placeholder="Market"
                   defaultValue={editingUser?.market}
-                  required
+                  disabled={editingUser?.type === "Investor"}
                 />
                 <input
                   name="broker"
@@ -668,13 +817,13 @@ const Users = () => {
                 />
                 <input
                   name="investors"
-                  placeholder="Investors"
+                  placeholder="Investments"
                   defaultValue={editingUser?.investors}
                   required
                 />
                 <input
                   name="profit"
-                  placeholder="Net Profit"
+                  placeholder="Portfolio Value"
                   defaultValue={editingUser?.profit}
                   required
                 />
@@ -727,30 +876,6 @@ const Users = () => {
                 <button
                   className="btn outline"
                   onClick={() => setDeleteUserId(null)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {editingMetric && (
-          <div className="modal">
-            <div className="modal-content small">
-              <h4>Edit {editingMetric}</h4>
-              <input
-                type="text"
-                value={newMetricValue}
-                onChange={(e) => setNewMetricValue(e.target.value)}
-              />
-              <div className="form-actions">
-                <button className="btn green" onClick={handleMetricUpdate}>
-                  Save
-                </button>
-                <button
-                  className="btn red"
-                  onClick={() => setEditingMetric(null)}
                 >
                   Cancel
                 </button>
@@ -849,7 +974,7 @@ const Users = () => {
                   <td data-label="Email">{user.email}</td>
                   <td data-label="Type">{user.type}</td>
                   <td data-label="Wallet">{user.wallet}</td>
-                  <td data-label="Market">{user.market}</td>
+                  <td data-label="Market">{user.market || '-'}</td>
                   <td data-label="Joined">{user.joined}</td>
                   <td data-label="Status">
                     <span className={`status-badge ${getStatusClass(user.status)}`}>
@@ -871,7 +996,7 @@ const Users = () => {
                           }`}
                         >
                           <button onClick={() => handleAction(user, "view")}>
-                            <Eye size={14} /> View Profile
+                            <Eye size= {14} /> View Profile
                           </button>
                           <button onClick={() => handleAction(user, "edit")}>
                             <Edit size={14} /> Edit
