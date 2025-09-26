@@ -683,8 +683,10 @@ const DataTable = () => {
                       <span>{row.name}</span>
                     </div>
                   </td>
-                  <td data-label="User Type">{row.userType}</td>
-                  <td data-label="Market">{row.market || '-'}</td>
+                  {/* <td data-label="User Type">{row.userType}</td>
+                  <td data-label="Market">{row.market || '-'}</td> */}
+                  <td data-label="User Type"><span className="cell-value">{row.userType}</span></td>
+                  <td data-label="Market"><span className="cell-value">{row.market || '-'}</span></td>
                   <td data-label="Portfolio" className="portfolio-cell">
                     {row.portfolio}
                   </td>

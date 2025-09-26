@@ -359,3 +359,24 @@
   margin-top: 0;
   margin-bottom: 6px;
 }
+@media (max-width: 768px) {
+  /* Force status cell into proper label:value layout */
+  .team-table td[data-label="Status"] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .team-table td[data-label="Status"]::before {
+    content: "Status:";
+    font-weight: 600;
+    color: #475569;
+    margin-right: 8px;
+    flex: 1;
+    text-align: left;
+  }
+
+  .team-table td[data-label="Status"] .status-badge {
+    margin-left: auto;   /* pushes badge to the far right */
+  }
+}
