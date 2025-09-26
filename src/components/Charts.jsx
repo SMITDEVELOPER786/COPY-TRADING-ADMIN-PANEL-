@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import "../Charts.css"
 
 const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
@@ -373,12 +373,43 @@ const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
   const currentData = getCurrentDisplayData()
   const maxValue = Math.max(...currentData.barData.map((d) => d.value))
   const minValue = Math.min(...currentData.barData.map((d) => d.value))
-  const chartHeight = 300
-  const chartWidth = 600
-  const padding = 30
-  const xStep = (chartWidth - 2 * padding) / (currentData.barData.length - 1)
+
+  const containerRef = useRef(null)
+  const svgRef = useRef(null)
+  const [dimensions, setDimensions] = useState({ width: 600, height: 300 })
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (svgRef.current) {
+        setDimensions({
+          width: svgRef.current.clientWidth,
+          height: svgRef.current.clientHeight,
+        })
+      }
+    }
+
+    updateDimensions()
+    window.addEventListener("resize", updateDimensions)
+    return () => window.removeEventListener("resize", updateDimensions)
+  }, [])
+
+  const chartWidth = dimensions.width
+  const chartHeight = dimensions.height
+
+  const leftPadding = chartWidth < 480 ? 40 : 60
+  const rightPadding = 20
+  const topPadding = 20
+  const bottomPadding = chartWidth < 480 ? 40 : 30
+  const fontSize = chartWidth < 480 ? 10 : chartWidth < 768 ? 12 : 14
+  const xLabelOffset = fontSize + 10
+  const yLabelOffset = fontSize / 3
+
+  const xStep =
+    currentData.barData.length > 1
+      ? (chartWidth - leftPadding - rightPadding) / (currentData.barData.length - 1)
+      : 0
   const yRange = maxValue - minValue
-  const yScale = (chartHeight - 2 * padding) / (yRange > 0 ? yRange : 1)
+  const yScale = (chartHeight - topPadding - bottomPadding) / (yRange > 0 ? yRange : 1)
 
   const openDialog = (type, index = null, value = "") => {
     setEditType(type)
@@ -538,8 +569,8 @@ const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
     </div>
   )
 
-  const getX = (index) => padding + index * xStep
-  const getY = (value) => chartHeight - padding - ((value - minValue) * yScale)
+  const getX = (index) => leftPadding + index * xStep
+  const getY = (value) => chartHeight - bottomPadding - ((value - minValue) * yScale)
 
   const generateSmoothPath = () => {
     const points = currentData.barData.map((data, index) => ({
@@ -697,17 +728,17 @@ const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
           )}
         </div>
 
-        <div className="line-chart-container" style={{ position: "relative", height: `${chartHeight}px`, width: `${chartWidth}px` }}>
-          <svg width={chartWidth} height={chartHeight}>
+        <div className="line-chart-container" ref={containerRef} style={{ position: "relative" }}>
+          <svg ref={svgRef} style={{ width: "100%", height: "100%" }}>
             {/* Grid lines */}
             {Array.from({ length: 6 }).map((_, i) => {
               const yValue = minValue + (i * yRange) / 5
               return (
                 <line
                   key={i}
-                  x1={padding}
+                  x1={leftPadding}
                   y1={getY(yValue)}
-                  x2={chartWidth - padding}
+                  x2={chartWidth - rightPadding}
                   y2={getY(yValue)}
                   stroke="#e5e7eb"
                   strokeWidth="1"
@@ -717,19 +748,19 @@ const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
             })}
             {/* X-axis */}
             <line
-              x1={padding}
-              y1={chartHeight - padding}
-              x2={chartWidth - padding}
-              y2={chartHeight - padding}
+              x1={leftPadding}
+              y1={chartHeight - bottomPadding}
+              x2={chartWidth - rightPadding}
+              y2={chartHeight - bottomPadding}
               stroke="#6b7280"
               strokeWidth="1.5"
             />
             {/* Y-axis */}
             <line
-              x1={padding}
-              y1={padding}
-              x2={padding}
-              y2={chartHeight - padding}
+              x1={leftPadding}
+              y1={topPadding}
+              x2={leftPadding}
+              y2={chartHeight - bottomPadding}
               stroke="#6b7280"
               strokeWidth="1.5"
             />
@@ -738,9 +769,9 @@ const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
               <text
                 key={index}
                 x={getX(index)}
-                y={chartHeight - padding + 25}
+                y={chartHeight - bottomPadding + xLabelOffset}
                 textAnchor="middle"
-                fontSize="14"
+                fontSize={fontSize}
                 fill="#4b5563"
                 fontWeight="500"
               >
@@ -753,19 +784,19 @@ const Charts = ({ activeTimeFilter, statsData, setStatsData }) => {
               return (
                 <g key={i}>
                   <text
-                    x={padding - 15}
-                    y={getY(yValue) + 5}
+                    x={leftPadding - 8}
+                    y={getY(yValue) + yLabelOffset}
                     textAnchor="end"
-                    fontSize="14"
+                    fontSize={fontSize}
                     fill="#4b5563"
                     fontWeight="500"
                   >
                     {Math.round(yValue)}
                   </text>
                   <line
-                    x1={padding - 5}
+                    x1={leftPadding - 4}
                     y1={getY(yValue)}
-                    x2={padding + 5}
+                    x2={leftPadding + 4}
                     y2={getY(yValue)}
                     stroke="#6b7280"
                     strokeWidth="1.5"
