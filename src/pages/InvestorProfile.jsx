@@ -237,13 +237,13 @@ const InvestorProfile = () => {
           <div className="tabs-container">
             <div className="tabs">
               <button
-                className={`tab ${activeTab === 'investments' ? 'active' : ''}`}
+                className={`tabs ${activeTab === 'investments' ? 'active' : ''}`}
                 onClick={() => setActiveTab('investments')}
               >
                 Investments
               </button>
               <button
-                className={`tab ${activeTab === 'transactions' ? 'active' : ''}`}
+                className={`tabs ${activeTab === 'transactions' ? 'active' : ''}`}
                 onClick={() => setActiveTab('transactions')}
               >
                 Transactions
