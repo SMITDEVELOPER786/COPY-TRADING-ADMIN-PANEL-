@@ -1,11 +1,14 @@
+// src/components/Investments.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { defaultUsers } from '../data/usersData';
 import { Search, MoreHorizontal, ChevronLeft, ChevronRight, ChevronDown, Calendar, CheckCircle, XCircle, Eye } from 'lucide-react';
 import '../Investments.css';
 
 const initialInvestmentsData = [
   {
     id: 1,
-    investor: { name: 'Maria Khan', avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Maria Khan', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
     trader: { name: 'John Doe', avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$2000',
     roi: '4.5%',
@@ -14,7 +17,7 @@ const initialInvestmentsData = [
   },
   {
     id: 2,
-    investor: { name: 'Jane Smith', avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Emma Brown', avatar: 'https://randomuser.me/api/portraits/women/65.jpg' },
     trader: { name: 'Alex Johnson', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$1500',
     roi: '3.2%',
@@ -23,7 +26,7 @@ const initialInvestmentsData = [
   },
   {
     id: 3,
-    investor: { name: 'Emily Davis', avatar: 'https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Sophia Martinez', avatar: 'https://randomuser.me/api/portraits/women/50.jpg' },
     trader: { name: 'Michael Brown', avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$3000',
     roi: '5.8%',
@@ -32,7 +35,7 @@ const initialInvestmentsData = [
   },
   {
     id: 4,
-    investor: { name: 'Sarah Wilson', avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Olivia Davis', avatar: 'https://randomuser.me/api/portraits/women/22.jpg' },
     trader: { name: 'David Garcia', avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$1000',
     roi: '2.1%',
@@ -41,7 +44,7 @@ const initialInvestmentsData = [
   },
   {
     id: 5,
-    investor: { name: 'Lisa Martinez', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Ava Thompson', avatar: 'https://randomuser.me/api/portraits/women/12.jpg' },
     trader: { name: 'Robert Anderson', avatar: 'https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$2500',
     roi: '6.0%',
@@ -50,7 +53,7 @@ const initialInvestmentsData = [
   },
   {
     id: 6,
-    investor: { name: 'Maria Khan', avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Maria Khan', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
     trader: { name: 'John Doe', avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$1800',
     roi: '4.0%',
@@ -59,7 +62,7 @@ const initialInvestmentsData = [
   },
   {
     id: 7,
-    investor: { name: 'Jane Smith', avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Emma Brown', avatar: 'https://randomuser.me/api/portraits/women/65.jpg' },
     trader: { name: 'Alex Johnson', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$2200',
     roi: '5.2%',
@@ -68,7 +71,7 @@ const initialInvestmentsData = [
   },
   {
     id: 8,
-    investor: { name: 'Emily Davis', avatar: 'https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Sophia Martinez', avatar: 'https://randomuser.me/api/portraits/women/50.jpg' },
     trader: { name: 'Michael Brown', avatar: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$1200',
     roi: '3.8%',
@@ -77,7 +80,7 @@ const initialInvestmentsData = [
   },
   {
     id: 9,
-    investor: { name: 'Sarah Wilson', avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Olivia Davis', avatar: 'https://randomuser.me/api/portraits/women/22.jpg' },
     trader: { name: 'David Garcia', avatar: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$2800',
     roi: '7.1%',
@@ -86,7 +89,7 @@ const initialInvestmentsData = [
   },
   {
     id: 10,
-    investor: { name: 'Lisa Martinez', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
+    investor: { name: 'Ava Thompson', avatar: 'https://randomuser.me/api/portraits/women/12.jpg' },
     trader: { name: 'Robert Anderson', avatar: 'https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1' },
     amount: '$900',
     roi: '1.9%',
@@ -96,6 +99,7 @@ const initialInvestmentsData = [
 ];
 
 function Investments() {
+  const navigate = useNavigate();
   const [investmentsData, setInvestmentsData] = useState(() => {
     const savedData = localStorage.getItem('investmentsData');
     try {
@@ -114,13 +118,23 @@ function Investments() {
   const [selectedDate, setSelectedDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [menuOpen, setMenuOpen] = useState(null);
-  const [selectedInvestment, setSelectedInvestment] = useState(null);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const itemsPerPage = 10;
 
   useEffect(() => {
     localStorage.setItem('investmentsData', JSON.stringify(investmentsData));
   }, [investmentsData]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.investments-action-menu')) {
+        setMenuOpen(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   const handleStatusChange = (id, newStatus) => {
     setInvestmentsData(prev => prev.map(item => 
@@ -130,8 +144,12 @@ function Investments() {
   };
 
   const handleViewDetails = (investment) => {
-    setSelectedInvestment(investment);
-    setIsDetailsModalOpen(true);
+    const investor = defaultUsers.find(user => user.name === investment.investor.name && user.type === 'Investor');
+    if (investor) {
+      navigate(`/investment/${investment.id}/investor/${investor.id}`);
+    } else {
+      console.error('Investor not found:', investment.investor.name);
+    }
     setMenuOpen(null);
   };
 
@@ -161,98 +179,6 @@ function Investments() {
         return 'status-active';
     }
   };
-
-  const DetailsModal = () => (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000,
-      }}
-    >
-      <div
-        style={{
-          background: 'white',
-          padding: '24px',
-          borderRadius: '16px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          width: '450px',
-          maxHeight: '80vh',
-          overflowY: 'auto',
-          fontFamily: 'inherit',
-        }}
-      >
-        <h3
-          style={{
-            fontSize: '18px',
-            fontWeight: 600,
-            color: '#1f2937',
-            marginBottom: '16px',
-            textAlign: 'center',
-          }}
-        >
-          Investment Details
-        </h3>
-        {selectedInvestment && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div>
-              <label style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280' }}>Investor:</label>
-              <p style={{ fontSize: '14px', color: '#1f2937' }}>{selectedInvestment.investor.name}</p>
-            </div>
-            <div>
-              <label style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280' }}>Trader:</label>
-              <p style={{ fontSize: '14px', color: '#1f2937' }}>{selectedInvestment.trader.name}</p>
-            </div>
-            <div>
-              <label style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280' }}>Amount:</label>
-              <p style={{ fontSize: '14px', color: '#1f2937' }}>{selectedInvestment.amount}</p>
-            </div>
-            <div>
-              <label style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280' }}>ROI:</label>
-              <p style={{ fontSize: '14px', color: '#1f2937' }}>{selectedInvestment.roi}</p>
-            </div>
-            <div>
-              <label style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280' }}>Date Invested:</label>
-              <p style={{ fontSize: '14px', color: '#1f2937' }}>{selectedInvestment.dateInvested}</p>
-            </div>
-            <div>
-              <label style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280' }}>Status:</label>
-              <span className={`status-badge ${getStatusClass(selectedInvestment.status)}`}>
-                {selectedInvestment.status}
-              </span>
-            </div>
-          </div>
-        )}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '20px' }}>
-          <button
-            onClick={() => setIsDetailsModalOpen(false)}
-            style={{
-              padding: '8px 20px',
-              background: '#f3f4f6',
-              color: '#6b7280',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'background 0.2s ease',
-            }}
-            onMouseOver={(e) => (e.target.style.background = '#e5e7eb')}
-            onMouseOut={(e) => (e.target.style.background = '#f3f4f6')}
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="dashboard-container">
@@ -285,13 +211,13 @@ function Investments() {
                   onChange={(e) => setSelectedStatus(e.target.value)}
                   className="reports-report-select"
                 >
-                  <option value="">Status </option>
+                  <option value="">Status</option>
                   <option value="Active">Active</option>
                   <option value="Pending">Pending</option>
                   <option value="Withdraw">Withdraw</option>
                   <option value="Successful">Successful</option>
                 </select>
-               <ChevronDown className="kyc-select-icon" size={16} />  
+                <ChevronDown className="kyc-select-icon" size={16} />  
               </div>
               
               <div className="reports-date-filter">
@@ -355,7 +281,10 @@ function Investments() {
                       <div className="investments-action-menu">
                         <button 
                           className="investments-action-btn"
-                          onClick={() => setMenuOpen(menuOpen === investment.id ? null : investment.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMenuOpen(menuOpen === investment.id ? null : investment.id);
+                          }}
                           aria-label="More actions"
                         >
                           <MoreHorizontal size={16} />
@@ -380,7 +309,7 @@ function Investments() {
                             ))}
                             <button onClick={() => handleViewDetails(investment)}>
                               <Eye size={16} />
-                              View Details
+                              View Investor Profile
                             </button>
                           </div>
                         )}
@@ -432,8 +361,6 @@ function Investments() {
           </div>
         </div>
       </div>
-
-      {isDetailsModalOpen && <DetailsModal />}
     </div>
   );
 }

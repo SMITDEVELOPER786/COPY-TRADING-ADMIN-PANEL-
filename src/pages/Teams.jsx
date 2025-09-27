@@ -126,7 +126,6 @@ function Team() {
   const [editMember, setEditMember] = useState(null);
   const [viewMember, setViewMember] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
-  const [openDropdown, setOpenDropdown] = useState(null);
   const navigate = useNavigate();
 
   const itemsPerPage = 10;
@@ -149,25 +148,35 @@ function Team() {
     }
   }, [teamData]);
 
- 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".team-action-menu")) {
+        setMenuOpen(null);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   const filteredTeam = teamData.filter((member) => {
-  const searchMatch =
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchMatch =
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const statusMatch =
-    selectedStatus === "" || member.status === selectedStatus;
+    const statusMatch =
+      selectedStatus === "" || member.status === selectedStatus;
 
-  // Allow YYYY, YYYY-MM, or YYYY-MM-DD
     const isValidDate = /^\d{4}(-\d{2}){0,2}$/;
     const dateMatch =
-    selectedDate === "" ||
-    (isValidDate.test(selectedDate) &&
-      member.dateJoined.startsWith(selectedDate));
+      selectedDate === "" ||
+      (isValidDate.test(selectedDate) &&
+        member.dateJoined.startsWith(selectedDate));
 
-     return searchMatch && statusMatch && dateMatch;
-    });
-
+    return searchMatch && statusMatch && dateMatch;
+  });
 
   const totalPages = Math.ceil(filteredTeam.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -300,7 +309,10 @@ function Team() {
                       <div className="team-action-menu">
                         <button
                           className="team-action-btn"
-                          onClick={() => toggleMenu(member.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleMenu(member.id);
+                          }}
                         >
                           <MoreHorizontal size={16} />
                         </button>
@@ -310,13 +322,28 @@ function Team() {
                               index >= currentTeam.length - 2 ? "drop-up" : ""
                             }`}
                           >
-                            <button onClick={() => setViewMember(member)}>
+                            <button
+                              onClick={() => {
+                                setViewMember(member);
+                                setMenuOpen(null); // Close dropdown
+                              }}
+                            >
                               <Eye size={14} /> View Profile
                             </button>
-                            <button onClick={() => setEditMember(member)}>
+                            <button
+                              onClick={() => {
+                                setEditMember(member);
+                                setMenuOpen(null); // Close dropdown
+                              }}
+                            >
                               <Edit size={14} /> Edit
                             </button>
-                            <button onClick={() => setConfirmDelete(member)}>
+                            <button
+                              onClick={() => {
+                                setConfirmDelete(member);
+                                setMenuOpen(null); // Close dropdown
+                              }}
+                            >
                               <Trash2 size={14} /> Remove
                             </button>
                           </div>
@@ -439,11 +466,21 @@ function Team() {
               alt={viewMember.name}
               style={{ width: "80px", borderRadius: "50%", margin: "10px auto" }}
             />
-            <p><b>Email:</b> {viewMember.email}</p>
-            <p><b>Phone:</b> {viewMember.phone}</p>
-            <p><b>Role:</b> {viewMember.role}</p>
-            <p><b>Status:</b> {viewMember.status}</p>
-            <p><b>Date Joined:</b> {viewMember.dateJoined}</p>
+            <p>
+              <b>Email:</b> {viewMember.email}
+            </p>
+            <p>
+              <b>Phone:</b> {viewMember.phone}
+            </p>
+            <p>
+              <b>Role:</b> {viewMember.role}
+            </p>
+            <p>
+              <b>Status:</b> {viewMember.status}
+            </p>
+            <p>
+              <b>Date Joined:</b> {viewMember.dateJoined}
+            </p>
             <button
               className="team-close-btn"
               style={{ marginTop: "10px" }}

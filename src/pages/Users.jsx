@@ -11,6 +11,7 @@ import {
   FaPhone,
   FaEdit,
   FaPlus,
+  FaChartLine
 } from "react-icons/fa";
 import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2, Activity, X } from "lucide-react";
 
@@ -202,6 +203,7 @@ const Users = () => {
   const [activeTab, setActiveTab] = useState("about");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showMetricsDialog, setShowMetricsDialog] = useState(false);
+  const [showRoiDialog, setShowRoiDialog] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
 
@@ -476,6 +478,13 @@ const Users = () => {
                 <button className="btn outline">
                   <FaPhone /> Contact Info
                 </button>
+               <button
+                className="btn outline"
+                onClick={() => setShowRoiDialog(true)}
+                title="View ROI"
+              >
+              <FaChartLine /> View ROI
+                </button>
               </div>
             </div>
           </div>
@@ -746,6 +755,31 @@ const Users = () => {
     </div>
   </div>
 )}
+
+ {showRoiDialog && (
+          <div className="modal" onClick={() => setShowRoiDialog(false)}>
+            <div className="modal-content roi-dialog" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3 className="dialog-title">Investor ROI</h3>
+                <button className="modal-close" onClick={() => setShowRoiDialog(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="roi-content">
+                <p>
+                  <span className="label">Return on Investment (ROI):</span>
+                  <span className={`value ${investorMetrics.roi >= 0 ? 'status-active' : 'status-withdraw'}`}>
+                    {investorMetrics.roi.toFixed(2)}%
+                  </span>
+                </p>
+              </div>
+              <button className="dialog-close-btn" onClick={() => setShowRoiDialog(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
         </main>
 
         {/* Modals */}
