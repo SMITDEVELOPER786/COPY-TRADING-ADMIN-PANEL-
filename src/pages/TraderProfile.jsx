@@ -224,36 +224,7 @@ const TraderProfile = ({ user }) => {
 
             <div className="advanced-metrics">
               <div className="advanced-metrics-grid">
-                <div className="metrics-section">
-                  <h4 className="section-title">Risk-Adjusted Metrics</h4>
-                  <div className="metrics-row">
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Sharpe Ratio</span>
-                      <span className="metric-value">{advancedMetricsMain.sharpeRatio}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Expectancy</span>
-                      <span className="metric-value">{advancedMetricsMain.expectancy}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">R:R Ratio</span>
-                      <span className="metric-value">{advancedMetricsMain.rrRatio}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Profit Factor</span>
-                      <span className="metric-value">{advancedMetricsMain.profitFactor}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Calmar Ratio</span>
-                      <span className="metric-value">{advancedMetricsMain.calmarRatio}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Sortino Ratio</span>
-                      <span className="metric-value">{advancedMetricsMain.sortinoRatio}</span>
-                    </div>
-                  </div>
-                </div>
-
+            
                 <div className="metrics-section">
                   <h4 className="section-title">Trade Performance</h4>
                   <div className="metrics-row">
@@ -284,84 +255,153 @@ const TraderProfile = ({ user }) => {
                   </div>
                 </div>
 
-                <div className="metrics-section">
-                  <h4 className="section-title">Trade Outcomes</h4>
-                  <div className="metrics-row">
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Average Winning Trade</span>
-                      <span className="metric-value positive">{advancedMetricsMain.averageWinningTrade}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Average Losing Trade</span>
-                      <span className="metric-value negative">{advancedMetricsMain.averageLosingTrade}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Largest Winning Trade</span>
-                      <span className="metric-value positive">{advancedMetricsMain.largestWinningTrade}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Largest Losing Trade</span>
-                      <span className="metric-value negative">{advancedMetricsMain.largestLosingTrade}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Profitable Days</span>
-                      <span className="metric-value">{advancedMetricsMain.profitableDays}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Unprofitable Days</span>
-                      <span className="metric-value">{advancedMetricsMain.unprofitableDays}</span>
-                    </div>
+                 <div className="metrics-section">
+                <h4 className="section-title">Trading Metrics</h4>
+                <div className="metrics-row">
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Equity</span>
+                    <span className="metric-value">{advancedMetricsDialog.equity.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Margin</span>
+                    <span className="metric-value">{advancedMetricsDialog.margin.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Free Margin</span>
+                    <span className="metric-value">{advancedMetricsDialog.freeMargin.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Profit</span>
+                    <span className={`metric-value ${advancedMetricsDialog.profit >= 0 ? "positive" : "negative"}`}>
+                      {advancedMetricsDialog.profit.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Balance</span>
+                    <span className="metric-value">{advancedMetricsDialog.balance.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Highest Balance</span>
+                    <span className="metric-value">{advancedMetricsDialog.highestBalance.toFixed(2)}</span>
+                  </div>
+
+                </div>
+              </div>
+
+         
+
+    
+
+               <div className="metrics-section">
+                <h4 className="section-title">Trade Analysis</h4>
+                <div className="metrics-row">
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Average Win</span>
+                    <span className="metric-value positive">{advancedMetricsDialog.averageWin.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Average Loss</span>
+                    <span className="metric-value negative">{advancedMetricsDialog.averageLoss.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Best Trade</span>
+                    <span className="metric-value positive">{advancedMetricsDialog.bestTrade.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Best Trade Date</span>
+                    <span className="metric-value">{advancedMetricsDialog.bestTradeDate}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Worst Trade</span>
+                    <span className="metric-value negative">{advancedMetricsDialog.worstTrade.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Worst Trade Date</span>
+                    <span className="metric-value">{advancedMetricsDialog.worstTradeDate}</span>
                   </div>
                 </div>
+              </div>
 
-                <div className="metrics-section">
-                  <h4 className="section-title">Market Metrics</h4>
-                  <div className="metrics-row">
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Avg Daily Return</span>
-                      <span className="metric-value">{advancedMetricsMain.avgDailyReturn}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Volatility</span>
-                      <span className="metric-value">{advancedMetricsMain.volatility}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Beta</span>
-                      <span className="metric-value">{advancedMetricsMain.beta}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Alpha</span>
-                      <span className="metric-value">{advancedMetricsMain.alpha}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Information Ratio</span>
-                      <span className="metric-value">{advancedMetricsMain.informationRatio}</span>
-                    </div>
-                    <div className="advanced-metric-item">
-                      <span className="metric-label">Treynor Ratio</span>
-                      <span className="metric-value">{advancedMetricsMain.treynorRatio}</span>
-                    </div>
+                          <div className="metrics-section">
+                <h4 className="section-title">Trading Statistics</h4>
+                <div className="metrics-row">
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Long Won Trades</span>
+                    <span className="metric-value">{advancedMetricsDialog.longWonTrades}</span>
                   </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Long Trades</span>
+                    <span className="metric-value">{advancedMetricsDialog.longTrades}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Short Trades</span>
+                    <span className="metric-value">{advancedMetricsDialog.shortTrades}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Long Won Trades %</span>
+                    <span className="metric-value positive">
+                      {advancedMetricsDialog.longWonTradesPercent.toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Days Since Trading Started</span>
+                    <span className="metric-value">{advancedMetricsDialog.daysSinceTradingStarted.toFixed(2)}</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Equity %</span>
+                    <span className="metric-value">{advancedMetricsDialog.equityPercent.toFixed(2)}%</span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Expectancy</span>
+                    <span className={`metric-value ${advancedMetricsDialog.expectancy >= 0 ? "positive" : "negative"}`}>
+                      {advancedMetricsDialog.expectancy.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Expectancy Pips</span>
+                    <span
+                      className={`metric-value ${advancedMetricsDialog.expectancyPips >= 0 ? "positive" : "negative"}`}
+                    >
+                      {advancedMetricsDialog.expectancyPips.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="advanced-metric-item">
+                    <span className="metric-label">Average Trade Length (Hours)</span>
+                    <span className="metric-value">
+                      {(advancedMetricsDialog.averageTradeLengthInMilliseconds / (1000 * 60 * 60)).toFixed(2)}
+                    </span>
+                  </div>
+                 
                 </div>
+              </div>
 
-                <div className="metrics-section">
-                  <h4 className="section-title">Risk Metrics</h4>
+               
+                   <div className="metrics-section">
+                  <h4 className="section-title">Risk-Adjusted Metrics</h4>
                   <div className="metrics-row">
                     <div className="advanced-metric-item">
-                      <span className="metric-label">Tracking Error</span>
-                      <span className="metric-value">{advancedMetricsMain.trackingError}</span>
+                      <span className="metric-label">Sharpe Ratio</span>
+                      <span className="metric-value">{advancedMetricsMain.sharpeRatio}</span>
                     </div>
                     <div className="advanced-metric-item">
-                      <span className="metric-label">Value at Risk</span>
-                      <span className="metric-value">{advancedMetricsMain.valueAtRisk}</span>
+                      <span className="metric-label">Expectancy</span>
+                      <span className="metric-value">{advancedMetricsMain.expectancy}</span>
                     </div>
                     <div className="advanced-metric-item">
-                      <span className="metric-label">Max Drawdown</span>
-                      <span className="metric-value negative">{advancedMetricsMain.maxDrawdown}</span>
+                      <span className="metric-label">R:R Ratio</span>
+                      <span className="metric-value">{advancedMetricsMain.rrRatio}</span>
                     </div>
                     <div className="advanced-metric-item">
-                      <span className="metric-label">Avg. Return</span>
-                      <span className="metric-value positive">{advancedMetricsMain.avgReturn}</span>
+                      <span className="metric-label">Profit Factor</span>
+                      <span className="metric-value">{advancedMetricsMain.profitFactor}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Calmar Ratio</span>
+                      <span className="metric-value">{advancedMetricsMain.calmarRatio}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Sortino Ratio</span>
+                      <span className="metric-value">{advancedMetricsMain.sortinoRatio}</span>
                     </div>
                   </div>
                 </div>
@@ -574,6 +614,35 @@ const TraderProfile = ({ user }) => {
                   </div>
                 </div>
               </div>
+                     <div className="metrics-section">
+                  <h4 className="section-title">Trade Outcomes</h4>
+                  <div className="metrics-row">
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Average Winning Trade</span>
+                      <span className="metric-value positive">{advancedMetricsMain.averageWinningTrade}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Average Losing Trade</span>
+                      <span className="metric-value negative">{advancedMetricsMain.averageLosingTrade}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Largest Winning Trade</span>
+                      <span className="metric-value positive">{advancedMetricsMain.largestWinningTrade}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Largest Losing Trade</span>
+                      <span className="metric-value negative">{advancedMetricsMain.largestLosingTrade}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Profitable Days</span>
+                      <span className="metric-value">{advancedMetricsMain.profitableDays}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Unprofitable Days</span>
+                      <span className="metric-value">{advancedMetricsMain.unprofitableDays}</span>
+                    </div>
+                  </div>
+                </div>
 
               <div className="metrics-section">
                 <h4 className="section-title">Pips Analysis</h4>
@@ -670,6 +739,56 @@ const TraderProfile = ({ user }) => {
                   </div>
                 </div>
               </div>
+                <div className="metrics-section">
+                  <h4 className="section-title">Market Metrics</h4>
+                  <div className="metrics-row">
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Avg Daily Return</span>
+                      <span className="metric-value">{advancedMetricsMain.avgDailyReturn}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Volatility</span>
+                      <span className="metric-value">{advancedMetricsMain.volatility}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Beta</span>
+                      <span className="metric-value">{advancedMetricsMain.beta}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Alpha</span>
+                      <span className="metric-value">{advancedMetricsMain.alpha}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Information Ratio</span>
+                      <span className="metric-value">{advancedMetricsMain.informationRatio}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Treynor Ratio</span>
+                      <span className="metric-value">{advancedMetricsMain.treynorRatio}</span>
+                    </div>
+                  </div>
+                </div>
+                 <div className="metrics-section">
+                  <h4 className="section-title">Risk Metrics</h4>
+                  <div className="metrics-row">
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Tracking Error</span>
+                      <span className="metric-value">{advancedMetricsMain.trackingError}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Value at Risk</span>
+                      <span className="metric-value">{advancedMetricsMain.valueAtRisk}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Max Drawdown</span>
+                      <span className="metric-value negative">{advancedMetricsMain.maxDrawdown}</span>
+                    </div>
+                    <div className="advanced-metric-item">
+                      <span className="metric-label">Avg. Return</span>
+                      <span className="metric-value positive">{advancedMetricsMain.avgReturn}</span>
+                    </div>
+                  </div>
+                </div>
             </div>
 
             <button className="dialog-close-btn" onClick={() => setShowMetricsDialog(false)}>
