@@ -366,7 +366,7 @@ const TraderProfile = ({ user }) => {
                     </span>
                   </div>
                   <div className="advanced-metric-item">
-                    <span className="metric-label">Average Trade Length (Hours)</span>
+                    <span className="metric-label">Average Trades Length (Hours)</span>
                     <span className="metric-value">
                       {(advancedMetricsDialog.averageTradeLengthInMilliseconds / (1000 * 60 * 60)).toFixed(2)}
                     </span>
