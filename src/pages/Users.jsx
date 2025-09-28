@@ -611,7 +611,6 @@ const Users = () => {
           </div>
 
           {/* Investor Metrics Dialog */}
-{/* Investor Metrics Dialog */}
 {showMetricsDialog && (
   <div className="modal" onClick={() => setShowMetricsDialog(false)}>
     <div className="modal-content metrics-dialog" onClick={(e) => e.stopPropagation()}>
@@ -621,30 +620,30 @@ const Users = () => {
           <X size={20} />
         </button>
       </div>
-      <div className="metrics-grid">
+      <div className="advanced-metrics-grid">
         {/* Portfolio Metrics */}
         <div className="metrics-section">
           <h4>Portfolio Metrics</h4>
           <div className="metrics-row">
             <p>
-              <span className="label">Portfolio Value:</span>
-              <span className="value">${investorMetrics.portfolioValue.toLocaleString()}</span>
+              <span className="metric-label">Portfolio Value:</span>
+              <span className="metric-value">${investorMetrics.portfolioValue.toLocaleString()}</span>
             </p>
             <p>
-              <span className="label">Annualized Return:</span>
-              <span className={`value ${investorMetrics.annualizedReturn >= 0 ? 'status-active' : 'status-withdraw'}`}>
+              <span className="metric-label">Annualized Return:</span>
+              <span className={`metric-value ${investorMetrics.annualizedReturn >= 0}`}>
                 {investorMetrics.annualizedReturn.toFixed(2)}%
               </span>
             </p>
             <p>
-              <span className="label">ROI:</span>
-              <span className={`value ${investorMetrics.roi >= 0 ? 'status-active' : 'status-withdraw'}`}>
+              <span className="metric-label">ROI:</span>
+              <span className={`metric-value ${investorMetrics.roi >= 0}`}>
                 {investorMetrics.roi.toFixed(2)}%
               </span>
             </p>
             <p>
-              <span className="label">Diversification Score:</span>
-              <span className="value">{investorMetrics.diversificationScore.toFixed(2)}</span>
+              <span className="metric-label">Diversification Score:</span>
+              <span className="metric-value">{investorMetrics.diversificationScore.toFixed(2)}</span>
             </p>
           </div>
         </div>
@@ -654,28 +653,28 @@ const Users = () => {
           <h4>Investment Activity</h4>
           <div className="metrics-row">
             <p>
-              <span className="label">Total Investments:</span>
-              <span className="value">{investorMetrics.totalInvestments}</span>
+              <span className="metric-label">Total Investments:</span>
+              <span className="metric-value">{investorMetrics.totalInvestments}</span>
             </p>
             <p>
-              <span className="label">Average Investment Size:</span>
-              <span className="value">${investorMetrics.averageInvestmentSize.toLocaleString()}</span>
+              <span className="metric-label">Average Investment Size:</span>
+              <span className="metric-value">${investorMetrics.averageInvestmentSize.toLocaleString()}</span>
             </p>
             <p>
-              <span className="label">Largest Investment:</span>
-              <span className="value">${investorMetrics.largestInvestment.toLocaleString()}</span>
+              <span className="metric-label">Largest Investment:</span>
+              <span className="metric-value">${investorMetrics.largestInvestment.toLocaleString()}</span>
             </p>
             <p>
-              <span className="label">Largest Investment Date:</span>
-              <span className="value">{investorMetrics.largestInvestmentDate}</span>
+              <span className="metric-label">Largest Investment Date:</span>
+              <span className="metric-value">{investorMetrics.largestInvestmentDate}</span>
             </p>
             <p>
-              <span className="label">Smallest Investment:</span>
-              <span className="value">${investorMetrics.smallestInvestment.toLocaleString()}</span>
+              <span className="metric-label">Smallest Investment:</span>
+              <span className="metric-value">${investorMetrics.smallestInvestment.toLocaleString()}</span>
             </p>
             <p>
-              <span className="label">Smallest Investment Date:</span>
-              <span className="value">{investorMetrics.smallestInvestmentDate}</span>
+              <span className="metric-label">Smallest Investment Date:</span>
+              <span className="metric-value">{investorMetrics.smallestInvestmentDate}</span>
             </p>
           </div>
         </div>
@@ -685,16 +684,16 @@ const Users = () => {
           <h4>Risk Metrics</h4>
           <div className="metrics-row">
             <p>
-              <span className="label">Sharpe Ratio:</span>
+              <span className="metric-label">Sharpe Ratio:</span>
               <span className="value">{investorMetrics.sharpeRatio.toFixed(2)}</span>
             </p>
             <p>
-              <span className="label">Volatility:</span>
-              <span className="value">{investorMetrics.volatility.toFixed(2)}%</span>
+              <span className="metric-label">Volatility:</span>
+              <span className="metric-value">{investorMetrics.volatility.toFixed(2)}%</span>
             </p>
             <p>
-              <span className="label">Max Drawdown:</span>
-              <span className={`value ${investorMetrics.maxDrawdown >= 0 ? 'status-active' : 'status-withdraw'}`}>
+              <span className="metric-label">Max Drawdown:</span>
+              <span className={`metric-value ${investorMetrics.maxDrawdown >= 0 ? 'status-active' : 'status-withdraw'}`}>
                 {investorMetrics.maxDrawdown.toFixed(2)}%
               </span>
             </p>
@@ -706,20 +705,20 @@ const Users = () => {
           <h4>Performance Metrics</h4>
           <div className="metrics-row">
             <p>
-              <span className="label">Average Investment Duration:</span>
-              <span className="value">{investorMetrics.averageInvestmentDuration}</span>
+              <span className="metric-label">Average Investment Duration:</span>
+              <span className="metric-value">{investorMetrics.averageInvestmentDuration}</span>
             </p>
             <p>
-              <span className="label">Positive Return Months:</span>
-              <span className="value">{investorMetrics.positiveReturnMonths}</span>
+              <span className="metric-label">Positive Return Months:</span>
+              <span className="metric-value">{investorMetrics.positiveReturnMonths}</span>
             </p>
             <p>
-              <span className="label">Negative Return Months:</span>
-              <span className="value">{investorMetrics.negativeReturnMonths}</span>
+              <span className="metric-label">Negative Return Months:</span>
+              <span className="metric-value">{investorMetrics.negativeReturnMonths}</span>
             </p>
             <p>
-              <span className="label">Average Monthly Return:</span>
-              <span className={`value ${investorMetrics.averageMonthlyReturn >= 0 ? 'status-active' : 'status-withdraw'}`}>
+              <span className="metric-label">Average Monthly Return:</span>
+              <span className={`metric-value ${investorMetrics.averageMonthlyReturn >= 0}`}>
                 {investorMetrics.averageMonthlyReturn.toFixed(2)}%
               </span>
             </p>
@@ -731,20 +730,20 @@ const Users = () => {
           <h4>Sector Allocation</h4>
           <div className="metrics-row">
             <p>
-              <span className="label">Technology:</span>
-              <span className="value">{investorMetrics.sectorAllocation.technology}%</span>
+              <span className="metric-label">Technology:</span>
+              <span className="metric-value">{investorMetrics.sectorAllocation.technology}%</span>
             </p>
             <p>
-              <span className="label">Real Estate:</span>
-              <span className="value">{investorMetrics.sectorAllocation.realEstate}%</span>
+              <span className="metric-label">Real Estate:</span>
+              <span className="metric-value">{investorMetrics.sectorAllocation.realEstate}%</span>
             </p>
             <p>
-              <span className="label">Healthcare:</span>
-              <span className="value">{investorMetrics.sectorAllocation.healthcare}%</span>
+              <span className="metric-label">Healthcare:</span>
+              <span className="metric-value">{investorMetrics.sectorAllocation.healthcare}%</span>
             </p>
             <p>
-              <span className="label">Others:</span>
-              <span className="value">{investorMetrics.sectorAllocation.others}%</span>
+              <span className="metric-label">Others:</span>
+              <span className="metric-value">{investorMetrics.sectorAllocation.others}%</span>
             </p>
           </div>
         </div>
