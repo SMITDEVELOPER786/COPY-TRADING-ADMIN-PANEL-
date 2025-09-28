@@ -456,7 +456,7 @@ const TraderProfile = ({ user }) => {
         <div className="metrics-dialog-overlay" onClick={() => setShowMetricsDialog(false)}>
           <div className="metrics-dialog" onClick={(e) => e.stopPropagation()}>
             <div className="dialog-header">
-              <h3 className="dialog-title">Advanced Trading Metrics</h3>
+              <h3 className="dialog-title">Trading Metrics</h3>
               <button className="dialog-close-icon" onClick={() => setShowMetricsDialog(false)}>
                 <X size={20} />
               </button>
@@ -464,7 +464,7 @@ const TraderProfile = ({ user }) => {
 
             <div className="advanced-metrics-grid">
               <div className="metrics-section">
-                <h4 className="section-title">Account Metrics</h4>
+                <h4 className="section-title">Trading Metrics</h4>
                 <div className="metrics-row">
                   <div className="advanced-metric-item">
                     <span className="metric-label">Equity</span>
