@@ -260,32 +260,34 @@ function Traders() {
               <Search size={20} />
               <input 
                 type="text" 
-                placeholder="Search Traders" 
+                placeholder="Search Traders by Name" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="filter-group">
-              <div className="filter-button">
+              <div className="kyc-status-filter">
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="kyc-status-select"
                 >
                   <option value="">All Status</option>
                   <option value="Profitable">Profitable</option>
                   <option value="Average">Average</option>
                   <option value="Unprofitable">Unprofitable</option>
                 </select>
-                <ChevronDown size={16} />
+                <ChevronDown size={16} className="kyc-select-icon" />
               </div>
-              <div className="filter-button">
+              <div className="reports-date-filter">
                 <input
                   type="text"
                   placeholder="Filter by Date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
+                  className="date-input"
                 />
-                <Calendar size={16} />
+                <Calendar size={16} className="date-icon" />
               </div>
             </div>
           </div>

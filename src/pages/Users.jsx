@@ -236,6 +236,58 @@ const Users = () => {
     },
   };
 
+  // Fixed date parsing function
+  const parseJoinedDate = (joinedStr) => {
+    // Convert "29 June 2023" format to Date object
+    const monthNames = {
+      'January': 0, 'February': 1, 'March': 2, 'April': 3,
+      'May': 4, 'June': 5, 'July': 6, 'August': 7,
+      'September': 8, 'October': 9, 'November': 10, 'December': 11
+    };
+    
+    const parts = joinedStr.split(' ');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0]);
+      const month = monthNames[parts[1]];
+      const year = parseInt(parts[2]);
+      
+      if (!isNaN(day) && month !== undefined && !isNaN(year)) {
+        return new Date(year, month, day);
+      }
+    }
+    return null;
+  };
+
+  // Fixed date matching function
+  const isDateMatch = (joinedStr, searchDate) => {
+    if (!searchDate) return true;
+    
+    const joinedDate = parseJoinedDate(joinedStr);
+    if (!joinedDate) return false;
+    
+    const year = joinedDate.getFullYear().toString();
+    const month = String(joinedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(joinedDate.getDate()).padStart(2, '0');
+    
+    // Support different search formats
+    if (searchDate.length === 4) {
+      // Year only: "2023"
+      return year === searchDate;
+    } else if (searchDate.length === 7 && searchDate.includes('-')) {
+      // Year-Month: "2023-07"
+      return `${year}-${month}` === searchDate;
+    } else if (searchDate.length === 10 && searchDate.includes('-')) {
+      // Full date: "2023-07-29"
+      return `${year}-${month}-${day}` === searchDate;
+    } else if (searchDate.length <= 2) {
+      // Day only: "29"
+      return day === searchDate.padStart(2, '0');
+    } else {
+      // Partial text search in original format
+      return joinedStr.toLowerCase().includes(searchDate.toLowerCase());
+    }
+  };
+
   // Load from localStorage
   useEffect(() => {
     const storedUsers = localStorage.getItem(STORAGE_KEY);
@@ -327,16 +379,16 @@ const Users = () => {
     setMenuOpen(null);
   };
 
-  // Filtered users for table
+  // Fixed filtered users with improved date filtering
   const filteredUsers = users.filter((user) => {
     const searchMatch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
     const statusMatch = selectedStatus === "" || user.status === selectedStatus;
-    const isValidDate = /^\d{4}(-\d{2}){0,2}$/;
-    const dateMatch =
-      selectedDate === "" ||
-      (isValidDate.test(selectedDate) && user.joined.includes(selectedDate));
+    
+    const dateMatch = isDateMatch(user.joined, selectedDate);
+    
     return searchMatch && statusMatch && dateMatch;
   });
 
@@ -357,6 +409,17 @@ const Users = () => {
       default:
         return "status-active";
     }
+  };
+
+  // Handle toggle and view details functions for investor profile
+  const handleToggle = (checked) => {
+    // Add your toggle logic here
+    console.log("Toggle switched:", checked);
+  };
+
+  const handleViewDetails = (item) => {
+    // Add your view details logic here
+    console.log("View details for:", item);
   };
 
   if (selectedUser && selectedUser.type === "Investor") {
@@ -954,7 +1017,7 @@ const Users = () => {
             <div className="reports-date-filter">
               <input
                 type="text"
-                placeholder="Search Date"
+                placeholder="Search Date (YYYY, YYYY-MM, YYYY-MM-DD, or text)"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="date-input"
@@ -1079,6 +1142,142 @@ const Users = () => {
             </button>
           </div>
         </div>
+
+        {/* Modals */}
+        {showForm && (
+          <div className="modal">
+            <div className="modal-content small">
+              <h3>{editingUser ? "Edit User" : "Add User"}</h3>
+              <form onSubmit={handleSubmit} className="form">
+                <input
+                  name="name"
+                  placeholder="Name"
+                  defaultValue={editingUser?.name}
+                  required
+                />
+                <input
+                  name="email"
+                  placeholder="Email"
+                  defaultValue={editingUser?.email}
+                  required
+                />
+                <input
+                  name="phone"
+                  placeholder="Phone"
+                  defaultValue={editingUser?.phone}
+                  required
+                />
+                <select
+                  name="type"
+                  defaultValue={editingUser?.type}
+                  required
+                  onChange={(e) => {
+                    if (e.target.value === "Investor") {
+                      document.getElementsByName("market")[0].value = "";
+                    }
+                  }}
+                >
+                  <option value="Trader">Trader</option>
+                  <option value="Investor">Investor</option>
+                </select>
+                <input
+                  name="wallet"
+                  placeholder="Wallet ID"
+                  defaultValue={editingUser?.wallet}
+                  required
+                />
+                <input
+                  name="market"
+                  placeholder="Market"
+                  defaultValue={editingUser?.market}
+                  disabled={editingUser?.type === "Investor"}
+                />
+                <input
+                  name="broker"
+                  placeholder="Broker"
+                  defaultValue={editingUser?.broker}
+                  required
+                />
+                <input
+                  name="joined"
+                  placeholder="Joined Date"
+                  defaultValue={editingUser?.joined}
+                  required
+                />
+                <input
+                  name="status"
+                  placeholder="Status"
+                  defaultValue={editingUser?.status}
+                  required
+                />
+                <input
+                  name="investors"
+                  placeholder="Investments"
+                  defaultValue={editingUser?.investors}
+                  required
+                />
+                <input
+                  name="profit"
+                  placeholder="Portfolio Value"
+                  defaultValue={editingUser?.profit}
+                  required
+                />
+                <input
+                  name="equity"
+                  placeholder="Equity"
+                  defaultValue={editingUser?.equity}
+                  required
+                />
+                <input
+                  name="exp"
+                  placeholder="Experience"
+                  defaultValue={editingUser?.exp}
+                  required
+                />
+                <input
+                  name="avatar"
+                  placeholder="Avatar URL"
+                  defaultValue={editingUser?.avatar}
+                  required
+                />
+                <div className="form-actions">
+                  <button type="submit" className="btn green">
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    className="btn red"
+                    onClick={() => {
+                      setShowForm(false);
+                      setEditingUser(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {deleteUserId && (
+          <div className="modal">
+            <div className="confirm-box">
+              <p>Are you sure you want to delete this user?</p>
+              <div className="confirm-actions">
+                <button className="btn red" onClick={confirmDelete}>
+                  Delete
+                </button>
+                <button
+                  className="btn outline"
+                  onClick={() => setDeleteUserId(null)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

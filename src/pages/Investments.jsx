@@ -196,7 +196,7 @@ function Investments() {
                 <Search className="search-icon" size={20} />
                 <input
                   type="text"
-                  placeholder="Search Investor or Trader Name"
+                  placeholder="Search Investors by Name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="reports-search-input"
