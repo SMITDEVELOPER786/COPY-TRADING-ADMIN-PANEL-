@@ -356,139 +356,152 @@ const DataTable = () => {
     setCurrentPage(1);
   };
 
-  const AddDialog = () => (
+const AddDialog = () => (
+  <div
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+      padding: '16px', // Add padding for mobile
+    }}
+  >
     <div
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000,
+        background: 'white',
+        padding: window.innerWidth <= 480 ? '16px' : '20px',
+        borderRadius: '12px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        width: '100%',
+        maxWidth: window.innerWidth <= 480 ? '320px' : '350px',
+        maxHeight: '90vh', // Prevent dialog from being too tall
+        overflowY: 'auto', // Add scroll if content is too long
+        textAlign: 'left',
+        fontFamily: 'inherit',
       }}
     >
-      <div
+      <h3
         style={{
-          background: 'white',
-          padding: '24px',
-          borderRadius: '16px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          width: '350px',
-          textAlign: 'left',
-          fontFamily: 'inherit',
+          fontSize: window.innerWidth <= 480 ? '16px' : '18px',
+          fontWeight: 600,
+          color: '#1f2937',
+          marginBottom: window.innerWidth <= 480 ? '12px' : '16px',
+          textAlign: 'center',
         }}
       >
-        <h3
-          style={{
-            fontSize: '18px',
-            fontWeight: 600,
-            color: '#1f2937',
-            marginBottom: '16px',
-            textAlign: 'center',
-          }}
-        >
-          Add New User
-        </h3>
-        {['name', 'userType', 'market', 'portfolio', 'investment', 'recentInvestment', 'rank', 'avatar'].map((field) => (
-          <div key={field} style={{ marginBottom: '12px' }}>
-            <label
+        Add New User
+      </h3>
+      {['name', 'userType', 'market', 'portfolio', 'investment', 'recentInvestment', 'rank', 'avatar'].map((field) => (
+        <div key={field} style={{ marginBottom: window.innerWidth <= 480 ? '10px' : '12px' }}>
+          <label
+            style={{
+              fontSize: window.innerWidth <= 480 ? '12px' : '14px',
+              fontWeight: 500,
+              color: '#1f2937',
+              marginBottom: '4px',
+              display: 'block',
+            }}
+          >
+            {field === 'userType' ? 'User Type' : field === 'market' ? 'Market' : field.charAt(0).toUpperCase() + field.slice(1)}
+          </label>
+          {field === 'userType' ? (
+            <select
+              value={newUser.userType}
+              onChange={(e) => setNewUser({ ...newUser, userType: e.target.value, market: e.target.value === 'Investor' ? '' : newUser.market })}
               style={{
-                fontSize: '14px',
-                fontWeight: 500,
-                color: '#1f2937',
-                marginBottom: '4px',
-                display: 'block',
+                width: '100%',
+                padding: window.innerWidth <= 480 ? '8px' : '10px',
+                fontSize: window.innerWidth <= 480 ? '12px' : '14px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                outline: 'none',
+                transition: 'border-color 0.2s ease',
               }}
+              onFocus={(e) => (e.target.style.borderColor = '#2d6b2d')}
+              onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
             >
-              {field === 'userType' ? 'User Type' : field === 'market' ? 'Market' : field.charAt(0).toUpperCase() + field.slice(1)}
-            </label>
-            {field === 'userType' ? (
-              <select
-                value={newUser.userType}
-                onChange={(e) => setNewUser({ ...newUser, userType: e.target.value, market: e.target.value === 'Investor' ? '' : newUser.market })}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  fontSize: '14px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  outline: 'none',
-                  transition: 'border-color 0.2s ease',
-                }}
-                onFocus={(e) => (e.target.style.borderColor = '#2d6b2d')}
-                onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
-              >
-                <option value="Trader">Trader</option>
-                <option value="Investor">Investor</option>
-              </select>
-            ) : (
-              <input
-                type={field === 'portfolio' || field === 'investment' ? 'number' : 'text'}
-                value={newUser[field]}
-                onChange={(e) => setNewUser({ ...newUser, [field]: e.target.value })}
-                placeholder={`Enter ${field}`}
-                disabled={(field === 'rank' && activeTab === 'Awaiting Approvals') || (field === 'market' && newUser.userType === 'Investor')}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  fontSize: '14px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  outline: 'none',
-                  transition: 'border-color 0.2s ease',
-                  background: field === 'market' && newUser.userType === 'Investor' ? '#f3f4f6' : 'white',
-                }}
-                onFocus={(e) => (e.target.style.borderColor = '#2d6b2d')}
-                onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
-              />
-            )}
-          </div>
-        ))}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
-          <button
-            onClick={handleAddSave}
-            style={{
-              padding: '8px 20px',
-              background: '#2d6b2d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'background 0.2s ease',
-            }}
-            onMouseOver={(e) => (e.target.style.background = '#4ade80')}
-            onMouseOut={(e) => (e.target.style.background = '#2d6b2d')}
-          >
-            Add User
-          </button>
-          <button
-            onClick={() => setIsAddDialogOpen(false)}
-            style={{
-              padding: '8px 20px',
-              background: '#f3f4f6',
-              color: '#6b7280',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'background 0.2s ease',
-            }}
-            onMouseOver={(e) => (e.target.style.background = '#e5e7eb')}
-            onMouseOut={(e) => (e.target.style.background = '#f3f4f6')}
-          >
-            Cancel
-          </button>
+              <option value="Trader">Trader</option>
+              <option value="Investor">Investor</option>
+            </select>
+          ) : (
+            <input
+              type={field === 'portfolio' || field === 'investment' ? 'number' : 'text'}
+              value={newUser[field]}
+              onChange={(e) => setNewUser({ ...newUser, [field]: e.target.value })}
+              placeholder={`Enter ${field}`}
+              disabled={(field === 'rank' && activeTab === 'Awaiting Approvals') || (field === 'market' && newUser.userType === 'Investor')}
+              style={{
+                width: '100%',
+                padding: window.innerWidth <= 480 ? '8px' : '10px',
+                fontSize: window.innerWidth <= 480 ? '12px' : '14px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                outline: 'none',
+                transition: 'border-color 0.2s ease',
+                background: field === 'market' && newUser.userType === 'Investor' ? '#f3f4f6' : 'white',
+              }}
+              onFocus={(e) => (e.target.style.borderColor = '#2d6b2d')}
+              onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
+            />
+          )}
         </div>
+      ))}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        gap: window.innerWidth <= 480 ? '8px' : '12px',
+        marginTop: window.innerWidth <= 480 ? '12px' : '16px'
+      }}>
+        <button
+          onClick={handleAddSave}
+          style={{
+            padding: window.innerWidth <= 480 ? '6px 16px' : '8px 20px',
+            background: '#2d6b2d',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: window.innerWidth <= 480 ? '12px' : '14px',
+            fontWeight: 500,
+            cursor: 'pointer',
+            transition: 'background 0.2s ease',
+            flex: 1,
+            maxWidth: '120px'
+          }}
+          onMouseOver={(e) => (e.target.style.background = '#4ade80')}
+          onMouseOut={(e) => (e.target.style.background = '#2d6b2d')}
+        >
+          Add User
+        </button>
+        <button
+          onClick={() => setIsAddDialogOpen(false)}
+          style={{
+            padding: window.innerWidth <= 480 ? '6px 16px' : '8px 20px',
+            background: '#f3f4f6',
+            color: '#6b7280',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: window.innerWidth <= 480 ? '12px' : '14px',
+            fontWeight: 500,
+            cursor: 'pointer',
+            transition: 'background 0.2s ease',
+            flex: 1,
+            maxWidth: '120px'
+          }}
+          onMouseOver={(e) => (e.target.style.background = '#e5e7eb')}
+          onMouseOut={(e) => (e.target.style.background = '#f3f4f6')}
+        >
+          Cancel
+        </button>
       </div>
     </div>
-  );
+  </div>
+);
 
   const MoveDialog = () => (
     <div
