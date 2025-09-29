@@ -265,7 +265,8 @@ function Traders() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="filter-group">
+            {/* <div className="filter-group"> */}
+            <div className="filter-controls">
               <div className="kyc-status-filter">
                 <select
                   value={selectedStatus}
