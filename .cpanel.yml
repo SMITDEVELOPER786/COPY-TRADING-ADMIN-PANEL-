@@ -1,0 +1,8 @@
+deployment:
+  tasks:
+    - export NODE_ENV=production
+    - cd $DEPLOYMENT_SOURCE
+    - npm install
+    - npm run build
+    - rm -rf /home/greegkar/admin.greentrutle.com/*
+    - cp -r dist/* /home/greegkar/admin.greentrutle.com/
