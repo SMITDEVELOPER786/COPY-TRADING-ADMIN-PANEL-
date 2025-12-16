@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { login } from "../services/auth.service";
 import "../Login.css";
 
 export default function Login() {
@@ -59,6 +60,7 @@ export default function Login() {
     setLoading(true);
     setShowAdminAnimation(true);
 
+    // Validation
     if (emailError) {
       setError("Please fix the email format ❌");
       setLoading(false);
@@ -73,17 +75,33 @@ export default function Login() {
       return;
     }
 
-    setTimeout(() => {
-      if (email === "admin@copytrading.com" && password === "admin1234") {
+    try {
+      // Call login API
+      const data = await login({
+        email: email.trim(),
+        password: password,
+      });
+
+      // Extract access token from response
+      // Response structure: { data: { access: "...", refresh: "...", user: {...} }, message: "...", status: "..." }
+      const token = data?.data?.access || data?.access;
+
+      // Store only the token
+      if (token) {
+        localStorage.setItem("token", token);
         localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("token", "sample-jwt-token");
+        setLoading(false);
+        setShowAdminAnimation(false);
         navigate("/");
       } else {
-        setError("Invalid email or password ❌");
+        throw new Error("No token received from server");
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError(error.message || "Invalid email or password ❌");
       setLoading(false);
       setShowAdminAnimation(false);
-    }, 5000); // 5-second animation delay
+    }
   };
 
   const handleForgotPassword = async (e) => {

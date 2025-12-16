@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { defaultUsers } from '../data/usersData';
 import UserCharts from '../components/UserCharts';
+import { getUserById } from '../services/user.service';
 import {
   FaEnvelope,
   FaBan,
@@ -18,8 +18,9 @@ import '../Users.css';
 const InvestorProfile = () => {
   const { investmentId, investorId } = useParams();
   const navigate = useNavigate();
-  const [users, setUsers] = useState(defaultUsers);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
@@ -53,43 +54,82 @@ const InvestorProfile = () => {
     },
   };
 
+  // ==================== FETCH INVESTOR DATA ====================
   useEffect(() => {
-    const user = users.find((u) => u.id === parseInt(investorId));
-    setSelectedUser(user || null);
-  }, [investorId, users]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = new FormData(e.target);
-    const userData = {
-      id: editingUser ? editingUser.id : Date.now(),
-      name: form.get('name'),
-      email: form.get('email'),
-      phone: form.get('phone') || '',
-      type: form.get('type'),
-      wallet: form.get('wallet'),
-      market: form.get('type') === 'Investor' ? '' : form.get('market'),
-      broker: form.get('broker'),
-      joined: form.get('joined'),
-      status: form.get('status'),
-      investors: form.get('investors'),
-      profit: form.get('profit'),
-      equity: form.get('equity'),
-      exp: form.get('exp'),
-      avatar: form.get('avatar'),
+    const fetchInvestor = async () => {
+      if (!investorId) return;
+      
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const response = await getUserById(investorId);
+        
+        // Transform API data to component format
+        const transformedUser = {
+          id: response._id || response.id,
+          _id: response._id,
+          name: response.username || response.name || 'N/A',
+          email: response.email || 'N/A',
+          phone: response.phone || '',
+          type: response.role || 'INVESTOR',
+          role: response.role,
+          wallet: response.wallet || response.walletAddress || '-',
+          market: response.market || '-',
+          broker: response.broker || '-',
+          joined: response.createdAt 
+            ? new Date(response.createdAt).toLocaleDateString('en-GB', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+              })
+            : '-',
+          createdAt: response.createdAt,
+          status: response.kycStatus === 'APPROVED' ? 'Active' : 
+                  response.kycStatus === 'PENDING' ? 'Deactivate' : 
+                  response.isFrozen ? 'Delete' : 'Active',
+          kycStatus: response.kycStatus,
+          isFrozen: response.isFrozen,
+          avatar: response.profileImage?.url || response.avatar || 'https://via.placeholder.com/40',
+          investors: response.investors || 0,
+          profit: response.profit || '$0',
+          equity: response.equity || '0%',
+          exp: response.exp || '-',
+          // API specific fields
+          username: response.username,
+          profileCompleted: response.profileCompleted,
+          isEmailVerified: response.isEmailVerified,
+          verificationMethod: response.verificationMethod,
+          verificationCompleted: response.verificationCompleted || {},
+          kycDocuments: response.kycDocuments || {},
+          kycReview: response.kycReview || {},
+          lastLoginAt: response.lastLoginAt,
+          updatedAt: response.updatedAt,
+        };
+        
+        setSelectedUser(transformedUser);
+      } catch (err) {
+        console.error('Error fetching investor:', err);
+        setError(err.message || 'Failed to fetch investor details');
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    if (editingUser) {
-      setUsers(users.map((u) => (u.id === editingUser.id ? userData : u)));
-    } else {
-      setUsers([...users, userData]);
-    }
+    fetchInvestor();
+  }, [investorId]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // TODO: Implement API call for update
     setShowForm(false);
     setEditingUser(null);
+    // Refresh data
+    window.location.reload();
   };
 
-  const confirmDelete = () => {
-    setUsers(users.filter((u) => u.id !== deleteUserId));
+  const confirmDelete = async () => {
+    // TODO: Implement API call for delete
     setDeleteUserId(null);
     navigate('/investments');
   };
@@ -102,8 +142,48 @@ const InvestorProfile = () => {
     console.log(`Viewing details for: ${item}`);
   };
 
+  if (isLoading) {
+    return (
+      <div className="app">
+        <main className="main-content">
+          <div style={{ padding: "40px", textAlign: "center" }}>
+            Loading investor profile...
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app">
+        <main className="main-content">
+          <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
+            Error: {error}
+            <br />
+            <button className="btn outline" onClick={() => navigate('/investments')}>
+              Back to Investors
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (!selectedUser) {
-    return <div>Loading...</div>;
+    return (
+      <div className="app">
+        <main className="main-content">
+          <div style={{ padding: "40px", textAlign: "center" }}>
+            Investor not found
+            <br />
+            <button className="btn outline" onClick={() => navigate('/investments')}>
+              Back to Investors
+            </button>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -188,6 +268,16 @@ const InvestorProfile = () => {
                 <span className="value">{selectedUser.email}</span>
               </p>
               <p>
+                <span className="label">Phone:</span>
+                <span className="value">{selectedUser.phone || '-'}</span>
+              </p>
+            </div>
+            <div className="detail-row">
+              <p>
+                <span className="label">Username:</span>
+                <span className="value">{selectedUser.username || '-'}</span>
+              </p>
+              <p>
                 <span className="label">User Type:</span>
                 <span className="value">{selectedUser.type}</span>
               </p>
@@ -207,16 +297,84 @@ const InvestorProfile = () => {
             <div className="detail-row">
               <p>
                 <span className="label">Broker:</span>
-                <span className="value">{selectedUser.broker}</span>
+                <span className="value">{selectedUser.broker || '-'}</span>
               </p>
               <p>
                 <span className="label">Joined:</span>
                 <span className="value">{selectedUser.joined}</span>
               </p>
             </div>
+            <div className="detail-row">
+              <p>
+                <span className="label">KYC Status:</span>
+                <span className={`value ${selectedUser.kycStatus === 'APPROVED' ? 'status-active' : 'status-pending'}`}>
+                  {selectedUser.kycStatus || '-'}
+                </span>
+              </p>
+              <p>
+                <span className="label">Verification Method:</span>
+                <span className="value">{selectedUser.verificationMethod || 'NONE'}</span>
+              </p>
+            </div>
+            <div className="detail-row">
+              <p>
+                <span className="label">Profile Completed:</span>
+                <span className={`value ${selectedUser.profileCompleted ? 'status-active' : 'status-pending'}`}>
+                  {selectedUser.profileCompleted ? 'Yes' : 'No'}
+                </span>
+              </p>
+              <p>
+                <span className="label">Email Verified:</span>
+                <span className={`value ${selectedUser.isEmailVerified ? 'status-active' : 'status-pending'}`}>
+                  {selectedUser.isEmailVerified ? 'Yes' : 'No'}
+                </span>
+              </p>
+            </div>
+            <div className="detail-row">
+              <p>
+                <span className="label">Account Frozen:</span>
+                <span className={`value ${selectedUser.isFrozen ? 'status-withdraw' : 'status-active'}`}>
+                  {selectedUser.isFrozen ? 'Yes' : 'No'}
+                </span>
+              </p>
+              <p>
+                <span className="label">Last Login:</span>
+                <span className="value">
+                  {selectedUser.lastLoginAt 
+                    ? new Date(selectedUser.lastLoginAt).toLocaleString()
+                    : '-'}
+                </span>
+              </p>
+            </div>
+            {selectedUser.verificationCompleted && (
+              <div className="detail-row">
+                <p>
+                  <span className="label">CNIC Verified:</span>
+                  <span className={`value ${selectedUser.verificationCompleted.cnic ? 'status-active' : 'status-pending'}`}>
+                    {selectedUser.verificationCompleted.cnic ? 'Yes' : 'No'}
+                  </span>
+                </p>
+                <p>
+                  <span className="label">Face ID Verified:</span>
+                  <span className={`value ${selectedUser.verificationCompleted.faceId ? 'status-active' : 'status-pending'}`}>
+                    {selectedUser.verificationCompleted.faceId ? 'Yes' : 'No'}
+                  </span>
+                </p>
+              </div>
+            )}
+            {selectedUser.kycReview && (
+              <div className="detail-row">
+                <p>
+                  <span className="label">KYC Review Status:</span>
+                  <span className={`value ${selectedUser.kycReview.status === 'APPROVED' ? 'status-active' : 'status-pending'}`}>
+                    {selectedUser.kycReview.status || 'PENDING'}
+                  </span>
+                </p>
+              </div>
+            )}
             <div className="actions">
               <button className="btn outline">
-                <FaIdCard /> View KYC
+                <FaIdCard /> View KYC Documents
               </button>
               <button className="btn outline">
                 <FaPhone /> Contact Info

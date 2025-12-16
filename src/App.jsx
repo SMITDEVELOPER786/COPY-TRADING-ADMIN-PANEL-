@@ -5,6 +5,7 @@ import Teams from "./pages/Teams";
 import Reports from "./pages/Reports";
 import KYC from "./pages/KYC";
 import Users from "./pages/Users";
+import Investors from "./pages/Investors";
 import Traders from "./pages/Traders";
 import Messages from "./pages/Messages";
 import Settings from "./pages/Settings";
@@ -31,13 +32,14 @@ function App() {
               <Sidebar />
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/investments" element={<Investments />} />
+                <Route path="/investments" element={<Investors />} />
                 <Route path="/investment/:investmentId/investor/:investorId" element={<InvestorProfile />} />
                 <Route path="/team" element={<Teams />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/kyc" element={<KYC />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/users/:id" element={<Users />} />
+                <Route path="/investors" element={<Investors />} />
                 <Route path="/trader" element={<Traders />} />
                 <Route path="/profile/:id" element={<Profile />} />
                 <Route path="/messages" element={<Messages />} />

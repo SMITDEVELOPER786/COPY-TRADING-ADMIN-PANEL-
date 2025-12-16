@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../Users.css";
 import UserCharts from "../components/UserCharts";
@@ -14,184 +14,10 @@ import {
   FaChartLine
 } from "react-icons/fa";
 import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2, Activity, X } from "lucide-react";
+import { getUsers } from "../services/user.service";
 
-const STORAGE_KEY = "users_data";
-
-const defaultUsers = [
-  {
-    id: 1,
-    name: "Maria Khan",
-    email: "maria.khan@example.com",
-    phone: "+923331111111",
-    type: "Investor",
-    wallet: "fkdjf9393kdkd9393",
-    market: "",
-    broker: "Fidelity",
-    joined: "29 June 2023",
-    status: "Active",
-    investors: 15,
-    profit: "$1.8M",
-    equity: "40%",
-    exp: "3-4 years",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-  },
-  {
-    id: 2,
-    name: "Ali Raza",
-    email: "ali.raza@example.com",
-    phone: "+923341111111",
-    type: "Trader",
-    wallet: "xyz789abc123",
-    market: "Stocks",
-    broker: "E*TRADE",
-    joined: "02 July 2023",
-    status: "Deactivate",
-    investors: 8,
-    profit: "$900K",
-    equity: "25%",
-    exp: "1-2 years",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  {
-    id: 3,
-    name: "John Smith",
-    email: "john.smith@example.com",
-    phone: "+923351111111",
-    type: "Trader",
-    wallet: "jhs789kdkd9393",
-    market: "Crypto",
-    broker: "Coinbase",
-    joined: "10 July 2023",
-    status: "Active",
-    investors: 20,
-    profit: "$3.2M",
-    equity: "50%",
-    exp: "5+ years",
-    avatar: "https://randomuser.me/api/portraits/men/12.jpg",
-  },
-  {
-    id: 4,
-    name: "Emma Brown",
-    email: "emma.brown@example.com",
-    phone: "+923361111111",
-    type: "Investor",
-    wallet: "emmb987xyz456",
-    market: "",
-    broker: "Vanguard",
-    joined: "15 July 2023",
-    status: "Active",
-    investors: 10,
-    profit: "$1.5M",
-    equity: "30%",
-    exp: "2-3 years",
-    avatar: "https://randomuser.me/api/portraits/women/65.jpg",
-  },
-  {
-    id: 5,
-    name: "David Johnson",
-    email: "david.j@example.com",
-    phone: "+923371111111",
-    type: "Trader",
-    wallet: "dj789kdkd1234",
-    market: "Stocks",
-    broker: "TD Ameritrade",
-    joined: "20 July 2023",
-    status: "Deactivate",
-    investors: 5,
-    profit: "$600K",
-    equity: "20%",
-    exp: "1 year",
-    avatar: "https://randomuser.me/api/portraits/men/28.jpg",
-  },
-  {
-    id: 6,
-    name: "Sophia Martinez",
-    email: "sophia.martinez@example.com",
-    phone: "+923381111111",
-    type: "Investor",
-    wallet: "sm987xyz789",
-    market: "",
-    broker: "Schwab",
-    joined: "22 July 2023",
-    status: "Active",
-    investors: 7,
-    profit: "$800K",
-    equity: "28%",
-    exp: "1-2 years",
-    avatar: "https://randomuser.me/api/portraits/women/50.jpg",
-  },
-  {
-    id: 7,
-    name: "William Lee",
-    email: "william.lee@example.com",
-    phone: "+923391111111",
-    type: "Trader",
-    wallet: "wl456kdkd789",
-    market: "Forex",
-    broker: "IG",
-    joined: "25 July 2023",
-    status: "Delete",
-    investors: 3,
-    profit: "$400K",
-    equity: "15%",
-    exp: "6 months",
-    avatar: "https://randomuser.me/api/portraits/men/41.jpg",
-  },
-  {
-    id: 8,
-    name: "Olivia Davis",
-    email: "olivia.davis@example.com",
-    phone: "+923401111111",
-    type: "Investor",
-    wallet: "od789xyz123",
-    market: "",
-    broker: "Fidelity",
-    joined: "28 July 2023",
-    status: "Active",
-    investors: 18,
-    profit: "$2.7M",
-    equity: "45%",
-    exp: "4-5 years",
-    avatar: "https://randomuser.me/api/portraits/women/22.jpg",
-  },
-  {
-    id: 9,
-    name: "James Wilson",
-    email: "james.wilson@example.com",
-    phone: "+923411111111",
-    type: "Trader",
-    wallet: "jw123kdkd456",
-    market: "Crypto",
-    broker: "Binance",
-    joined: "01 August 2023",
-    status: "Active",
-    investors: 25,
-    profit: "$4.1M",
-    equity: "60%",
-    exp: "6+ years",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
-  },
-  {
-    id: 10,
-    name: "Ava Thompson",
-    email: "ava.thompson@example.com",
-    phone: "+923421111111",
-    type: "Investor",
-    wallet: "at456xyz789",
-    market: "",
-    broker: "FXCM",
-    joined: "05 August 2023",
-    status: "Deactivate",
-    investors: 6,
-    profit: "$700K",
-    equity: "22%",
-    exp: "1 year",
-    avatar: "https://randomuser.me/api/portraits/women/12.jpg",
-  },
-];
 
 const Users = () => {
-  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
@@ -208,6 +34,103 @@ const Users = () => {
   const navigate = useNavigate();
 
   const itemsPerPage = 10;
+
+  // ==================== STATE MANAGEMENT ====================
+  const [usersData, setUsersData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // ==================== HELPER FUNCTIONS ====================
+  
+  /**
+   * Transform API user data to component format
+   */
+  const transformUserData = (apiUser) => {
+    return {
+      id: apiUser._id || apiUser.id,
+      _id: apiUser._id,
+      name: apiUser.username || apiUser.name || apiUser.fullName || 'N/A',
+      email: apiUser.email || 'N/A',
+      phone: apiUser.phone || '',
+      type: apiUser.role || 'INVESTOR',
+      role: apiUser.role,
+      wallet: apiUser.wallet || apiUser.walletAddress || '-',
+      market: apiUser.market || '-',
+      broker: apiUser.broker || '-',
+      joined: apiUser.createdAt 
+        ? new Date(apiUser.createdAt).toLocaleDateString('en-GB', { 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric' 
+          })
+        : '-',
+      createdAt: apiUser.createdAt,
+      status: apiUser.kycStatus === 'APPROVED' ? 'Active' : 
+              apiUser.kycStatus === 'PENDING' ? 'Deactivate' : 
+              apiUser.isFrozen ? 'Delete' : 'Active',
+      kycStatus: apiUser.kycStatus,
+      isFrozen: apiUser.isFrozen,
+      avatar: apiUser.profileImage?.url || apiUser.avatar || apiUser.profilePicture || 'https://via.placeholder.com/40',
+      investors: apiUser.investors || 0,
+      profit: apiUser.profit || '$0',
+      equity: apiUser.equity || '0%',
+      exp: apiUser.exp || '-',
+    };
+  };
+
+  /**
+   * Fetch users from API
+   */
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Pass empty role to get all users, then filter client-side
+      const response = await getUsers({
+        role: '',
+        all: true,
+      });
+      
+      setUsersData(response);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError(err.message || 'Failed to fetch users');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ==================== DATA TRANSFORMATION ====================
+  
+  /**
+   * Extract and transform users from API response
+   */
+  const users = useMemo(() => {
+    if (!usersData) return [];
+    
+    // API structure: { status: 'success', message: '...', data: { users: [...], total: 2, count: 2 } }
+    let apiUsers = [];
+    
+    // Handle nested structure: usersData.data.users
+    if (usersData.data && usersData.data.users && Array.isArray(usersData.data.users)) {
+      apiUsers = usersData.data.users;
+    } else if (usersData.users && Array.isArray(usersData.users)) {
+      apiUsers = usersData.users;
+    } else if (usersData.data && Array.isArray(usersData.data)) {
+      apiUsers = usersData.data;
+    } else if (Array.isArray(usersData)) {
+      apiUsers = usersData;
+    }
+    
+    // Filter to show only INVESTOR or TRADER roles
+    const filteredApiUsers = apiUsers.filter(
+      user => user.role === 'INVESTOR' || user.role === 'TRADER'
+    );
+    
+    // Transform to component format
+    return filteredApiUsers.map(transformUserData);
+  }, [usersData]);
 
   // Investor Metrics for Dialog
   const investorMetrics = {
@@ -258,12 +181,21 @@ const Users = () => {
     return null;
   };
 
-  // Fixed date matching function
+  // Date matching function - handles both formatted dates and ISO dates
   const isDateMatch = (joinedStr, searchDate) => {
-    if (!searchDate) return true;
+    if (!searchDate || !joinedStr) return true;
     
-    const joinedDate = parseJoinedDate(joinedStr);
-    if (!joinedDate) return false;
+    // Try to parse as ISO date first (from API)
+    let joinedDate = null;
+    if (joinedStr.includes('T') || joinedStr.includes('-')) {
+      // ISO format from API
+      joinedDate = new Date(joinedStr);
+    } else {
+      // Formatted date string
+      joinedDate = parseJoinedDate(joinedStr);
+    }
+    
+    if (!joinedDate || isNaN(joinedDate.getTime())) return false;
     
     const year = joinedDate.getFullYear().toString();
     const month = String(joinedDate.getMonth() + 1).padStart(2, '0');
@@ -271,54 +203,51 @@ const Users = () => {
     
     // Support different search formats
     if (searchDate.length === 4) {
-      // Year only: "2023"
       return year === searchDate;
     } else if (searchDate.length === 7 && searchDate.includes('-')) {
-      // Year-Month: "2023-07"
       return `${year}-${month}` === searchDate;
     } else if (searchDate.length === 10 && searchDate.includes('-')) {
-      // Full date: "2023-07-29"
       return `${year}-${month}-${day}` === searchDate;
-    } else if (searchDate.length <= 2) {
-      // Day only: "29"
-      return day === searchDate.padStart(2, '0');
     } else {
-      // Partial text search in original format
       return joinedStr.toLowerCase().includes(searchDate.toLowerCase());
     }
   };
 
-  // Load from localStorage
+  // ==================== API CALLS ====================
+  
+  // Fetch users on component mount
   useEffect(() => {
-    const storedUsers = localStorage.getItem(STORAGE_KEY);
-    if (storedUsers) {
-      setUsers(JSON.parse(storedUsers));
-    } else {
-      setUsers(defaultUsers);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUsers));
-    }
+    fetchUsers();
   }, []);
 
-  // Save to localStorage
+  // ==================== FILTERS & PAGINATION ====================
+  
+  // Reset to page 1 when filters change
   useEffect(() => {
-    if (users.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    }
-  }, [users]);
+    setCurrentPage(1);
+  }, [searchTerm, selectedStatus, selectedDate]);
 
   // Dynamic Profile: Check if viewing a specific user
   useEffect(() => {
     const userId = params.id;
-    if (userId) {
-      const user = users.find((u) => u.id === parseInt(userId));
+    if (userId && users.length > 0) {
+      // Try to find by id (could be number or string)
+      const user = users.find((u) => 
+        u.id === parseInt(userId) || 
+        u.id === userId || 
+        u._id === userId ||
+        String(u.id) === String(userId)
+      );
       setSelectedUser(user || null);
     } else {
       setSelectedUser(null);
     }
   }, [params.id, users]);
 
+  // ==================== EVENT HANDLERS ====================
+  
   // Handle Add/Edit user submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = new FormData(e.target);
     const userData = {
@@ -339,22 +268,20 @@ const Users = () => {
       avatar: form.get("avatar"),
     };
 
-    if (editingUser) {
-      setUsers(users.map((u) => (u.id === editingUser.id ? userData : u)));
-    } else {
-      setUsers([...users, userData]);
-    }
+    // TODO: Implement API call for create/update user
     setShowForm(false);
     setEditingUser(null);
+    fetchUsers(); // Refresh data
   };
 
   // Confirm delete
-  const confirmDelete = () => {
-    setUsers(users.filter((u) => u.id !== deleteUserId));
+  const confirmDelete = async () => {
+    // TODO: Implement API call for delete user
     setDeleteUserId(null);
-    if (selectedUser && selectedUser.id === deleteUserId) {
+    if (selectedUser && (selectedUser.id === deleteUserId || selectedUser._id === deleteUserId)) {
       navigate("/users");
     }
+    fetchUsers(); // Refresh data
   };
 
   // Toggle dropdown menu
@@ -364,38 +291,46 @@ const Users = () => {
 
   // Handle actions (View, Edit, Remove)
   const handleAction = (user, action) => {
+    const userId = user.id || user._id;
     if (action === "view") {
-      if (user.type === "Trader") {
-        navigate(`/profile/${user.id}`);
+      if (user.type === "Trader" || user.role === "TRADER") {
+        navigate(`/profile/${userId}`);
       } else {
-        navigate(`/users/${user.id}`);
+        navigate(`/users/${userId}`);
       }
     } else if (action === "edit") {
       setEditingUser(user);
       setShowForm(true);
     } else if (action === "remove") {
-      setDeleteUserId(user.id);
+      setDeleteUserId(userId);
     }
     setMenuOpen(null);
   };
 
-  // Fixed filtered users with improved date filtering
-  const filteredUsers = users.filter((user) => {
-    const searchMatch =
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const statusMatch = selectedStatus === "" || user.status === selectedStatus;
-    
-    const dateMatch = isDateMatch(user.joined, selectedDate);
-    
-    return searchMatch && statusMatch && dateMatch;
-  });
+  // Filter users by search, status, and date
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      // Search filter
+      const searchMatch = !searchTerm || 
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Status filter
+      const statusMatch = !selectedStatus || user.status === selectedStatus;
+      
+      // Date filter - check both formatted date and raw createdAt
+      const dateMatch = !selectedDate || 
+        (user.joined && isDateMatch(user.joined, selectedDate)) ||
+        (user.createdAt && isDateMatch(user.createdAt, selectedDate));
+      
+      return searchMatch && statusMatch && dateMatch;
+    });
+  }, [users, searchTerm, selectedStatus, selectedDate]);
 
+  // Paginate filtered results (client-side pagination)
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+  const currentUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
 
   // Get status class
   const getStatusClass = (status) => {
@@ -1041,106 +976,134 @@ const Users = () => {
         </div>
 
         <div className="table-container">
-          <table className="team-table">
-            <thead>
-              <tr>
-                <th>Member</th>
-                <th>Email</th>
-                <th>Type</th>
-                <th>Wallet</th>
-                <th>Market</th>
-                <th>Joined</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentUsers.map((user, index) => (
-                <tr key={user.id}>
-                  <td data-label="Member">
-                    <div className="user-cell">
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="user-avatar"
-                      />
-                      <span className="user-name">{user.name}</span>
-                    </div>
-                  </td>
-                  <td data-label="Email">{user.email}</td>
-                  <td data-label="Type">{user.type}</td>
-                  <td data-label="Wallet">{user.wallet}</td>
-                  <td data-label="Market">{user.market || '-'}</td>
-                  <td data-label="Joined">{user.joined}</td>
-                  <td data-label="Status">
-                    <span className={`status-badge ${getStatusClass(user.status)}`}>
-                      {user.status}
-                    </span>
-                  </td>
-                  <td data-label="Actions" className="team-actions">
-                    <div className="team-action-menu">
-                      <button
-                        className="team-action-btn"
-                        onClick={() => toggleMenu(user.id)}
-                      >
-                        <MoreHorizontal size={16} />
-                      </button>
-                      {menuOpen === user.id && (
-                        <div
-                          className={`team-dropdown-menu ${
-                            index >= currentUsers.length - 2 ? "drop-up" : ""
-                          }`}
-                        >
-                          <button onClick={() => handleAction(user, "view")}>
-                            <Eye size= {14} /> View Profile
-                          </button>
-                          <button onClick={() => handleAction(user, "edit")}>
-                            <Edit size={14} /> Edit
-                          </button>
-                          <button onClick={() => handleAction(user, "remove")}>
-                            <Trash2 size={14} /> Remove
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
+          {isLoading && (
+            <div style={{ padding: "20px", textAlign: "center" }}>
+              Loading investors...
+            </div>
+          )}
+          {error && (
+            <div style={{ padding: "20px", textAlign: "center", color: "red" }}>
+              Error loading investors: {error.message}
+            </div>
+          )}
+          {!isLoading && !error && (
+            <table className="team-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Email</th>
+                  <th>Type</th>
+                  <th>Wallet</th>
+                  <th>Market</th>
+                  <th>Joined</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" style={{ textAlign: "center", padding: "20px" }}>
+                      No investors found
+                    </td>
+                  </tr>
+                ) : (
+                  currentUsers.map((user, index) => (
+                <tr key={user.id}>
+                    <td data-label="Member">
+                      <div className="user-cell">
+                        <img
+                          src={user.avatar}
+                          alt={user.name}
+                          className="user-avatar"
+                        />
+                        <span className="user-name">{user.name}</span>
+                      </div>
+                    </td>
+                    <td data-label="Email">{user.email}</td>
+                    <td data-label="Type">{user.type}</td>
+                    <td data-label="Wallet">{user.wallet}</td>
+                    <td data-label="Market">{user.market}</td>
+                    <td data-label="Joined">{user.joined}</td>
+                    <td data-label="Status">
+                      <span className={`status-badge ${getStatusClass(user.status)}`}>
+                        {user.status}
+                      </span>
+                    </td>
+                    <td data-label="Actions" className="team-actions">
+                      <div className="team-action-menu">
+                        <button
+                          className="team-action-btn"
+                          onClick={() => toggleMenu(user.id || user._id)}
+                        >
+                          <MoreHorizontal size={16} />
+                        </button>
+                        {menuOpen === (user.id || user._id) && (
+                          <div
+                            className={`team-dropdown-menu ${
+                              index >= currentUsers.length - 2 ? "drop-up" : ""
+                            }`}
+                          >
+                            <button onClick={() => handleAction(user, "view")}>
+                              <Eye size={14} /> View Profile
+                            </button>
+                            <button onClick={() => handleAction(user, "edit")}>
+                              <Edit size={14} /> Edit
+                            </button>
+                            <button onClick={() => handleAction(user, "remove")}>
+                              <Trash2 size={14} /> Remove
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <div className="table-footer">
           <div className="showing-info">
-            Showing: {Math.min(filteredUsers.length, itemsPerPage)} of {filteredUsers.length} Entries
+            {isLoading ? (
+              "Loading..."
+            ) : error ? (
+              `Error: ${error}`
+            ) : (
+              `Showing: ${currentUsers.length} of ${filteredUsers.length}${usersData?.data?.total ? ` (Total: ${usersData.data.total})` : usersData?.total ? ` (Total: ${usersData.total})` : ''} Entries`
+            )}
           </div>
-          <div className="pagination">
-            <button
-              className="pagination-button"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-            >
-              Prev
-            </button>
-            <div className="pagination-numbers">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i + 1}
-                  className={`pagination-number ${i + 1 === currentPage ? "active" : ""}`}
-                  onClick={() => setCurrentPage(i + 1)}
-                >
-                  {i + 1}
-                </button>
-              ))}
+          {!isLoading && !error && totalPages > 0 && (
+            <div className="pagination">
+              <button
+                className="pagination-button"
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+              >
+                Prev
+              </button>
+              <div className="pagination-numbers">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    className={`pagination-number ${i + 1 === currentPage ? "active" : ""}`}
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="pagination-button"
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
             </div>
-            <button
-              className="pagination-button"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+          )}
         </div>
 
         {/* Modals */}
