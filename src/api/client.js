@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://backend.greentrutle.com';
+const API_BASE_URL = 'http://localhost:5000/admin';
 
 /**
  * API Client with error handling and interceptors

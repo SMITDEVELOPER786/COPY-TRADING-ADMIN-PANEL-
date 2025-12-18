@@ -12,7 +12,7 @@ import {
   FaEdit,
   FaPlus,
 } from "react-icons/fa";
-import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2, FileText } from "lucide-react";
 
 const Investors = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,6 +20,7 @@ const Investors = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [menuOpen, setMenuOpen] = useState(null);
+  const [activeTab, setActiveTab] = useState("all"); // "all", "kyc-approval", "kyc-submit"
   const params = useParams();
   const navigate = useNavigate();
 
@@ -56,7 +57,7 @@ const Investors = () => {
         : '-',
       createdAt: apiUser.createdAt,
       status: apiUser.kycStatus === 'APPROVED' ? 'Active' : 
-              apiUser.kycStatus === 'PENDING' ? 'Deactivate' : 
+              apiUser.kycStatus === 'PENDING' ? 'PENDING' : 
               apiUser.isFrozen ? 'Delete' : 'Active',
       kycStatus: apiUser.kycStatus,
       isFrozen: apiUser.isFrozen,
@@ -65,6 +66,8 @@ const Investors = () => {
       profit: apiUser.profit || '$0',
       equity: apiUser.equity || '0%',
       exp: apiUser.exp || '-',
+      kycDocuments: apiUser.kycDocuments || {},
+      kycReview: apiUser.kycReview || {},
     };
   };
 
@@ -193,7 +196,15 @@ const Investors = () => {
   
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedStatus, selectedDate]);
+  }, [searchTerm, selectedStatus, selectedDate, activeTab]);
+
+  // Check if user has submitted KYC documents
+  const hasKycDocuments = (user) => {
+    const docs = user.kycDocuments || {};
+    return !!(docs.cnicFront?.url || docs.cnicFront?.filename || 
+              docs.cnicBack?.url || docs.cnicBack?.filename || 
+              docs.facePicture?.url || docs.facePicture?.filename);
+  };
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -207,9 +218,19 @@ const Investors = () => {
         (user.joined && isDateMatch(user.joined, selectedDate)) ||
         (user.createdAt && isDateMatch(user.createdAt, selectedDate));
       
-      return searchMatch && statusMatch && dateMatch;
+      // Tab-based filtering
+      let tabMatch = true;
+      if (activeTab === "kyc-approval") {
+        // Show users with KYC status (APPROVED, PENDING, REJECTED, etc.)
+        tabMatch = !!(user.kycStatus && user.kycStatus !== '');
+      } else if (activeTab === "kyc-submit") {
+        // Show users who have submitted KYC documents
+        tabMatch = hasKycDocuments(user);
+      }
+      
+      return searchMatch && statusMatch && dateMatch && tabMatch;
     });
-  }, [users, searchTerm, selectedStatus, selectedDate]);
+  }, [users, searchTerm, selectedStatus, selectedDate, activeTab]);
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -226,6 +247,9 @@ const Investors = () => {
     if (action === "view") {
       // Navigate to investor profile
       navigate(`/investment/1/investor/${userId}`);
+    } else if (action === "viewKyc") {
+      // Navigate to investor profile with KYC tab focus
+      navigate(`/investment/1/investor/${userId}?tab=kyc`);
     } else if (action === "edit") {
       // TODO: Implement edit
       console.log('Edit user:', user);
@@ -237,6 +261,7 @@ const Investors = () => {
   };
 
   const getStatusClass = (status) => {
+    console.log('Status:', status);
     switch (status) {
       case "Active":
         return "status-active";
@@ -258,6 +283,28 @@ const Investors = () => {
           <h2 className="page-title">
             Investors <span className="sub-title">› Investor List</span>
           </h2>
+        </div>
+
+        {/* Tabs */}
+        <div className="investor-tabs-container">
+          <button
+            className={`investor-tab ${activeTab === "all" ? "active" : ""}`}
+            onClick={() => setActiveTab("all")}
+          >
+            All Investors
+          </button>
+          <button
+            className={`investor-tab ${activeTab === "kyc-approval" ? "active" : ""}`}
+            onClick={() => setActiveTab("kyc-approval")}
+          >
+            KYC Approval
+          </button>
+          <button
+            className={`investor-tab ${activeTab === "kyc-submit" ? "active" : ""}`}
+            onClick={() => setActiveTab("kyc-submit")}
+          >
+            KYC Submit Type
+          </button>
         </div>
 
         <div className="filters-container">
@@ -371,6 +418,11 @@ const Investors = () => {
                               <button onClick={() => handleAction(user, "view")}>
                                 <Eye size={14} /> View Profile
                               </button>
+                              {hasKycDocuments(user) && (
+                                <button onClick={() => handleAction(user, "viewKyc")}>
+                                  <FileText size={14} /> View KYC
+                                </button>
+                              )}
                               <button onClick={() => handleAction(user, "edit")}>
                                 <Edit size={14} /> Edit
                               </button>

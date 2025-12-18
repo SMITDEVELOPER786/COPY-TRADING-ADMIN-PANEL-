@@ -25,8 +25,10 @@ const InvestorProfile = () => {
   const [showForm, setShowForm] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
   const [activeTab, setActiveTab] = useState('investments');
+  const [kycTab, setKycTab] = useState('documents'); // 'documents' or 'status'
   const [showMetricsDialog, setShowMetricsDialog] = useState(false);
   const [showRoiDialog, setShowRoiDialog] = useState(false);
+  const [showKycDialog, setShowKycDialog] = useState(false);
 
   const investorMetrics = {
     portfolioValue: selectedUser ? parseFloat(selectedUser.profit.replace('$', '').replace('M', '')) * 1000000 : 0,
@@ -65,46 +67,49 @@ const InvestorProfile = () => {
         
         const response = await getUserById(investorId);
         
+        // API structure: { status: 'success', message: '...', data: { ...user data... } }
+        const userData = response.data || response;
+        
         // Transform API data to component format
         const transformedUser = {
-          id: response._id || response.id,
-          _id: response._id,
-          name: response.username || response.name || 'N/A',
-          email: response.email || 'N/A',
-          phone: response.phone || '',
-          type: response.role || 'INVESTOR',
-          role: response.role,
-          wallet: response.wallet || response.walletAddress || '-',
-          market: response.market || '-',
-          broker: response.broker || '-',
-          joined: response.createdAt 
-            ? new Date(response.createdAt).toLocaleDateString('en-GB', { 
+          id: userData._id || userData.id,
+          _id: userData._id,
+          name: userData.username || userData.name || 'N/A',
+          email: userData.email || 'N/A',
+          phone: userData.phone || '',
+          type: userData.role || 'INVESTOR',
+          role: userData.role,
+          wallet: userData.wallet || userData.walletAddress || '-',
+          market: userData.market || '-',
+          broker: userData.broker || '-',
+          joined: userData.createdAt 
+            ? new Date(userData.createdAt).toLocaleDateString('en-GB', { 
                 day: 'numeric', 
                 month: 'long', 
                 year: 'numeric' 
               })
             : '-',
-          createdAt: response.createdAt,
-          status: response.kycStatus === 'APPROVED' ? 'Active' : 
-                  response.kycStatus === 'PENDING' ? 'Deactivate' : 
-                  response.isFrozen ? 'Delete' : 'Active',
-          kycStatus: response.kycStatus,
-          isFrozen: response.isFrozen,
-          avatar: response.profileImage?.url || response.avatar || 'https://via.placeholder.com/40',
-          investors: response.investors || 0,
-          profit: response.profit || '$0',
-          equity: response.equity || '0%',
-          exp: response.exp || '-',
+          createdAt: userData.createdAt,
+          status: userData.kycStatus === 'APPROVED' ? 'APPROVED' : 
+                  userData.kycStatus === 'PENDING' ? 'PENDING' : 
+                  userData.isFrozen ? 'Delete' : 'Active',
+          kycStatus: userData.kycStatus,
+          isFrozen: userData.isFrozen,
+          avatar: userData.profileImage?.url || userData.avatar || 'https://via.placeholder.com/40',
+          investors: userData.investors || 0,
+          profit: userData.profit || '$0',
+          equity: userData.equity || '0%',
+          exp: userData.exp || '-',
           // API specific fields
-          username: response.username,
-          profileCompleted: response.profileCompleted,
-          isEmailVerified: response.isEmailVerified,
-          verificationMethod: response.verificationMethod,
-          verificationCompleted: response.verificationCompleted || {},
-          kycDocuments: response.kycDocuments || {},
-          kycReview: response.kycReview || {},
-          lastLoginAt: response.lastLoginAt,
-          updatedAt: response.updatedAt,
+          username: userData.username,
+          profileCompleted: userData.profileCompleted,
+          isEmailVerified: userData.isEmailVerified,
+          verificationMethod: userData.verificationMethod,
+          verificationCompleted: userData.verificationCompleted || {},
+          kycDocuments: userData.kycDocuments || {},
+          kycReview: userData.kycReview || {},
+          lastLoginAt: userData.lastLoginAt,
+          updatedAt: userData.updatedAt,
         };
         
         setSelectedUser(transformedUser);
@@ -373,7 +378,10 @@ const InvestorProfile = () => {
               </div>
             )}
             <div className="actions">
-              <button className="btn outline">
+              <button 
+                className="btn outline"
+                onClick={() => setShowKycDialog(true)}
+              >
                 <FaIdCard /> View KYC Documents
               </button>
               <button className="btn outline">
@@ -494,6 +502,253 @@ const InvestorProfile = () => {
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* KYC Documents Section */}
+        <div className="container" style={{ marginTop: '40px' }}>
+          <h3 className="strategy-title">KYC Documents</h3>
+          <div className="tabs-container">
+            <div className="tabs">
+              <button
+                className={`tabs ${kycTab === 'documents' ? 'active' : ''}`}
+                onClick={() => setKycTab('documents')}
+              >
+                Documents
+              </button>
+              <button
+                className={`tabs ${kycTab === 'status' ? 'active' : ''}`}
+                onClick={() => setKycTab('status')}
+              >
+                Document Status
+              </button>
+            </div>
+          </div>
+
+          {/* Documents Tab */}
+          <div className={`tab-content-wrapper ${kycTab === 'documents' ? 'active' : ''}`}>
+            {kycTab === 'documents' && (
+              <div className="tab-content">
+                <h4 className="content-title">Uploaded Documents</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginTop: '20px' }}>
+                  {/* CNIC Front */}
+                  <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px', background: '#fff' }}>
+                    <h5 style={{ marginBottom: '10px' }}>CNIC Front</h5>
+                    {selectedUser?.kycDocuments?.cnicFront?.url || selectedUser?.kycDocuments?.cnicFront?.filename ? (
+                      <div>
+                        <img 
+                          src={selectedUser.kycDocuments.cnicFront.url ? 
+                            (selectedUser.kycDocuments.cnicFront.url.startsWith('http') ? 
+                              selectedUser.kycDocuments.cnicFront.url : 
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicFront.url}`) : 
+                            'https://via.placeholder.com/300x200?text=CNIC+Front'} 
+                          alt="CNIC Front" 
+                          style={{ width: '100%', height: 'auto', borderRadius: '4px', marginBottom: '10px' }}
+                        />
+                        <p style={{ fontSize: '12px', color: '#666' }}>
+                          Uploaded: {selectedUser.kycDocuments.cnicFront.uploadedAt ? 
+                            new Date(selectedUser.kycDocuments.cnicFront.uploadedAt).toLocaleDateString() : 
+                            'N/A'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                        <p style={{ fontStyle: 'italic' }}>No document uploaded</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* CNIC Back */}
+                  <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px', background: '#fff' }}>
+                    <h5 style={{ marginBottom: '10px' }}>CNIC Back</h5>
+                    {selectedUser?.kycDocuments?.cnicBack?.url || selectedUser?.kycDocuments?.cnicBack?.filename ? (
+                      <div>
+                        <img 
+                          src={selectedUser.kycDocuments.cnicBack.url ? 
+                            (selectedUser.kycDocuments.cnicBack.url.startsWith('http') ? 
+                              selectedUser.kycDocuments.cnicBack.url : 
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicBack.url}`) : 
+                            'https://via.placeholder.com/300x200?text=CNIC+Back'} 
+                          alt="CNIC Back" 
+                          style={{ width: '100%', height: 'auto', borderRadius: '4px', marginBottom: '10px' }}
+                        />
+                        <p style={{ fontSize: '12px', color: '#666' }}>
+                          Uploaded: {selectedUser.kycDocuments.cnicBack.uploadedAt ? 
+                            new Date(selectedUser.kycDocuments.cnicBack.uploadedAt).toLocaleDateString() : 
+                            'N/A'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                        <p style={{ fontStyle: 'italic' }}>No document uploaded</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Face Picture */}
+                  <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px', background: '#fff' }}>
+                    <h5 style={{ marginBottom: '10px' }}>Face Picture</h5>
+                    {selectedUser?.kycDocuments?.facePicture?.url || selectedUser?.kycDocuments?.facePicture?.filename ? (
+                      <div>
+                        <img 
+                          src={selectedUser.kycDocuments.facePicture.url ? 
+                            (selectedUser.kycDocuments.facePicture.url.startsWith('http') ? 
+                              selectedUser.kycDocuments.facePicture.url : 
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.facePicture.url}`) : 
+                            'https://via.placeholder.com/300x300?text=Face+Picture'} 
+                          alt="Face Picture" 
+                          style={{ width: '100%', height: 'auto', borderRadius: '4px', marginBottom: '10px' }}
+                        />
+                        <p style={{ fontSize: '12px', color: '#666' }}>
+                          Uploaded: {selectedUser.kycDocuments.facePicture.uploadedAt ? 
+                            new Date(selectedUser.kycDocuments.facePicture.uploadedAt).toLocaleDateString() : 
+                            'N/A'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                        <p style={{ fontStyle: 'italic' }}>No document uploaded</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Document Status Tab */}
+          <div className={`tab-content-wrapper ${kycTab === 'status' ? 'active' : ''}`}>
+            {kycTab === 'status' && (
+              <div className="tab-content">
+                <h4 className="content-title">Document Status</h4>
+                <table className="transactions-table" style={{ marginTop: '20px' }}>
+                  <thead>
+                    <tr>
+                      <th>Document Type</th>
+                      <th>Uploaded</th>
+                      <th>Verification Status</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* CNIC Front Status */}
+                    <tr>
+                      <td><strong>CNIC Front</strong></td>
+                      <td>
+                        {selectedUser?.kycDocuments?.cnicFront?.url || selectedUser?.kycDocuments?.cnicFront?.filename ? (
+                          <span className="status-actives">Yes</span>
+                        ) : (
+                          <span style={{ color: '#999', fontStyle: 'italic' }}>Not Uploaded</span>
+                        )}
+                      </td>
+                      <td>
+                        {selectedUser?.kycDocuments?.cnicFront?.verified ? (
+                          <span className="status-actives">Verified</span>
+                        ) : (
+                          <span className="status-pendings">Not Verified</span>
+                        )}
+                      </td>
+                      <td>
+                        {selectedUser?.kycDocuments?.cnicFront?.url || selectedUser?.kycDocuments?.cnicFront?.filename ? (
+                          <span className="status-actives">Uploaded</span>
+                        ) : (
+                          <span style={{ color: '#999' }}>Pending</span>
+                        )}
+                      </td>
+                    </tr>
+
+                    {/* CNIC Back Status */}
+                    <tr>
+                      <td><strong>CNIC Back</strong></td>
+                      <td>
+                        {selectedUser?.kycDocuments?.cnicBack?.url || selectedUser?.kycDocuments?.cnicBack?.filename ? (
+                          <span className="status-actives">Yes</span>
+                        ) : (
+                          <span style={{ color: '#999', fontStyle: 'italic' }}>Not Uploaded</span>
+                        )}
+                      </td>
+                      <td>
+                        {selectedUser?.kycDocuments?.cnicBack?.verified ? (
+                          <span className="status-actives">Verified</span>
+                        ) : (
+                          <span className="status-pendings">Not Verified</span>
+                        )}
+                      </td>
+                      <td>
+                        {selectedUser?.kycDocuments?.cnicBack?.url || selectedUser?.kycDocuments?.cnicBack?.filename ? (
+                          <span className="status-actives">Uploaded</span>
+                        ) : (
+                          <span style={{ color: '#999' }}>Pending</span>
+                        )}
+                      </td>
+                    </tr>
+
+                    {/* Face Picture Status */}
+                    <tr>
+                      <td><strong>Face Picture</strong></td>
+                      <td>
+                        {selectedUser?.kycDocuments?.facePicture?.url || selectedUser?.kycDocuments?.facePicture?.filename ? (
+                          <span className="status-actives">Yes</span>
+                        ) : (
+                          <span style={{ color: '#999', fontStyle: 'italic' }}>Not Uploaded</span>
+                        )}
+                      </td>
+                      <td>
+                        {selectedUser?.kycDocuments?.facePicture?.verified ? (
+                          <span className="status-actives">Verified</span>
+                        ) : (
+                          <span className="status-pendings">Not Verified</span>
+                        )}
+                      </td>
+                      <td>
+                        {selectedUser?.kycDocuments?.facePicture?.url || selectedUser?.kycDocuments?.facePicture?.filename ? (
+                          <span className="status-actives">Uploaded</span>
+                        ) : (
+                          <span style={{ color: '#999' }}>Pending</span>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                {/* Overall KYC Status */}
+                <div style={{ marginTop: '30px', padding: '20px', background: '#f5f5f5', borderRadius: '8px' }}>
+                  <h4 style={{ marginBottom: '15px' }}>Overall KYC Status</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
+                    <div>
+                      <p><span className="label">KYC Review Status:</span></p>
+                      <p>
+                        <span className={`value ${selectedUser?.kycReview?.status === 'APPROVED' ? 'status-active' : 'status-pending'}`}>
+                          {selectedUser?.kycReview?.status || 'PENDING'}
+                        </span>
+                      </p>
+                    </div>
+                    <div>
+                      <p><span className="label">CNIC Verified:</span></p>
+                      <p>
+                        <span className={`value ${selectedUser?.verificationCompleted?.cnic ? 'status-active' : 'status-pending'}`}>
+                          {selectedUser?.verificationCompleted?.cnic ? 'Yes' : 'No'}
+                        </span>
+                      </p>
+                    </div>
+                    <div>
+                      <p><span className="label">Face ID Verified:</span></p>
+                      <p>
+                        <span className={`value ${selectedUser?.verificationCompleted?.faceId ? 'status-active' : 'status-pending'}`}>
+                          {selectedUser?.verificationCompleted?.faceId ? 'Yes' : 'No'}
+                        </span>
+                      </p>
+                    </div>
+                    <div>
+                      <p><span className="label">Verification Method:</span></p>
+                      <p>
+                        <span className="value">{selectedUser?.verificationMethod || 'NONE'}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -672,6 +927,171 @@ const InvestorProfile = () => {
                 </p>
               </div>
               <button className="dialog-close-btn" onClick={() => setShowRoiDialog(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showKycDialog && selectedUser && (
+          <div className="modal" onClick={() => setShowKycDialog(false)}>
+            <div className="modal-content kyc-dialog" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto' }}>
+              <div className="modal-header">
+                <h3 className="dialog-title">KYC Documents</h3>
+                <button className="modal-close" onClick={() => setShowKycDialog(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="kyc-content" style={{ padding: '20px' }}>
+                {/* KYC Review Status */}
+                {selectedUser.kycReview && (
+                  <div style={{ marginBottom: '20px', padding: '15px', background: '#f5f5f5', borderRadius: '8px' }}>
+                    <h4 style={{ marginBottom: '10px' }}>KYC Review Status</h4>
+                    <p>
+                      <span className="label">Status:</span>
+                      <span className={`value ${selectedUser.kycReview.status === 'APPROVED' ? 'status-active' : 'status-pending'}`}>
+                        {selectedUser.kycReview.status || 'PENDING'}
+                      </span>
+                    </p>
+                  </div>
+                )}
+
+                {/* CNIC Front */}
+                <div style={{ marginBottom: '30px' }}>
+                  <h4 style={{ marginBottom: '15px' }}>CNIC Front</h4>
+                  {selectedUser.kycDocuments?.cnicFront?.url || selectedUser.kycDocuments?.cnicFront?.filename ? (
+                    <div>
+                      <div style={{ marginBottom: '10px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px', background: '#fff' }}>
+                        <img 
+                          src={selectedUser.kycDocuments.cnicFront.url ? 
+                            (selectedUser.kycDocuments.cnicFront.url.startsWith('http') ? 
+                              selectedUser.kycDocuments.cnicFront.url : 
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicFront.url}`) : 
+                            'https://via.placeholder.com/400x250?text=CNIC+Front'} 
+                          alt="CNIC Front" 
+                          style={{ width: '100%', maxWidth: '400px', height: 'auto', borderRadius: '4px' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+                        <p>
+                          <span className="label">Verified:</span>
+                          <span className={`value ${selectedUser.kycDocuments.cnicFront.verified ? 'status-active' : 'status-pending'}`}>
+                            {selectedUser.kycDocuments.cnicFront.verified ? 'Yes' : 'No'}
+                          </span>
+                        </p>
+                        {selectedUser.kycDocuments.cnicFront.uploadedAt && (
+                          <p>
+                            <span className="label">Uploaded:</span>
+                            <span className="value">
+                              {new Date(selectedUser.kycDocuments.cnicFront.uploadedAt).toLocaleString()}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p style={{ color: '#999', fontStyle: 'italic' }}>No CNIC Front document uploaded</p>
+                  )}
+                </div>
+
+                {/* CNIC Back */}
+                <div style={{ marginBottom: '30px' }}>
+                  <h4 style={{ marginBottom: '15px' }}>CNIC Back</h4>
+                  {selectedUser.kycDocuments?.cnicBack?.url || selectedUser.kycDocuments?.cnicBack?.filename ? (
+                    <div>
+                      <div style={{ marginBottom: '10px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px', background: '#fff' }}>
+                        <img 
+                          src={selectedUser.kycDocuments.cnicBack.url ? 
+                            (selectedUser.kycDocuments.cnicBack.url.startsWith('http') ? 
+                              selectedUser.kycDocuments.cnicBack.url : 
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicBack.url}`) : 
+                            'https://via.placeholder.com/400x250?text=CNIC+Back'} 
+                          alt="CNIC Back" 
+                          style={{ width: '100%', maxWidth: '400px', height: 'auto', borderRadius: '4px' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+                        <p>
+                          <span className="label">Verified:</span>
+                          <span className={`value ${selectedUser.kycDocuments.cnicBack.verified ? 'status-active' : 'status-pending'}`}>
+                            {selectedUser.kycDocuments.cnicBack.verified ? 'Yes' : 'No'}
+                          </span>
+                        </p>
+                        {selectedUser.kycDocuments.cnicBack.uploadedAt && (
+                          <p>
+                            <span className="label">Uploaded:</span>
+                            <span className="value">
+                              {new Date(selectedUser.kycDocuments.cnicBack.uploadedAt).toLocaleString()}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p style={{ color: '#999', fontStyle: 'italic' }}>No CNIC Back document uploaded</p>
+                  )}
+                </div>
+
+                {/* Face Picture */}
+                <div style={{ marginBottom: '30px' }}>
+                  <h4 style={{ marginBottom: '15px' }}>Face Picture</h4>
+                  {selectedUser.kycDocuments?.facePicture?.url || selectedUser.kycDocuments?.facePicture?.filename ? (
+                    <div>
+                      <div style={{ marginBottom: '10px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px', background: '#fff' }}>
+                        <img 
+                          src={selectedUser.kycDocuments.facePicture.url ? 
+                            (selectedUser.kycDocuments.facePicture.url.startsWith('http') ? 
+                              selectedUser.kycDocuments.facePicture.url : 
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.facePicture.url}`) : 
+                            'https://via.placeholder.com/400x400?text=Face+Picture'} 
+                          alt="Face Picture" 
+                          style={{ width: '100%', maxWidth: '400px', height: 'auto', borderRadius: '4px' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+                        <p>
+                          <span className="label">Verified:</span>
+                          <span className={`value ${selectedUser.kycDocuments.facePicture.verified ? 'status-active' : 'status-pending'}`}>
+                            {selectedUser.kycDocuments.facePicture.verified ? 'Yes' : 'No'}
+                          </span>
+                        </p>
+                        {selectedUser.kycDocuments.facePicture.uploadedAt && (
+                          <p>
+                            <span className="label">Uploaded:</span>
+                            <span className="value">
+                              {new Date(selectedUser.kycDocuments.facePicture.uploadedAt).toLocaleString()}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p style={{ color: '#999', fontStyle: 'italic' }}>No Face Picture uploaded</p>
+                  )}
+                </div>
+
+                {/* Verification Completed Summary */}
+                {selectedUser.verificationCompleted && (
+                  <div style={{ marginTop: '20px', padding: '15px', background: '#f5f5f5', borderRadius: '8px' }}>
+                    <h4 style={{ marginBottom: '10px' }}>Verification Summary</h4>
+                    <div style={{ display: 'flex', gap: '30px' }}>
+                      <p>
+                        <span className="label">CNIC Verified:</span>
+                        <span className={`value ${selectedUser.verificationCompleted.cnic ? 'status-active' : 'status-pending'}`}>
+                          {selectedUser.verificationCompleted.cnic ? 'Yes' : 'No'}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="label">Face ID Verified:</span>
+                        <span className={`value ${selectedUser.verificationCompleted.faceId ? 'status-active' : 'status-pending'}`}>
+                          {selectedUser.verificationCompleted.faceId ? 'Yes' : 'No'}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <button className="dialog-close-btn" onClick={() => setShowKycDialog(false)} style={{ marginTop: '20px' }}>
                 Close
               </button>
             </div>
