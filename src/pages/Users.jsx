@@ -66,7 +66,7 @@ const Users = () => {
         : '-',
       createdAt: apiUser.createdAt,
       status: apiUser.kycStatus === 'APPROVED' ? 'Active' : 
-              apiUser.kycStatus === 'PENDING' ? 'Deactivate' : 
+              apiUser.kycStatus === 'PENDING' ? 'PENDING' : 
               apiUser.isFrozen ? 'Delete' : 'Active',
       kycStatus: apiUser.kycStatus,
       isFrozen: apiUser.isFrozen,

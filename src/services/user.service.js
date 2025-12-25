@@ -55,4 +55,54 @@ export const getUserById = async (id) => {
   }
 };
 
+/**
+ * Update user status
+ * @param {string} id - User ID
+ * @param {string} status - Status to set ('Active', 'Deactivate', 'Delete')
+ * @returns {Promise<Object>} Updated user data
+ */
+export const updateUserStatus = async (id, status) => {
+  try {
+    // Map status to API fields
+    let updateData = {};
+    
+    if (status === 'Delete') {
+      // Freeze the account
+      updateData.isFrozen = true;
+    } else if (status === 'Deactivate') {
+      // Set KYC status to PENDING
+      updateData.kycStatus = 'PENDING';
+      updateData.isFrozen = false;
+    } else if (status === 'Active') {
+      // Activate the account
+      updateData.kycStatus = 'APPROVED';
+      updateData.isFrozen = false;
+    }
+    
+    const response = await apiClient.put(ENDPOINTS.USERS.UPDATE(id), updateData);
+    return response;
+  } catch (error) {
+    console.error('Update user status error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Submit KYC review
+ * @param {string} userId - User ID
+ * @param {Object} reviewData - Review data
+ * @param {string} reviewData.status - Review status ('APPROVED', 'REJECTED', 'PENDING')
+ * @param {string} reviewData.adminNotes - Admin notes/comment
+ * @returns {Promise<Object>} Review response
+ */
+export const submitKycReview = async (userId, reviewData) => {
+  try {
+    const response = await apiClient.post(ENDPOINTS.ADMIN.KYC_REVIEW(userId), reviewData);
+    return response;
+  } catch (error) {
+    console.error('Submit KYC review error:', error);
+    throw error;
+  }
+};
+
 

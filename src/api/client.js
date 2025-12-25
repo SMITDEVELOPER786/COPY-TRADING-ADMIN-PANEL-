@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/admin';
+const API_BASE_URL = 'https://backend.greentrutle.com/admin';
 
 /**
  * API Client with error handling and interceptors
@@ -30,7 +30,9 @@ class ApiClient {
    * Build full URL
    */
   buildURL(endpoint) {
-    return `${this.baseURL}${endpoint}`;
+    const base = this.baseURL.endsWith('/') ? this.baseURL.slice(0, -1) : this.baseURL;
+    const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    return `${base}${path}`;
   }
 
   /**

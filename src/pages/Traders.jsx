@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Search,
   Calendar,
   ChevronDown,
-  MoreHorizontal
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Trash2,
+  FileText,
+  CheckCircle,
+  XCircle,
+  X
 } from 'lucide-react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -18,6 +25,7 @@ import {
 } from 'chart.js';
 import '../Traders.css';
 import { useNavigate } from 'react-router-dom';
+import { getUsers, updateUserStatus, submitKycReview } from '../services/user.service';
 
 // Register chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -32,41 +40,213 @@ function Traders() {
   const [selectedMetric, setSelectedMetric] = useState(null);
   const navigate = useNavigate();
 
-  const handleViewProfile = (id) => {
-    navigate(`/profile/${id}`); // Updated to match DataTable and Users routing
+  // ==================== STATE MANAGEMENT ====================
+  const [usersData, setUsersData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showKycApprovalDialog, setShowKycApprovalDialog] = useState(false);
+  const [selectedUserForKyc, setSelectedUserForKyc] = useState(null);
+  const [adminNotes, setAdminNotes] = useState("");
+
+  // ==================== HELPER FUNCTIONS ====================
+  
+  /**
+   * Transform API user data to component format
+   */
+  const transformUserData = (apiUser) => {
+    return {
+      id: apiUser._id || apiUser.id,
+      _id: apiUser._id,
+      name: apiUser.username || apiUser.name || apiUser.fullName || 'N/A',
+      email: apiUser.email || 'N/A',
+      isEmailVerified: apiUser.isEmailVerified || false,
+      phone: apiUser.phone || '',
+      type: apiUser.role || 'TRADER',
+      role: apiUser.role,
+      wallet: apiUser.wallet || apiUser.walletAddress || '-',
+      market: apiUser.market || '-',
+      broker: apiUser.broker || '-',
+      joined: apiUser.createdAt 
+        ? new Date(apiUser.createdAt).toLocaleDateString('en-GB', { 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric' 
+          })
+        : '-',
+      createdAt: apiUser.createdAt,
+      status: apiUser.isFrozen ? 'Delete' : 
+              apiUser.kycStatus === 'APPROVED' ? 'Active' : 
+              apiUser.kycStatus === 'PENDING' ? 'PENDING' : 
+              'Active',
+      kycStatus: apiUser.kycStatus,
+      isFrozen: apiUser.isFrozen,
+      avatar: apiUser.profileImage?.url || apiUser.avatar || apiUser.profilePicture || 'https://via.placeholder.com/40',
+      amountSecured: apiUser.amountSecured || '$0',
+      netProfit: apiUser.netProfit || '$0',
+      avgROI: apiUser.avgROI || '0%',
+      avgDrawdown: apiUser.avgDrawdown || '0%',
+      tag: apiUser.kycStatus === 'APPROVED' ? 'Profitable' : 
+           apiUser.kycStatus === 'PENDING' ? 'Average' : 
+           apiUser.isFrozen ? 'Unprofitable' : 'Profitable',
+      tagColor: apiUser.kycStatus === 'APPROVED' ? 'green' : 
+                apiUser.kycStatus === 'PENDING' ? 'orange' : 
+                apiUser.isFrozen ? 'red' : 'green',
+      kycDocuments: apiUser.kycDocuments || {},
+      kycReview: apiUser.kycReview || {},
+    };
   };
 
-  const [traders, setTraders] = useState(() => {
-    const savedData = localStorage.getItem('tradersData');
+  /**
+   * Fetch traders from API
+   */
+  const fetchTraders = async () => {
     try {
-      const parsedData = savedData ? JSON.parse(savedData) : null;
-      if (parsedData && Array.isArray(parsedData)) {
-        return parsedData;
-      }
-      return defaultTraders();
-    } catch {
-      return defaultTraders();
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await getUsers({
+        role: 'TRADER',
+        all: true,
+      });
+      
+      setUsersData(response);
+    } catch (err) {
+      console.error('Error fetching traders:', err);
+      setError(err.message || 'Failed to fetch traders');
+    } finally {
+      setIsLoading(false);
     }
-  });
+  };
 
+  // ==================== DATA TRANSFORMATION ====================
+  
+  /**
+   * Extract and transform traders from API response
+   */
+  const traders = useMemo(() => {
+    if (!usersData) return [];
+    
+    let apiUsers = [];
+    
+    try {
+      // Handle nested structure: usersData.data.users
+      if (usersData.data && usersData.data.users && Array.isArray(usersData.data.users)) {
+        apiUsers = usersData.data.users;
+      }
+      // Handle direct users property
+      else if (usersData.users && Array.isArray(usersData.users)) {
+        apiUsers = usersData.users;
+      }
+      // Handle data as array
+      else if (usersData.data && Array.isArray(usersData.data)) {
+        apiUsers = usersData.data;
+      }
+      // Handle if response is directly an array
+      else if (Array.isArray(usersData)) {
+        apiUsers = usersData;
+      }
+      
+      // Ensure apiUsers is an array before mapping
+      if (!Array.isArray(apiUsers)) {
+        console.error('API response is not an array:', { usersData, apiUsers });
+        return [];
+      }
+      
+      // Transform to component format
+      return apiUsers.map(transformUserData);
+    } catch (error) {
+      console.error('Error transforming traders:', error, { usersData });
+      return [];
+    }
+  }, [usersData]);
+
+  // ==================== API CALLS ====================
+  
   useEffect(() => {
-    localStorage.setItem('tradersData', JSON.stringify(traders));
-  }, [traders]);
+    fetchTraders();
+  }, []);
 
-  const handleStatusChange = (id, newStatus, newTagColor) => {
-    setTraders(prev =>
-      prev.map(trader =>
-        trader.id === id ? { ...trader, tag: newStatus, tagColor: newTagColor } : trader
-      )
-    );
+  // ==================== EVENT HANDLERS ====================
+
+  const handleViewProfile = (id) => {
+    navigate(`/trader/${id}`);
+  };
+
+  const handleStatusChange = async (user, newStatus) => {
+    const userId = user.id || user._id;
+    try {
+      setIsLoading(true);
+      await updateUserStatus(userId, newStatus);
+      // Refresh the traders list
+      await fetchTraders();
+      setMenuOpen(null);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      setError(error.message || 'Failed to update status');
+      // Clear error after 3 seconds
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApproveKyc = (user) => {
+    setSelectedUserForKyc(user);
+    setAdminNotes("");
+    setShowKycApprovalDialog(true);
     setMenuOpen(null);
   };
 
-  const filteredTraders = traders.filter(trader =>
-    trader.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (selectedStatus === '' || trader.tag === selectedStatus) &&
-    (selectedDate === '' || trader.date.toLowerCase().includes(selectedDate.toLowerCase()))
-  );
+  const handleSubmitKycApproval = async () => {
+    if (!selectedUserForKyc) return;
+    
+    const userId = selectedUserForKyc.id || selectedUserForKyc._id;
+    try {
+      setIsLoading(true);
+      await submitKycReview(userId, {
+        status: "APPROVED",
+        adminNotes: adminNotes || "All documents verified successfully. Identity confirmed."
+      });
+      // Refresh the traders list
+      await fetchTraders();
+      setShowKycApprovalDialog(false);
+      setSelectedUserForKyc(null);
+      setAdminNotes("");
+    } catch (error) {
+      console.error('Error approving KYC:', error);
+      setError(error.message || 'Failed to approve KYC');
+      // Clear error after 3 seconds
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Check if user has submitted KYC documents
+  const hasKycDocuments = (user) => {
+    const docs = user.kycDocuments || {};
+    return !!(docs.cnicFront?.url || docs.cnicFront?.filename || 
+              docs.cnicBack?.url || docs.cnicBack?.filename || 
+              docs.facePicture?.url || docs.facePicture?.filename);
+  };
+
+  // ==================== FILTERS ====================
+  
+  const filteredTraders = useMemo(() => {
+    return traders.filter(trader => {
+      const searchMatch = !searchTerm || 
+        trader.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        trader.email.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const statusMatch = !selectedStatus || trader.tag === selectedStatus;
+      
+      const dateMatch = !selectedDate || 
+        (trader.joined && trader.joined.toLowerCase().includes(selectedDate.toLowerCase())) ||
+        (trader.createdAt && trader.createdAt.toLowerCase().includes(selectedDate.toLowerCase()));
+      
+      return searchMatch && statusMatch && dateMatch;
+    });
+  }, [traders, searchTerm, selectedStatus, selectedDate]);
 
   const calculateMetrics = () => {
     const totalTraders = filteredTraders.length;
@@ -294,150 +474,194 @@ function Traders() {
           </div>
 
           <div className="table-wrapper">
-            <table className="traders-data-table">
-              <thead>
-                <tr>
-                  <th>Trader Name</th>
-                  <th>Amount Secured</th>
-                  <th>Net Profit</th>
-                  <th>Avg ROI</th>
-                  <th>Avg Drawdown</th>
-                  <th>Tag</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTraders.map((trader, index) => (
-                  <tr key={trader.id}>
-                    <td data-label="Trader Name">
-                      <div className="trader-details">
-                        <img src={trader.avatar} alt={trader.name} className="user-profile-pic" />
-                        <span>{trader.name}</span>
-                      </div>
-                    </td>
-                    <td data-label="Amount Secured">{trader.amountSecured}</td>
-                    <td data-label="Net Profit">{trader.netProfit}</td>
-                    <td data-label="Avg ROI">{trader.avgROI}</td>
-                    <td data-label="Avg Drawdown">{trader.avgDrawdown}</td>
-                    <td data-label="Tag">
-                      <span className={`status-tag status-tag-${trader.tagColor}`}>
-                        {trader.tag}
-                      </span>
-                    </td>
-                    <td data-label="Actions" className="traders-actions">
-                      <div className="traders-action-menu">
-                        <button 
-                          className="traders-action-btn"
-                          onClick={() => setMenuOpen(menuOpen === trader.id ? null : trader.id)}
-                          aria-label="More actions"
-                        >
-                          <MoreHorizontal size={16} />
-                        </button>
-                        {menuOpen === trader.id && (
-                          <div
-                            className={`traders-dropdown-menu ${index >= filteredTraders.length - 2 ? 'drop-up' : ''}`}
-                          >
-                            <button onClick={() => handleViewProfile(trader.id)}>
-                              View Profile
-                            </button>
-                            {[
-                              { status: 'Profitable', color: 'green' },
-                              { status: 'Average', color: 'orange' },
-                              { status: 'Unprofitable', color: 'red' }
-                            ].filter(({ status }) => status !== trader.tag).map(({ status, color }) => (
-                              <button 
-                                key={status}
-                                onClick={() => handleStatusChange(trader.id, status, color)}
-                              >
-                                Set to {status}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </td>
+            {isLoading && (
+              <div style={{ padding: "20px", textAlign: "center" }}>
+                Loading traders...
+              </div>
+            )}
+            {error && (
+              <div style={{ padding: "20px", textAlign: "center", color: "red" }}>
+                Error loading traders: {error}
+              </div>
+            )}
+            {!isLoading && !error && (
+              <table className="traders-data-table">
+                <thead>
+                  <tr>
+                    <th>Trader Name</th>
+                    <th>Amount Secured</th>
+                    <th>Net Profit</th>
+                    <th>Avg ROI</th>
+                    <th>Avg Drawdown</th>
+                    <th>Tag</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredTraders.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
+                        No traders found
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredTraders.map((trader, index) => (
+                      <tr key={trader.id}>
+                        <td data-label="Trader Name">
+                          <div 
+                            className="trader-details" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => handleViewProfile(trader.id || trader._id)}
+                            title="Click to view profile"
+                          >
+                            <img src={trader.avatar} alt={trader.name} className="user-profile-pic" />
+                            <span style={{ textDecoration: 'underline', color: '#10B981' }}>{trader.name}</span>
+                          </div>
+                        </td>
+                        <td data-label="Amount Secured">{trader.amountSecured}</td>
+                        <td data-label="Net Profit">{trader.netProfit}</td>
+                        <td data-label="Avg ROI">{trader.avgROI}</td>
+                        <td data-label="Avg Drawdown">{trader.avgDrawdown}</td>
+                        <td data-label="Tag">
+                          <span className={`status-tag status-tag-${trader.tagColor}`}>
+                            {trader.tag}
+                          </span>
+                        </td>
+                        <td data-label="Actions" className="traders-actions">
+                          <div className="traders-action-menu">
+                            <button 
+                              className="traders-action-btn"
+                              onClick={() => setMenuOpen(menuOpen === (trader.id || trader._id) ? null : (trader.id || trader._id))}
+                              aria-label="More actions"
+                            >
+                              <MoreHorizontal size={16} />
+                            </button>
+                            {menuOpen === (trader.id || trader._id) && (
+                              <div
+                                className={`traders-dropdown-menu ${index >= filteredTraders.length - 2 ? 'drop-up' : ''}`}
+                              >
+                                <button onClick={() => handleViewProfile(trader.id || trader._id)}>
+                                  <Eye size={14} /> View Profile
+                                </button>
+                                {hasKycDocuments(trader) && (
+                                  <>
+                                    <button onClick={() => navigate(`/profile/${trader.id || trader._id}?tab=kyc`)}>
+                                      <FileText size={14} /> View KYC
+                                    </button>
+                                    {trader.kycStatus !== 'APPROVED' && (
+                                      <button onClick={() => handleApproveKyc(trader)}>
+                                        <CheckCircle size={14} color="#166534" /> Approve KYC
+                                      </button>
+                                    )}
+                                  </>
+                                )}
+                                {/* Status Update Options */}
+                                {[
+                                  { status: 'Active', icon: <CheckCircle size={14} color="#166534" /> },
+                                  { status: 'Deactivate', icon: <XCircle size={14} color="#92400e" /> },
+                                  { status: 'Delete', icon: <XCircle size={14} color="#dc2626" /> }
+                                ].filter(({ status }) => {
+                                  // Map status to trader tag for comparison
+                                  const statusMap = {
+                                    'Active': 'Profitable',
+                                    'Deactivate': 'Average',
+                                    'Delete': 'Unprofitable'
+                                  };
+                                  return statusMap[status] !== trader.tag;
+                                }).map(({ status, icon }) => (
+                                  <button 
+                                    key={status}
+                                    onClick={() => handleStatusChange(trader, status)}
+                                  >
+                                    {icon}
+                                    Set to {status}
+                                  </button>
+                                ))}
+                                <button onClick={() => console.log('Edit trader:', trader)}>
+                                  <Edit size={14} /> Edit
+                                </button>
+                                <button onClick={() => console.log('Remove trader:', trader)}>
+                                  <Trash2 size={14} /> Remove
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
+
+      {/* KYC Approval Dialog */}
+      {showKycApprovalDialog && selectedUserForKyc && (
+        <div className="modal" onClick={() => setShowKycApprovalDialog(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+            <div className="modal-header">
+              <h3>Approve KYC</h3>
+              <button className="modal-close" onClick={() => setShowKycApprovalDialog(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <p style={{ marginBottom: '10px', color: '#666' }}>
+                  Approving KYC for: <strong>{selectedUserForKyc.name}</strong>
+                </p>
+                <p style={{ marginBottom: '10px', color: '#666', fontSize: '14px' }}>
+                  Email: {selectedUserForKyc.email}
+                </p>
+              </div>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333' }}>
+                  Admin Notes (Optional)
+                </label>
+                <textarea
+                  value={adminNotes}
+                  onChange={(e) => setAdminNotes(e.target.value)}
+                  placeholder="All documents verified successfully. Identity confirmed."
+                  style={{
+                    width: '100%',
+                    minHeight: '100px',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical'
+                  }}
+                />
+              </div>
+              <div className="form-actions">
+                <button
+                  className="btn outline"
+                  onClick={() => {
+                    setShowKycApprovalDialog(false);
+                    setSelectedUserForKyc(null);
+                    setAdminNotes("");
+                  }}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn green"
+                  onClick={handleSubmitKycApproval}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Approving...' : 'Approve KYC'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
-
-function defaultTraders() {
-  // Trader data from Users.jsx
-  const tradersData = [
-    {
-      id: 2,
-      name: 'Ali Raza',
-      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-      amountSecured: '$800k', // Estimated based on profit and investors
-      netProfit: '900k',
-      avgROI: '30.2%', // Assigned based on original data inspiration
-      avgDrawdown: '3.1%',
-      tag: 'Average',
-      tagColor: 'orange',
-      date: 'Jul 2023'
-    },
-    {
-      id: 3,
-      name: 'John Smith',
-      avatar: 'https://randomuser.me/api/portraits/men/12.jpg',
-      amountSecured: '$2.5M',
-      netProfit: '3200k',
-      avgROI: '45.7%',
-      avgDrawdown: '2.4%',
-      tag: 'Profitable',
-      tagColor: 'green',
-      date: 'Jul 2023'
-    },
-    {
-      id: 5,
-      name: 'David Johnson',
-      avatar: 'https://randomuser.me/api/portraits/men/28.jpg',
-      amountSecured: '$500k',
-      netProfit: '600k',
-      avgROI: '15.5%',
-      avgDrawdown: '5.0%',
-      tag: 'Average',
-      tagColor: 'orange',
-      date: 'Jul 2023'
-    },
-    {
-      id: 7,
-      name: 'William Lee',
-      avatar: 'https://randomuser.me/api/portraits/men/41.jpg',
-      amountSecured: '$300k',
-      netProfit: '400k',
-      avgROI: '10.0%',
-      avgDrawdown: '6.0%',
-      tag: 'Unprofitable',
-      tagColor: 'red',
-      date: 'Jul 2023'
-    },
-    {
-      id: 9,
-      name: 'James Wilson',
-      avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
-      amountSecured: '$3.0M',
-      netProfit: '4100k',
-      avgROI: '50.0%',
-      avgDrawdown: '2.0%',
-      tag: 'Profitable',
-      tagColor: 'green',
-      date: 'Aug 2023'
-    }
-  ];
-
-  // Sort by netProfit in descending order
-  return tradersData.sort((a, b) => {
-    const profitA = parseFloat(a.netProfit.replace('k', '')) * 1000;
-    const profitB = parseFloat(b.netProfit.replace('k', '')) * 1000;
-    return profitB - profitA;
-  });
 }
 
 export default Traders;

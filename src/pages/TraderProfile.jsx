@@ -1,7 +1,7 @@
 "use client";
 
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   Phone,
@@ -17,10 +17,97 @@ import {
 } from "lucide-react";
 import "../TraderProfile.css";
 import { FaBan, FaEnvelope, FaSnowflake, FaTrash, FaEdit } from "react-icons/fa";
+import { getUserById } from "../services/user.service";
 
-const TraderProfile = ({ user }) => {
+const TraderProfile = ({ user: propUser }) => {
+  const { traderId } = useParams();
   const navigate = useNavigate();
   const [showMetricsDialog, setShowMetricsDialog] = useState(false);
+  const [user, setUser] = useState(propUser || null);
+  const [isLoading, setIsLoading] = useState(!propUser);
+  const [error, setError] = useState(null);
+
+  // ==================== FETCH TRADER DATA ====================
+  useEffect(() => {
+    const fetchTrader = async () => {
+      // If user is passed as prop, use it
+      if (propUser) {
+        setUser(propUser);
+        setIsLoading(false);
+        return;
+      }
+
+      // Otherwise fetch from API using traderId from URL
+      if (!traderId) return;
+      
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const response = await getUserById(traderId);
+        
+        // API structure: { status: 'success', message: '...', data: { ...user data... } }
+        const userData = response.data || response;
+        
+        // Transform API data to component format
+        const transformedUser = {
+          id: userData._id || userData.id,
+          _id: userData._id,
+          name: userData.username || userData.name || 'N/A',
+          email: userData.email || 'N/A',
+          phone: userData.phone || '',
+          type: userData.role || 'TRADER',
+          role: userData.role,
+          wallet: userData.wallet || userData.walletAddress || '-',
+          market: userData.market || '-',
+          broker: userData.broker || '-',
+          joined: userData.createdAt 
+            ? new Date(userData.createdAt).toLocaleDateString('en-GB', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+              })
+            : '-',
+          createdAt: userData.createdAt,
+          status: userData.kycStatus === 'APPROVED' ? 'APPROVED' : 
+                  userData.kycStatus === 'PENDING' ? 'PENDING' : 
+                  userData.isFrozen ? 'Delete' : 'Active',
+          kycStatus: userData.kycStatus,
+          isFrozen: userData.isFrozen,
+          avatar: userData.profileImage?.url || userData.avatar || userData.profilePicture || 'https://via.placeholder.com/40',
+          amountSecured: userData.amountSecured || '$0',
+          netProfit: userData.netProfit || '$0',
+          avgROI: userData.avgROI || '0%',
+          avgDrawdown: userData.avgDrawdown || '0%',
+          tag: userData.kycStatus === 'APPROVED' ? 'Profitable' : 
+               userData.kycStatus === 'PENDING' ? 'Average' : 
+               userData.isFrozen ? 'Unprofitable' : 'Profitable',
+          tagColor: userData.kycStatus === 'APPROVED' ? 'green' : 
+                    userData.kycStatus === 'PENDING' ? 'orange' : 
+                    userData.isFrozen ? 'red' : 'green',
+          // API specific fields
+          username: userData.username,
+          profileCompleted: userData.profileCompleted,
+          isEmailVerified: userData.isEmailVerified,
+          verificationMethod: userData.verificationMethod,
+          verificationCompleted: userData.verificationCompleted || {},
+          kycDocuments: userData.kycDocuments || {},
+          kycReview: userData.kycReview || {},
+          lastLoginAt: userData.lastLoginAt,
+          updatedAt: userData.updatedAt,
+        };
+        
+        setUser(transformedUser);
+      } catch (err) {
+        console.error('Error fetching trader:', err);
+        setError(err.message || 'Failed to fetch trader details');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTrader();
+  }, [traderId, propUser]);
 
   const advancedMetricsMain = {
     totalTrades: "1,247",
@@ -96,8 +183,50 @@ const TraderProfile = ({ user }) => {
     lots: 0.5700000000000001,
   };
 
+  if (isLoading) {
+    return (
+      <div className="trader-profile-container">
+        <div style={{ padding: "40px", textAlign: "center" }}>
+          Loading trader profile...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="trader-profile-container">
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
+          Error: {error}
+          <br />
+          <button 
+            className="back-btn" 
+            onClick={() => navigate('/trader')}
+            style={{ marginTop: '20px' }}
+          >
+            <ChevronLeft size={18} /> Back to Traders
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!user) {
-    return <p style={{ padding: "20px" }}>Trader not found</p>;
+    return (
+      <div className="trader-profile-container">
+        <div style={{ padding: "40px", textAlign: "center" }}>
+          Trader not found
+          <br />
+          <button 
+            className="back-btn" 
+            onClick={() => navigate('/trader')}
+            style={{ marginTop: '20px' }}
+          >
+            <ChevronLeft size={18} /> Back to Traders
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const defaultWallet = Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -110,8 +239,8 @@ const TraderProfile = ({ user }) => {
   return (
     <div className="trader-profile-container">
       <div className="profile-header">
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          <ChevronLeft size={18} /> Back
+        <button className="back-btn" onClick={() => navigate('/trader')}>
+          <ChevronLeft size={18} /> Back to Traders
         </button>
         <div className="header-title">
           <h2 className="pagee-titlees">

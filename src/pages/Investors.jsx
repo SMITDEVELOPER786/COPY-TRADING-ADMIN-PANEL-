@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../Users.css";
-import { getUsers } from "../services/user.service";
+import { getUsers, updateUserStatus, submitKycReview } from "../services/user.service";
 import {
   FaEnvelope,
   FaBan,
@@ -12,7 +12,7 @@ import {
   FaEdit,
   FaPlus,
 } from "react-icons/fa";
-import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2, FileText } from "lucide-react";
+import { MoreHorizontal, Search, Calendar, ChevronDown, Eye, Edit, Trash2, FileText, CheckCircle, XCircle, X } from "lucide-react";
 
 const Investors = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +30,9 @@ const Investors = () => {
   const [usersData, setUsersData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showKycApprovalDialog, setShowKycApprovalDialog] = useState(false);
+  const [selectedUserForKyc, setSelectedUserForKyc] = useState(null);
+  const [adminNotes, setAdminNotes] = useState("");
 
   // ==================== HELPER FUNCTIONS ====================
   
@@ -42,6 +45,7 @@ const Investors = () => {
       _id: apiUser._id,
       name: apiUser.username || apiUser.name || apiUser.fullName || 'N/A',
       email: apiUser.email || 'N/A',
+      isEmailVerified: apiUser.isEmailVerified || false,
       phone: apiUser.phone || '',
       type: apiUser.role || 'INVESTOR',
       role: apiUser.role,
@@ -56,9 +60,10 @@ const Investors = () => {
           })
         : '-',
       createdAt: apiUser.createdAt,
-      status: apiUser.kycStatus === 'APPROVED' ? 'Active' : 
+      status: apiUser.isFrozen ? 'Delete' : 
+              apiUser.kycStatus === 'APPROVED' ? 'Active' : 
               apiUser.kycStatus === 'PENDING' ? 'PENDING' : 
-              apiUser.isFrozen ? 'Delete' : 'Active',
+              'Active',
       kycStatus: apiUser.kycStatus,
       isFrozen: apiUser.isFrozen,
       avatar: apiUser.profileImage?.url || apiUser.avatar || apiUser.profilePicture || 'https://via.placeholder.com/40',
@@ -260,6 +265,56 @@ const Investors = () => {
     setMenuOpen(null);
   };
 
+  const handleStatusChange = async (user, newStatus) => {
+    const userId = user.id || user._id;
+    try {
+      setIsLoading(true);
+      await updateUserStatus(userId, newStatus);
+      // Refresh the investors list
+      await fetchInvestors();
+      setMenuOpen(null);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      setError(error.message || 'Failed to update status');
+      // Clear error after 3 seconds
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApproveKyc = (user) => {
+    setSelectedUserForKyc(user);
+    setAdminNotes("");
+    setShowKycApprovalDialog(true);
+    setMenuOpen(null);
+  };
+
+  const handleSubmitKycApproval = async () => {
+    if (!selectedUserForKyc) return;
+    
+    const userId = selectedUserForKyc.id || selectedUserForKyc._id;
+    try {
+      setIsLoading(true);
+      await submitKycReview(userId, {
+        status: "APPROVED",
+        adminNotes: adminNotes || "All documents verified successfully. Identity confirmed."
+      });
+      // Refresh the investors list
+      await fetchInvestors();
+      setShowKycApprovalDialog(false);
+      setSelectedUserForKyc(null);
+      setAdminNotes("");
+    } catch (error) {
+      console.error('Error approving KYC:', error);
+      setError(error.message || 'Failed to approve KYC');
+      // Clear error after 3 seconds
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getStatusClass = (status) => {
     console.log('Status:', status);
     switch (status) {
@@ -286,14 +341,14 @@ const Investors = () => {
         </div>
 
         {/* Tabs */}
-        <div className="investor-tabs-container">
+        {/* <div className="investor-tabs-container">
           <button
             className={`investor-tab ${activeTab === "all" ? "active" : ""}`}
             onClick={() => setActiveTab("all")}
           >
             All Investors
           </button>
-          <button
+          {/* <button
             className={`investor-tab ${activeTab === "kyc-approval" ? "active" : ""}`}
             onClick={() => setActiveTab("kyc-approval")}
           >
@@ -304,8 +359,8 @@ const Investors = () => {
             onClick={() => setActiveTab("kyc-submit")}
           >
             KYC Submit Type
-          </button>
-        </div>
+          </button> */}
+        {/* </div>  */}
 
         <div className="filters-container">
           <div className="reports-search-container">
@@ -365,15 +420,20 @@ const Investors = () => {
                 <tr>
                   <th>Member</th>
                   <th>Email</th>
+
                   <th>Type</th>
+                  <th>Email Verified</th>
+
                   <th>Wallet</th>
                   <th>Joined</th>
+                  <th>Kyc Upload</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {currentUsers.length === 0 ? (
+                
                   <tr>
                     <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
                       No investors found
@@ -381,6 +441,7 @@ const Investors = () => {
                   </tr>
                 ) : (
                   currentUsers.map((user, index) => (
+                    console.log(currentUsers),
                     <tr key={user.id}>
                       <td data-label="Member">
                         <div className="user-cell">
@@ -393,9 +454,13 @@ const Investors = () => {
                         </div>
                       </td>
                       <td data-label="Email">{user.email}</td>
+
                       <td data-label="Type">{user.type}</td>
+                      <td data-label="emailverified" style={user.isEmailVerified==true ? { color: 'green' } : { color: 'red' }}>{user.isEmailVerified==true ?  'Yes' : 'No'}</td>
                       <td data-label="Wallet">{user.wallet}</td>
                       <td data-label="Joined">{user.joined}</td>
+                      <td data-label="Joined">{hasKycDocuments(user) ? 'Yes' : 'No'}</td>
+
                       <td data-label="Status">
                         <span className={`status-badge ${getStatusClass(user.status)}`}>
                           {user.status}
@@ -419,10 +484,31 @@ const Investors = () => {
                                 <Eye size={14} /> View Profile
                               </button>
                               {hasKycDocuments(user) && (
-                                <button onClick={() => handleAction(user, "viewKyc")}>
-                                  <FileText size={14} /> View KYC
-                                </button>
+                                <>
+                                  <button onClick={() => handleAction(user, "viewKyc")}>
+                                    <FileText size={14} /> View KYC
+                                  </button>
+                                  {user.kycStatus !== 'APPROVED' && (
+                                    <button onClick={() => handleApproveKyc(user)}>
+                                      <CheckCircle size={14} color="#166534" /> Approve KYC
+                                    </button>
+                                  )}
+                                </>
                               )}
+                              {/* Status Update Options */}
+                              {[
+                                // { status: 'Active', icon: <CheckCircle size={14} color="#166534" /> },
+                                // { status: 'Deactivate', icon: <XCircle size={14} color="#92400e" /> },
+                                // { status: 'Delete', icon: <XCircle size={14} color="#dc2626" /> }
+                              ].filter(({ status }) => status !== user.status).map(({ status, icon }) => (
+                                <button 
+                                  key={status}
+                                  onClick={() => handleStatusChange(user, status)}
+                                >
+                                  {icon}
+                                  Set to {status}
+                                </button>
+                              ))}
                               <button onClick={() => handleAction(user, "edit")}>
                                 <Edit size={14} /> Edit
                               </button>
@@ -482,6 +568,70 @@ const Investors = () => {
           )}
         </div>
       </main>
+
+      {/* KYC Approval Dialog */}
+      {showKycApprovalDialog && selectedUserForKyc && (
+        <div className="modal" onClick={() => setShowKycApprovalDialog(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+            <div className="modal-header">
+              <h3>Approve KYC</h3>
+              <button className="modal-close" onClick={() => setShowKycApprovalDialog(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <p style={{ marginBottom: '10px', color: '#666' }}>
+                  Approving KYC for: <strong>{selectedUserForKyc.name}</strong>
+                </p>
+                <p style={{ marginBottom: '10px', color: '#666', fontSize: '14px' }}>
+                  Email: {selectedUserForKyc.email}
+                </p>
+              </div>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333' }}>
+                  Admin Notes (Optional)
+                </label>
+                <textarea
+                  value={adminNotes}
+                  onChange={(e) => setAdminNotes(e.target.value)}
+                  placeholder="All documents verified successfully. Identity confirmed."
+                  style={{
+                    width: '100%',
+                    minHeight: '100px',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical'
+                  }}
+                />
+              </div>
+              <div className="form-actions">
+                <button
+                  className="btn outline"
+                  onClick={() => {
+                    setShowKycApprovalDialog(false);
+                    setSelectedUserForKyc(null);
+                    setAdminNotes("");
+                  }}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn green"
+                  onClick={handleSubmitKycApproval}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Approving...' : 'Approve KYC'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

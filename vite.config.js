@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 9090, // Try port 9090 first (matches CORS allowed origin)
+    port: 3000, // Try port 9090 first (matches CORS allowed origin)
     strictPort: false, // If 9090 is taken, use next available port
     proxy: {
       '/api': {

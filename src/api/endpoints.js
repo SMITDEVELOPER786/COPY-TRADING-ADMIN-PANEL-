@@ -15,6 +15,7 @@ export const ENDPOINTS = {
   // Admin endpoints
   ADMIN: {
     USERS: '/admin/users',
+    KYC_REVIEW: (userId) => `/kyc/submissions/${userId}/review`,
   },
   
   // User endpoints

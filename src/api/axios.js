@@ -1,11 +1,7 @@
 import axios from 'axios';
 
 // Base URL for API
-// In development, use proxy path to avoid CORS
-// In production, use direct API URL
-const API_BASE_URL = import.meta.env.DEV 
-  ? '/api'  // Use proxy in development
-  : 'https://backend.greentrutle.com';  // Direct URL in production
+const API_BASE_URL = 'https://backend.greentrutle.com/admin';
 
 // Create axios instance
 const apiClient = axios.create({

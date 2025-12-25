@@ -13,6 +13,7 @@ import Sidebar from "./components/Sidebar";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import InvestorProfile from './pages/InvestorProfile';
+import TraderProfile from './pages/TraderProfile';
 import "./App.css";
 
 function PrivateRoute({ children }) {
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/investments" element={<Investors />} />
                 <Route path="/investment/:investmentId/investor/:investorId" element={<InvestorProfile />} />
+                <Route path="/trader/:traderId" element={<TraderProfile />} />
                 <Route path="/team" element={<Teams />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/kyc" element={<KYC />} />
