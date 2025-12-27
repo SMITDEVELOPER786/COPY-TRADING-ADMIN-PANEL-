@@ -1,9 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Home from "./pages/Home";
 import Investments from "./pages/Investments";
 import Teams from "./pages/Teams";
 import Reports from "./pages/Reports";
-import KYC from "./pages/KYC";
+import KYC from "./pages/Kyc";
 import Users from "./pages/Users";
 import Investors from "./pages/Investors";
 import Traders from "./pages/Traders";
@@ -51,6 +53,17 @@ function App() {
           }
         />
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   );
 }

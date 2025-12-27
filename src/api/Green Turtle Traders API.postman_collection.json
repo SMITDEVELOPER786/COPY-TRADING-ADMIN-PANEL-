@@ -1,0 +1,2803 @@
+{
+	"info": {
+		"_postman_id": "5f18462a-7060-4ca4-85a3-709b2c39e33a",
+		"name": "Green Turtle Traders API",
+		"description": "Complete API collection for PAMM trading platform backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13867276",
+		"_collection_link": "https://dark-desert-728744.postman.co/workspace/My-Workspace~0fb36e7d-2713-4d27-8e39-2a231dca0a52/collection/38459919-5f18462a-7060-4ca4-85a3-709b2c39e33a?action=share&source=collection_link&creator=13867276"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Signup - Investor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('accessToken', response.data.tokens.access);",
+									"    pm.collectionVariables.set('refreshToken', response.data.tokens.refresh);",
+									"    pm.collectionVariables.set('investorId', response.data.user._id);",
+									"    pm.collectionVariables.set('userId', response.data.user._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"investor@example.com\",\n  \"phone\": \"+1234567890\",\n  \"password\": \"Password123!\",\n  \"role\": \"INVESTOR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup - Trader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('accessToken', response.data.tokens.access);",
+									"    pm.collectionVariables.set('refreshToken', response.data.tokens.refresh);",
+									"    pm.collectionVariables.set('traderId', response.data.user._id);",
+									"    pm.collectionVariables.set('userId', response.data.user._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"trader@example.com\",\n  \"phone\": \"+1234567891\",\n  \"password\": \"Password123!\",\n  \"role\": \"TRADER\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('accessToken', response.data.access);",
+									"    pm.collectionVariables.set('refreshToken', response.data.refresh);",
+									"    pm.collectionVariables.set('userId', response.data.user._id);",
+									"    if (response.data.user.role === 'TRADER') {",
+									"        pm.collectionVariables.set('traderId', response.data.user._id);",
+									"    } else if (response.data.user.role === 'INVESTOR') {",
+									"        pm.collectionVariables.set('investorId', response.data.user._id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"trader@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VERIFY OTP",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get My Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update My Profile",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"+1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?page=1&limit=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Freeze User (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"Risk management policy violation\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/freeze",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"freeze"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wallets",
+			"item": [
+				{
+					"name": "Get My Wallet",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wallets",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets/me/transactions?limit=50&offset=0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wallets",
+								"me",
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "50"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Deposit Intent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 1000,\n  \"currency\": \"GBP\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/deposit-intent",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wallets",
+								"deposit-intent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 500,\n  \"destination\": \"bank_account_123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/withdraw-request",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wallets",
+								"withdraw-request"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "KYC",
+			"item": [
+				{
+					"name": "Initiate KYC",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"provider\": \"sumsub\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kyc/initiate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"initiate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get KYC Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/kyc/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "KYC Webhook (Provider)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Webhook-Signature",
+								"value": "webhook_signature_here"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"externalUserId\": \"{{userId}}\",\n  \"status\": \"APPROVED\",\n  \"checks\": [\"id\", \"liveness\"],\n  \"sessionId\": \"kyc_session_123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kyc/webhook",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"webhook"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload CNIC Front",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "document",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kyc/documents/cnicFront",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"documents",
+								"cnicFront"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload CNIC Back",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "document",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kyc/documents/cnicBack",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"documents",
+								"cnicBack"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Face Picture",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "document",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kyc/documents/facePicture",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"documents",
+								"facePicture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get KYC Documents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/kyc/documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"documents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete CNIC Front",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/kyc/documents/cnicFront",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"documents",
+								"cnicFront"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete CNIC Back",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/kyc/documents/cnicBack",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"documents",
+								"cnicBack"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Face Picture",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/kyc/documents/facePicture",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"documents",
+								"facePicture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit KYC for Review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kyc/submit",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Select Verification Method",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"method\": \"CNIC\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kyc/select-method",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kyc",
+								"select-method"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin KYC Management",
+			"item": [
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('adminAccessToken', response.access);",
+									"    pm.collectionVariables.set('adminRefreshToken', response.refresh);",
+									"    pm.collectionVariables.set('adminId', response.user._id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@copytrade.com\",\n  \"password\": \"Admin@12345\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}admin/auth/login",
+							"host": [
+								"{{baseUrl}}admin"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get KYC Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All KYC Submissions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/submissions?page=1&limit=20&status=PENDING",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"submissions"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "status",
+									"value": "PENDING"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get KYC Submission Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"submissions",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve KYC Submission",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"APPROVED\",\n  \"adminNotes\": \"All documents verified successfully. Identity confirmed.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"submissions",
+								"{{userId}}",
+								"review"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject KYC Submission",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"REJECTED\",\n  \"adminNotes\": \"Documents are unclear and do not meet verification standards.\",\n  \"rejectionReason\": \"Poor image quality and unreadable text\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"submissions",
+								"{{userId}}",
+								"review"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request More Documents",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"NEEDS_MORE_INFO\",\n  \"adminNotes\": \"Please provide clearer images with better lighting.\",\n  \"requiredDocuments\": [\"cnicFront\", \"facePicture\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"submissions",
+								"{{userId}}",
+								"review"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify CNIC Front Document",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"verified\": true,\n  \"adminNotes\": \"CNIC front document is clear and valid.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/documents/cnicFront/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"submissions",
+								"{{userId}}",
+								"documents",
+								"cnicFront",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify CNIC Back Document",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"verified\": true,\n  \"adminNotes\": \"CNIC back document is clear and valid.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/documents/cnicBack/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"submissions",
+								"{{userId}}",
+								"documents",
+								"cnicBack",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Face Picture Document",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"verified\": true,\n  \"adminNotes\": \"Face picture matches the CNIC photo.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/documents/facePicture/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"kyc",
+								"submissions",
+								"{{userId}}",
+								"documents",
+								"facePicture",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all USERS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?page=1&limit=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET USER BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?page=1&limit=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Investor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users?all=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"users"
+							],
+							"query": [
+								{
+									"key": "all",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Traders",
+			"item": [
+				{
+					"name": "Get My Trader Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/traders/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"traders",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update My Trader Profile",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"strategy\": \"Scalping Strategy\",\n  \"assetClasses\": [\"FOREX\", \"CFD\"],\n  \"style\": \"SCALPER\",\n  \"riskLevel\": \"HIGH\",\n  \"bio\": \"Professional forex trader with 5 years experience\",\n  \"experience\": \"ADVANCED\",\n  \"languages\": [\"English\", \"Spanish\"],\n  \"timezone\": \"UTC\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/traders/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"traders",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trader by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/traders/{{traderId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"traders",
+								"{{traderId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Top Traders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/traders/top?metric=profitFactor&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"traders",
+								"top"
+							],
+							"query": [
+								{
+									"key": "metric",
+									"value": "profitFactor"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get EA Link",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/traders/{{traderId}}/ealink",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"traders",
+								"{{traderId}}",
+								"ealink"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Regenerate EA Link",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/traders/me/regenerate-ea-link",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"traders",
+								"me",
+								"regenerate-ea-link"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Investors",
+			"item": [
+				{
+					"name": "Get My Investor Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/investors/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"investors",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update My Investor Profile",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"riskLevel\": \"MEDIUM\",\n  \"timeline\": \"LONG\",\n  \"preferences\": [\"FOREX\", \"CFD\"],\n  \"maxAllocation\": 50000,\n  \"minAllocation\": 1000,\n  \"maxDrawdown\": 0.15,\n  \"investmentGoal\": \"GROWTH\",\n  \"notificationSettings\": {\n    \"email\": true,\n    \"push\": true,\n    \"sms\": false\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/investors/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"investors",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Investors (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/investors?page=1&limit=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"investors"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Investor by ID (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/investors/{{investorId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"investors",
+								"{{investorId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Investor Stats (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/investors/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"investors",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Broker Accounts",
+			"item": [
+				{
+					"name": "Create Broker Account",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('brokerAccountId', response.data._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"MT5\",\n  \"accountNo\": \"123456789\",\n  \"mode\": \"DEMO\",\n  \"brokerName\": \"Test Broker\",\n  \"server\": \"TestServer\",\n  \"currency\": \"USD\",\n  \"leverage\": 100,\n  \"connectionString\": \"mt5://test:password@broker.com:443\",\n  \"apiKey\": \"api_key_here\",\n  \"apiSecret\": \"api_secret_here\",\n  \"webhookUrl\": \"https://example.com/webhook\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/broker-accounts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"broker-accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Broker Accounts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/broker-accounts/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"broker-accounts",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Broker Account by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/broker-accounts/{{brokerAccountId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"broker-accounts",
+								"{{brokerAccountId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Broker Account",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"ONLINE\",\n  \"brokerName\": \"Updated Broker\",\n  \"server\": \"UpdatedServer\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/broker-accounts/{{brokerAccountId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"broker-accounts",
+								"{{brokerAccountId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Broker Account Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/broker-accounts/{{brokerAccountId}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"broker-accounts",
+								"{{brokerAccountId}}",
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Broker Account",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/broker-accounts/{{brokerAccountId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"broker-accounts",
+								"{{brokerAccountId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Broker Accounts (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/broker-accounts?page=1&limit=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"broker-accounts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PAMM Pools",
+			"item": [
+				{
+					"name": "Get All Pools",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pools?mode=DEMO",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pools"
+							],
+							"query": [
+								{
+									"key": "mode",
+									"value": "DEMO"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pool by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pools/{{poolId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pools",
+								"{{poolId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Pool (Trader)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('poolId', response.data._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mode\": \"DEMO\",\n  \"name\": \"Test Trading Pool\",\n  \"description\": \"A test pool for demonstration purposes\",\n  \"maxAllocation\": 100000,\n  \"minAllocation\": 100,\n  \"performanceFee\": 0.20,\n  \"managementFee\": 0.02\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pools",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pools"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Allocation (Investor)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"proportion\": 0.25,\n  \"amount\": 25000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pools/{{poolId}}/allocations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pools",
+								"{{poolId}}",
+								"allocations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Allocation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pools/{{poolId}}/allocations/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pools",
+								"{{poolId}}",
+								"allocations",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All My Allocations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pools/me/allocations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pools",
+								"me",
+								"allocations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Allocation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pools/{{poolId}}/allocations/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pools",
+								"{{poolId}}",
+								"allocations",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trade Ingestion",
+			"item": [
+				{
+					"name": "Ingest Trade Signal (EA Webhook)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 202) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('tradeId', response.data.tradeId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-EA-Signature",
+								"value": "{{$randomString}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idempotencyKey\": \"trade_{{$timestamp}}\",\n  \"brokerAccountId\": \"{{brokerAccountId}}\",\n  \"side\": \"BUY\",\n  \"symbol\": \"EURUSD\",\n  \"lot\": 1.0,\n  \"price\": 1.1000,\n  \"sl\": 1.0950,\n  \"tp\": 1.1100\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/trades/ingest",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trades",
+								"ingest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trade Signals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/trades?page=1&limit=50&status=EXECUTED",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trades"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "50"
+								},
+								{
+									"key": "status",
+									"value": "EXECUTED"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trade Signal by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/trades/{{tradeId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trades",
+								"{{tradeId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Close Trade",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"closePrice\": 1.1050\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/trades/{{tradeId}}/close",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trades",
+								"{{tradeId}}",
+								"close"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test Scenarios",
+			"item": [
+				{
+					"name": "Complete User Journey - Trader",
+					"item": [
+						{
+							"name": "1. Signup as Trader",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"trader@example.com\",\n  \"phone\": \"+1234567891\",\n  \"password\": \"Password123!\",\n  \"role\": \"TRADER\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/signup",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Update Trader Profile",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"strategy\": \"Scalping Strategy\",\n  \"assetClasses\": [\"FOREX\", \"CFD\"],\n  \"style\": \"SCALPER\",\n  \"riskLevel\": \"HIGH\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/traders/me",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"traders",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Create Broker Account",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"type\": \"MT5\",\n  \"accountNo\": \"123456789\",\n  \"mode\": \"DEMO\",\n  \"brokerName\": \"Test Broker\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/broker-accounts",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"broker-accounts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Create PAMM Pool",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"mode\": \"DEMO\",\n  \"name\": \"My Trading Pool\",\n  \"description\": \"Professional trading pool\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/pools",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Get EA Link",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/traders/me/regenerate-ea-link",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"traders",
+										"me",
+										"regenerate-ea-link"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Complete User Journey - Investor",
+					"item": [
+						{
+							"name": "1. Signup as Investor",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"investor@example.com\",\n  \"phone\": \"+1234567890\",\n  \"password\": \"Password123!\",\n  \"role\": \"INVESTOR\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/signup",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Update Investor Profile",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"riskLevel\": \"MEDIUM\",\n  \"timeline\": \"LONG\",\n  \"preferences\": [\"FOREX\", \"CFD\"],\n  \"maxAllocation\": 50000\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/investors/me",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"investors",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Browse Available Pools",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pools",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Set Allocation to Pool",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"proportion\": 0.25,\n  \"amount\": 25000\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/pools/{{poolId}}/allocations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pools",
+										"{{poolId}}",
+										"allocations"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Check My Allocations",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pools/me/allocations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pools",
+										"me",
+										"allocations"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Complete KYC Document Upload Flow",
+					"item": [
+						{
+							"name": "1. Login as User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password123!\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Check Current KYC Status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/kyc/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc",
+										"status"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Upload CNIC Front",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "document",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/kyc/documents/cnicFront",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc",
+										"documents",
+										"cnicFront"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Upload CNIC Back",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "document",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/kyc/documents/cnicBack",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc",
+										"documents",
+										"cnicBack"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Upload Face Picture",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "document",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/kyc/documents/facePicture",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc",
+										"documents",
+										"facePicture"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Get All Uploaded Documents",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/kyc/documents",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc",
+										"documents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. Submit KYC for Review",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/kyc/submit",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc",
+										"submit"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "8. Check Final KYC Status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/kyc/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"kyc",
+										"status"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Complete Admin KYC Review Flow",
+					"item": [
+						{
+							"name": "1. Login as Admin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"admin@greenturtle.com\",\n  \"password\": \"Admin123!\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Get KYC Statistics",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/kyc/stats",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"kyc",
+										"stats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Get Pending KYC Submissions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/kyc/submissions?status=PENDING",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"kyc",
+										"submissions"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "PENDING"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Get KYC Submission Details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"kyc",
+										"submissions",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Verify CNIC Front Document",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"verified\": true,\n  \"adminNotes\": \"CNIC front document is clear and valid.\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/documents/cnicFront/verify",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"kyc",
+										"submissions",
+										"{{userId}}",
+										"documents",
+										"cnicFront",
+										"verify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Verify CNIC Back Document",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"verified\": true,\n  \"adminNotes\": \"CNIC back document is clear and valid.\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/documents/cnicBack/verify",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"kyc",
+										"submissions",
+										"{{userId}}",
+										"documents",
+										"cnicBack",
+										"verify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. Verify Face Picture Document",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"verified\": true,\n  \"adminNotes\": \"Face picture matches the CNIC photo.\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/documents/facePicture/verify",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"kyc",
+										"submissions",
+										"{{userId}}",
+										"documents",
+										"facePicture",
+										"verify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "8. Approve KYC Submission",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"APPROVED\",\n  \"adminNotes\": \"All documents verified successfully. Identity confirmed.\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}/review",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"kyc",
+										"submissions",
+										"{{userId}}",
+										"review"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "9. Verify Final Status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/kyc/submissions/{{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"kyc",
+										"submissions",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Profile Questions",
+			"item": [
+				{
+					"name": "Get Questions for Role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/profile-questions/questions/INVESTOR",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"profile-questions",
+								"questions",
+								"INVESTOR"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Profile Answers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"answers\": [\n    {\n      \"questionId\": \"risk_preference\",\n      \"answer\": \"Medium\"\n    },\n    {\n      \"questionId\": \"trading_style\",\n      \"answer\": \"Day Trader\"\n    },\n    {\n      \"questionId\": \"asset_classes\",\n      \"answer\": [\"Forex\", \"Commodities\"]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/profile-questions/answers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"profile-questions",
+								"answers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Profile Answers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/profile-questions/answers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"profile-questions",
+								"answers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Profile Questions",
+			"item": [
+				{
+					"name": "Get All Questions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/profile-questions/admin/questions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"profile-questions",
+								"admin",
+								"questions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Profile Question",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"questionId\": \"risk_preference\",\n  \"role\": \"INVESTOR\",\n  \"questionText\": \"What is your risk preference?\",\n  \"questionType\": \"SINGLE_CHOICE\",\n  \"options\": [\n    {\n      \"value\": \"Low\",\n      \"label\": \"Low Risk\"\n    },\n    {\n      \"value\": \"Medium\",\n      \"label\": \"Medium Risk\"\n    },\n    {\n      \"value\": \"High\",\n      \"label\": \"High Risk\"\n    }\n  ],\n  \"isRequired\": true,\n  \"order\": 1,\n  \"category\": \"RISK_ASSESSMENT\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/profile-questions/admin/questions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"profile-questions",
+								"admin",
+								"questions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile Question",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"questionText\": \"What is your preferred risk level?\",\n  \"isRequired\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/profile-questions/admin/questions/risk_preference",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"profile-questions",
+								"admin",
+								"questions",
+								"risk_preference"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Profile Question",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/profile-questions/admin/questions/risk_preference",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"profile-questions",
+								"admin",
+								"questions",
+								"risk_preference"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "traderId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "investorId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "poolId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "brokerAccountId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tradeId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

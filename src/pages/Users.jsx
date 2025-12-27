@@ -230,19 +230,48 @@ const Users = () => {
   // Dynamic Profile: Check if viewing a specific user
   useEffect(() => {
     const userId = params.id;
-    if (userId && users.length > 0) {
-      // Try to find by id (could be number or string)
-      const user = users.find((u) => 
-        u.id === parseInt(userId) || 
-        u.id === userId || 
-        u._id === userId ||
-        String(u.id) === String(userId)
-      );
-      setSelectedUser(user || null);
+    if (userId) {
+      if (users.length > 0) {
+        // Try to find by id in the current users list (could be number or string)
+        const user = users.find((u) => 
+          u.id === parseInt(userId) || 
+          u.id === userId || 
+          u._id === userId ||
+          String(u.id) === String(userId)
+        );
+        
+        if (user) {
+          setSelectedUser(user);
+        } else {
+          // If user not found in current list, try to fetch specific user
+          // For now, we'll set a temporary user object with just the ID
+          // In a real scenario, you might want to fetch the specific user from the API
+          setSelectedUser({ id: userId });
+        }
+      } else {
+        // If users list is not loaded yet, set a temporary user with the ID
+        // The useEffect will update this when users data is loaded
+        setSelectedUser({ id: userId });
+      }
     } else {
       setSelectedUser(null);
     }
   }, [params.id, users]);
+
+  // Handle View Profile action for investors
+  const handleViewProfile = (userId) => {
+    const user = users.find((u) => 
+      u.id === parseInt(userId) || 
+      u.id === userId || 
+      u._id === userId ||
+      String(u.id) === String(userId)
+    );
+    
+    if (user) {
+      setSelectedUser(user);
+      navigate(`/users/${userId}`);
+    }
+  };
 
   // ==================== EVENT HANDLERS ====================
   
@@ -296,7 +325,7 @@ const Users = () => {
       if (user.type === "Trader" || user.role === "TRADER") {
         navigate(`/profile/${userId}`);
       } else {
-        navigate(`/users/${userId}`);
+        handleViewProfile(userId);
       }
     } else if (action === "edit") {
       setEditingUser(user);
@@ -357,7 +386,7 @@ const Users = () => {
     console.log("View details for:", item);
   };
 
-  if (selectedUser && selectedUser.type === "Investor") {
+  if (selectedUser && (selectedUser.type === "Investor" || selectedUser.role === "INVESTOR")) {
     // Investor Profile View
     return (
       <div className="app">
@@ -365,11 +394,14 @@ const Users = () => {
           <div className="page-header">
             <button
               className="btn outline back-btn"
-              onClick={() => navigate("/users")}
+              onClick={() => {
+                setSelectedUser(null);
+                navigate("/users");
+              }}
             >
               ← Back to Users
             </button>
-            <h2 className="page-title">Profile: {selectedUser.name}</h2>
+            <h2 className="page-title">Profile: {selectedUser.name || 'Loading...'}</h2>
           </div>
 
           <div className="user-info">

@@ -11,13 +11,15 @@ export const ENDPOINTS = {
     REFRESH: '/auth/refresh',
     ME: '/auth/me',
   },
-  
+
   // Admin endpoints
   ADMIN: {
     USERS: '/admin/users',
-    KYC_REVIEW: (userId) => `/kyc/submissions/${userId}/review`,
+    INVITE: '/invite',
+    KYC_SUBMISSIONS: '/admin/kyc/submissions',
+    KYC_REVIEW: (id) => `/admin/kyc/submissions/${id}/review`,
   },
-  
+
   // User endpoints
   USERS: {
     LIST: '/users',
@@ -26,7 +28,7 @@ export const ENDPOINTS = {
     UPDATE: (id) => `/users/${id}`,
     DELETE: (id) => `/users/${id}`,
   },
-  
+
   // Add more endpoints as needed
-};                                                                                                                            
+};
 

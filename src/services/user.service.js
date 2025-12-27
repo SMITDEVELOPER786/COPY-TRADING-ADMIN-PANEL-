@@ -105,4 +105,35 @@ export const submitKycReview = async (userId, reviewData) => {
   }
 };
 
+/**
+ * Fetch KYC submissions
+ * @param {Object} params - Query parameters
+ * @returns {Promise<Object>} Response data containing KYC submissions
+ */
+export const getKycSubmissions = async (params = {}) => {
+  try {
+    const { status, page = 1, limit = 10, ...otherParams } = params;
+    
+    // Build query string
+    const queryParams = new URLSearchParams();
+    if (status) queryParams.append('status', status);
+    queryParams.append('page', page);
+    queryParams.append('limit', limit);
+    
+    // Add any other query parameters
+    Object.keys(otherParams).forEach(key => {
+      if (otherParams[key] !== undefined && otherParams[key] !== null) {
+        queryParams.append(key, otherParams[key]);
+      }
+    });
 
+    const queryString = queryParams.toString();
+    const url = `${ENDPOINTS.ADMIN.KYC_SUBMISSIONS}${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await apiClient.get(url);
+    return response;
+  } catch (error) {
+    console.error('Get KYC submissions error:', error);
+    throw error;
+  }
+};
