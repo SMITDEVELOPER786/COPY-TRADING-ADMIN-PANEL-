@@ -1,24 +1,13 @@
-/**
- * API Endpoints
- * Centralized endpoint definitions
- */
-
 export const ENDPOINTS = {
-  // Auth endpoints
+  // Auth
   AUTH: {
     LOGIN: '/auth/login',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
     ME: '/auth/me',
   },
-  
-  // Admin endpoints
-  ADMIN: {
-    USERS: '/admin/users',
-    KYC_REVIEW: (userId) => `/kyc/submissions/${userId}/review`,
-  },
-  
-  // User endpoints
+
+  // Users
   USERS: {
     LIST: '/users',
     DETAIL: (id) => `/users/${id}`,
@@ -26,7 +15,18 @@ export const ENDPOINTS = {
     UPDATE: (id) => `/users/${id}`,
     DELETE: (id) => `/users/${id}`,
   },
-  
-  // Add more endpoints as needed
-};                                                                                                                            
 
+  // Admin
+  ADMIN: {
+    USERS: '/admin/users',
+
+    // ✅ KYC (relative to baseURL /admin/kyc)
+    KYC: {
+      LIST: 'kyc/submissions',
+      DETAIL: (userId) => `kyc/submissions/${userId}`,
+      REVIEW: (userId) => `kyc/submissions/${userId}/review`,
+      VERIFY_DOCUMENT: (userId) => `kyc/documents/${userId}/verify`,
+      STATS: '/stats',
+    },
+  },
+};
