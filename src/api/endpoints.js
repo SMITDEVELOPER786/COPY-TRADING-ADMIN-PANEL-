@@ -8,12 +8,7 @@ export const ENDPOINTS = {
   },
 
   // Admin endpoints
-  ADMIN: {
-    USERS: '/admin/users',
-    INVITE: '/invite',
-    KYC_SUBMISSIONS: '/admin/kyc/submissions',
-    KYC_REVIEW: (id) => `/admin/kyc/submissions/${id}/review`,
-  },
+
 
   // Users
   USERS: {
@@ -26,7 +21,8 @@ export const ENDPOINTS = {
 
   // Admin
   ADMIN: {
-    USERS: '/admin/users',
+    USERS: '/users',
+    INVITE: '/users/invite',
 
     // ✅ KYC (relative to baseURL /admin/kyc)
     KYC: {
