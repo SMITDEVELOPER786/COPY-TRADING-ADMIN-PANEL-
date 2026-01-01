@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import UserCharts from '../components/UserCharts';
-import { getUserById, updateUserStatus } from '../services/user.service';
+import { getUserById, updateUserStatus, submitKycReview } from '../services/user.service';
 import {
   FaEnvelope,
   FaBan,
@@ -64,16 +64,16 @@ const InvestorProfile = () => {
   useEffect(() => {
     const fetchInvestor = async () => {
       if (!investorId) return;
-      
+
       try {
         setIsLoading(true);
         setError(null);
-        
+
         const response = await getUserById(investorId);
-        
+
         // API structure: { status: 'success', message: '...', data: { ...user data... } }
         const userData = response.data || response;
-        
+
         // Transform API data to component format
         const transformedUser = {
           id: userData._id || userData.id,
@@ -86,17 +86,17 @@ const InvestorProfile = () => {
           wallet: userData.wallet || userData.walletAddress || '-',
           market: userData.market || '-',
           broker: userData.broker || '-',
-          joined: userData.createdAt 
-            ? new Date(userData.createdAt).toLocaleDateString('en-GB', { 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric' 
-              })
+          joined: userData.createdAt
+            ? new Date(userData.createdAt).toLocaleDateString('en-GB', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            })
             : '-',
           createdAt: userData.createdAt,
-          status: userData.kycStatus === 'APPROVED' ? 'APPROVED' : 
-                  userData.kycStatus === 'PENDING' ? 'PENDING' : 
-                  userData.isFrozen ? 'Delete' : 'Active',
+          status: userData.kycStatus === 'APPROVED' ? 'APPROVED' :
+            userData.kycStatus === 'PENDING' ? 'PENDING' :
+              userData.isFrozen ? 'Delete' : 'Active',
           kycStatus: userData.kycStatus,
           isFrozen: userData.isFrozen,
           avatar: userData.profileImage?.url || userData.avatar || 'https://via.placeholder.com/40',
@@ -115,7 +115,7 @@ const InvestorProfile = () => {
           lastLoginAt: userData.lastLoginAt,
           updatedAt: userData.updatedAt,
         };
-        
+
         setSelectedUser(transformedUser);
       } catch (err) {
         console.error('Error fetching investor:', err);
@@ -130,7 +130,7 @@ const InvestorProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       // Extract form data
       const formData = new FormData(e.target);
@@ -150,17 +150,17 @@ const InvestorProfile = () => {
         exp: formData.get('exp'),
         avatar: formData.get('avatar'),
       };
-      
+
       // For now, we'll just update the local state
       // In a real implementation, you would make an API call to update the user
       setSelectedUser(prev => ({
         ...prev,
         ...updatedData
       }));
-      
+
       setShowForm(false);
       setEditingUser(null);
-      
+
       toast.success('User updated successfully');
     } catch (error) {
       console.error('Error updating user:', error);
@@ -184,10 +184,10 @@ const InvestorProfile = () => {
       // In a real implementation, this would call an email service
       // For now, we'll simulate sending an email
       console.log(`Sending email to: ${selectedUser.email}`);
-      
+
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       toast.success(`Email sent successfully to ${selectedUser.email}`);
     } catch (error) {
       console.error('Error sending email:', error);
@@ -202,11 +202,11 @@ const InvestorProfile = () => {
       toast.error('User data not available');
       return;
     }
-    
+
     try {
       // Determine the new status based on current status
       const newStatus = selectedUser.status === 'Active' ? 'Deactivate' : 'Active';
-      
+
       // Update the local state immediately to provide visual feedback
       setSelectedUser(prev => ({
         ...prev,
@@ -214,15 +214,15 @@ const InvestorProfile = () => {
         kycStatus: newStatus === 'Active' ? 'APPROVED' : 'PENDING',
         isFrozen: newStatus === 'Active' ? false : false // Keep isFrozen false for deactivation
       }));
-      
+
       // Make the API call
       await updateUserStatus(selectedUser.id, newStatus);
-      
+
       toast.success(`User ${newStatus === 'Active' ? 'activated' : 'deactivated'} successfully`);
     } catch (error) {
       console.error('Error updating user status:', error);
       toast.error(`Failed to ${selectedUser.status === 'Active' ? 'deactivate' : 'activate'} user`);
-      
+
       // Revert the status if API call failed
       setSelectedUser(prev => ({
         ...prev,
@@ -238,27 +238,27 @@ const InvestorProfile = () => {
       toast.error('User data not available');
       return;
     }
-    
+
     try {
       // Determine the new freeze status based on current status
       const newIsFrozen = !selectedUser.isFrozen;
       const newStatus = newIsFrozen ? 'Delete' : 'Active';
-      
+
       // Update the local state immediately to provide visual feedback
       setSelectedUser(prev => ({
         ...prev,
         status: newStatus,
         isFrozen: newIsFrozen
       }));
-      
+
       // Update the user status
       await updateUserStatus(selectedUser.id, newStatus);
-      
+
       toast.success(`User ${newIsFrozen ? 'frozen' : 'unfrozen'} successfully`);
     } catch (error) {
       console.error('Error updating user freeze status:', error);
       toast.error(`Failed to ${selectedUser.isFrozen ? 'unfreeze' : 'freeze'} user`);
-      
+
       // Revert the status if API call failed
       setSelectedUser(prev => ({
         ...prev,
@@ -273,7 +273,7 @@ const InvestorProfile = () => {
       toast.error('User data not available');
       return;
     }
-    
+
     setShowDeleteDialog(true);
   };
 
@@ -282,7 +282,7 @@ const InvestorProfile = () => {
       toast.error('User data not available');
       return;
     }
-    
+
     try {
       // Update the local state immediately to provide visual feedback
       const newStatus = selectedUser.status === 'Delete' ? 'Active' : 'Delete';
@@ -291,18 +291,18 @@ const InvestorProfile = () => {
         status: newStatus,
         isFrozen: newStatus === 'Delete'
       }));
-      
+
       // In the existing updateUserStatus function, 'Delete' status actually freezes the account
       // If you want to truly delete the user, you would need a different endpoint
       await updateUserStatus(selectedUser.id, newStatus);
-      
+
       toast.success(`User account ${newStatus === 'Delete' ? 'frozen (soft delete)' : 'activated'} successfully`);
       setShowDeleteDialog(false);
     } catch (error) {
       console.error('Error updating user:', error);
       toast.error('Failed to update user');
       setShowDeleteDialog(false);
-      
+
       // Revert the status if API call failed
       setSelectedUser(prev => ({
         ...prev,
@@ -317,19 +317,22 @@ const InvestorProfile = () => {
       toast.error('User data not available');
       return;
     }
-    
+
     try {
-      // In a real implementation, this would call the submitKycReview function
-      // For now, we'll update the user status directly
-      await updateUserStatus(selectedUser.id, 'Active');
-      
+      // Use submitKycReview for proper KYC workflow
+      await submitKycReview(selectedUser.id, {
+        status: 'APPROVED',
+        adminNotes: 'KYC Approved via Profile'
+      });
+
       // Update the local state to reflect the change
       setSelectedUser(prev => ({
         ...prev,
         status: 'Active',
-        kycStatus: 'APPROVED'
+        kycStatus: 'APPROVED',
+        kycReview: { ...prev.kycReview, status: 'APPROVED' }
       }));
-      
+
       toast.success('KYC approved successfully');
     } catch (error) {
       console.error('Error approving KYC:', error);
@@ -342,20 +345,22 @@ const InvestorProfile = () => {
       toast.error('User data not available');
       return;
     }
-    
+
     if (window.confirm('Are you sure you want to reject this user\'s KYC?')) {
       try {
-        // In a real implementation, this would call the submitKycReview function
-        // For now, we'll update the user status directly
-        await updateUserStatus(selectedUser.id, 'Deactivate');
-        
+        await submitKycReview(selectedUser.id, {
+          status: 'REJECTED',
+          adminNotes: 'KYC Rejected via Profile'
+        });
+
         // Update the local state to reflect the change
         setSelectedUser(prev => ({
           ...prev,
           status: 'Deactivate',
-          kycStatus: 'REJECTED'
+          kycStatus: 'REJECTED',
+          kycReview: { ...prev.kycReview, status: 'REJECTED' }
         }));
-        
+
         toast.success('KYC rejected successfully');
       } catch (error) {
         console.error('Error rejecting KYC:', error);
@@ -369,19 +374,21 @@ const InvestorProfile = () => {
       toast.error('User data not available');
       return;
     }
-    
+
     try {
-      // In a real implementation, this would call the submitKycReview function
-      // For now, we'll update the user status directly
-      await updateUserStatus(selectedUser.id, 'Deactivate');
-      
+      await submitKycReview(selectedUser.id, {
+        status: 'PENDING',
+        adminNotes: 'KYC status reset to Pending'
+      });
+
       // Update the local state to reflect the change
       setSelectedUser(prev => ({
         ...prev,
         status: 'PENDING',
-        kycStatus: 'PENDING'
+        kycStatus: 'PENDING',
+        kycReview: { ...prev.kycReview, status: 'PENDING' }
       }));
-      
+
       toast.success('KYC status set to pending');
     } catch (error) {
       console.error('Error setting KYC to pending:', error);
@@ -405,7 +412,7 @@ const InvestorProfile = () => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const formData = new FormData(e.target);
       const updatedData = {
@@ -422,20 +429,20 @@ const InvestorProfile = () => {
         equity: formData.get('equity'),
         exp: formData.get('exp'),
       };
-      
+
       // Update the user via API
       const userId = selectedUser.id || selectedUser._id;
       await updateUserStatus(userId, selectedUser.status); // We'll update other fields separately if needed
-      
+
       // Update local state
       setSelectedUser(prev => ({
         ...prev,
         ...updatedData
       }));
-      
+
       setShowForm(false);
       setEditingUser(null);
-      
+
       toast.success('User updated successfully');
     } catch (error) {
       console.error('Error updating user:', error);
@@ -638,7 +645,7 @@ const InvestorProfile = () => {
               <p>
                 <span className="label">Last Login:</span>
                 <span className="value">
-                  {selectedUser.lastLoginAt 
+                  {selectedUser.lastLoginAt
                     ? new Date(selectedUser.lastLoginAt).toLocaleString()
                     : '-'}
                 </span>
@@ -668,17 +675,18 @@ const InvestorProfile = () => {
                     {selectedUser.kycReview.status || 'PENDING'}
                   </span>
                 </p>
+
               </div>
             )}
             <div className="actions">
-              <button 
+              <button
                 className="btn green"
                 onClick={handleSendEmail}
                 disabled={isEmailSending}
               >
                 <FaEnvelope /> {isEmailSending ? 'Sending...' : 'Send Email'}
               </button>
-              <button 
+              <button
                 className="btn outline"
                 onClick={() => setShowKycDialog(true)}
               >
@@ -697,9 +705,7 @@ const InvestorProfile = () => {
                   </button>
                 </div>
               )}
-              <button className="btn outline">
-                <FaPhone /> Contact Info
-              </button>
+
               <button
                 className="btn outline"
                 onClick={() => setShowRoiDialog(true)}
@@ -851,18 +857,18 @@ const InvestorProfile = () => {
                     <h5 style={{ marginBottom: '10px' }}>CNIC Front</h5>
                     {selectedUser?.kycDocuments?.cnicFront?.url || selectedUser?.kycDocuments?.cnicFront?.filename ? (
                       <div>
-                        <img 
-                          src={selectedUser.kycDocuments.cnicFront.url ? 
-                            (selectedUser.kycDocuments.cnicFront.url.startsWith('http') ? 
-                              selectedUser.kycDocuments.cnicFront.url : 
-                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicFront.url}`) : 
-                            'https://via.placeholder.com/300x200?text=CNIC+Front'} 
-                          alt="CNIC Front" 
+                        <img
+                          src={selectedUser.kycDocuments.cnicFront.url ?
+                            (selectedUser.kycDocuments.cnicFront.url.startsWith('http') ?
+                              selectedUser.kycDocuments.cnicFront.url :
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicFront.url}`) :
+                            'https://via.placeholder.com/300x200?text=CNIC+Front'}
+                          alt="CNIC Front"
                           style={{ width: '100%', height: 'auto', borderRadius: '4px', marginBottom: '10px' }}
                         />
                         <p style={{ fontSize: '12px', color: '#666' }}>
-                          Uploaded: {selectedUser.kycDocuments.cnicFront.uploadedAt ? 
-                            new Date(selectedUser.kycDocuments.cnicFront.uploadedAt).toLocaleDateString() : 
+                          Uploaded: {selectedUser.kycDocuments.cnicFront.uploadedAt ?
+                            new Date(selectedUser.kycDocuments.cnicFront.uploadedAt).toLocaleDateString() :
                             'N/A'}
                         </p>
                       </div>
@@ -878,18 +884,18 @@ const InvestorProfile = () => {
                     <h5 style={{ marginBottom: '10px' }}>CNIC Back</h5>
                     {selectedUser?.kycDocuments?.cnicBack?.url || selectedUser?.kycDocuments?.cnicBack?.filename ? (
                       <div>
-                        <img 
-                          src={selectedUser.kycDocuments.cnicBack.url ? 
-                            (selectedUser.kycDocuments.cnicBack.url.startsWith('http') ? 
-                              selectedUser.kycDocuments.cnicBack.url : 
-                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicBack.url}`) : 
-                            'https://via.placeholder.com/300x200?text=CNIC+Back'} 
-                          alt="CNIC Back" 
+                        <img
+                          src={selectedUser.kycDocuments.cnicBack.url ?
+                            (selectedUser.kycDocuments.cnicBack.url.startsWith('http') ?
+                              selectedUser.kycDocuments.cnicBack.url :
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicBack.url}`) :
+                            'https://via.placeholder.com/300x200?text=CNIC+Back'}
+                          alt="CNIC Back"
                           style={{ width: '100%', height: 'auto', borderRadius: '4px', marginBottom: '10px' }}
                         />
                         <p style={{ fontSize: '12px', color: '#666' }}>
-                          Uploaded: {selectedUser.kycDocuments.cnicBack.uploadedAt ? 
-                            new Date(selectedUser.kycDocuments.cnicBack.uploadedAt).toLocaleDateString() : 
+                          Uploaded: {selectedUser.kycDocuments.cnicBack.uploadedAt ?
+                            new Date(selectedUser.kycDocuments.cnicBack.uploadedAt).toLocaleDateString() :
                             'N/A'}
                         </p>
                       </div>
@@ -905,18 +911,18 @@ const InvestorProfile = () => {
                     <h5 style={{ marginBottom: '10px' }}>Face Picture</h5>
                     {selectedUser?.kycDocuments?.facePicture?.url || selectedUser?.kycDocuments?.facePicture?.filename ? (
                       <div>
-                        <img 
-                          src={selectedUser.kycDocuments.facePicture.url ? 
-                            (selectedUser.kycDocuments.facePicture.url.startsWith('http') ? 
-                              selectedUser.kycDocuments.facePicture.url : 
-                              `https://backend.greentrutle.com${selectedUser.kycDocuments.facePicture.url}`) : 
-                            'https://via.placeholder.com/300x300?text=Face+Picture'} 
-                          alt="Face Picture" 
+                        <img
+                          src={selectedUser.kycDocuments.facePicture.url ?
+                            (selectedUser.kycDocuments.facePicture.url.startsWith('http') ?
+                              selectedUser.kycDocuments.facePicture.url :
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.facePicture.url}`) :
+                            'https://via.placeholder.com/300x300?text=Face+Picture'}
+                          alt="Face Picture"
                           style={{ width: '100%', height: 'auto', borderRadius: '4px', marginBottom: '10px' }}
                         />
                         <p style={{ fontSize: '12px', color: '#666' }}>
-                          Uploaded: {selectedUser.kycDocuments.facePicture.uploadedAt ? 
-                            new Date(selectedUser.kycDocuments.facePicture.uploadedAt).toLocaleDateString() : 
+                          Uploaded: {selectedUser.kycDocuments.facePicture.uploadedAt ?
+                            new Date(selectedUser.kycDocuments.facePicture.uploadedAt).toLocaleDateString() :
                             'N/A'}
                         </p>
                       </div>
@@ -1087,134 +1093,134 @@ const InvestorProfile = () => {
                   <X size={20} />
                 </button>
               </div>
-                   <div className="advanced-metrics-grid">
-        {/* Portfolio Metrics */}
-        <div className="metrics-section">
-          <h4>Portfolio Metrics</h4>
-          <div className="metrics-row">
-            <p>
-              <span className="metric-label">Portfolio Value:</span>
-              <span className="metric-value">${investorMetrics.portfolioValue.toLocaleString()}</span>
-            </p>
-            <p>
-              <span className="metric-label">Annualized Return:</span>
-              <span className={`metric-value ${investorMetrics.annualizedReturn >= 0}`}>
-                {investorMetrics.annualizedReturn.toFixed(2)}%
-              </span>
-            </p>
-            <p>
-              <span className="metric-label">ROI:</span>
-              <span className={`metric-value ${investorMetrics.roi >= 0}`}>
-                {investorMetrics.roi.toFixed(2)}%
-              </span>
-            </p>
-            <p>
-              <span className="metric-label">Diversification Score:</span>
-              <span className="metric-value">{investorMetrics.diversificationScore.toFixed(2)}</span>
-            </p>
-          </div>
-        </div>
+              <div className="advanced-metrics-grid">
+                {/* Portfolio Metrics */}
+                <div className="metrics-section">
+                  <h4>Portfolio Metrics</h4>
+                  <div className="metrics-row">
+                    <p>
+                      <span className="metric-label">Portfolio Value:</span>
+                      <span className="metric-value">${investorMetrics.portfolioValue.toLocaleString()}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Annualized Return:</span>
+                      <span className={`metric-value ${investorMetrics.annualizedReturn >= 0}`}>
+                        {investorMetrics.annualizedReturn.toFixed(2)}%
+                      </span>
+                    </p>
+                    <p>
+                      <span className="metric-label">ROI:</span>
+                      <span className={`metric-value ${investorMetrics.roi >= 0}`}>
+                        {investorMetrics.roi.toFixed(2)}%
+                      </span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Diversification Score:</span>
+                      <span className="metric-value">{investorMetrics.diversificationScore.toFixed(2)}</span>
+                    </p>
+                  </div>
+                </div>
 
-        {/* Investment Activity */}
-        <div className="metrics-section">
-          <h4>Investment Activity</h4>
-          <div className="metrics-row">
-            <p>
-              <span className="metric-label">Total Investments:</span>
-              <span className="metric-value">{investorMetrics.totalInvestments}</span>
-            </p>
-            <p>
-              <span className="metric-label">Average Investment Size:</span>
-              <span className="metric-value">${investorMetrics.averageInvestmentSize.toLocaleString()}</span>
-            </p>
-            <p>
-              <span className="metric-label">Largest Investment:</span>
-              <span className="metric-value">${investorMetrics.largestInvestment.toLocaleString()}</span>
-            </p>
-            <p>
-              <span className="metric-label">Largest Investment Date:</span>
-              <span className="metric-value">{investorMetrics.largestInvestmentDate}</span>
-            </p>
-            <p>
-              <span className="metric-label">Smallest Investment:</span>
-              <span className="metric-value">${investorMetrics.smallestInvestment.toLocaleString()}</span>
-            </p>
-            <p>
-              <span className="metric-label">Smallest Investment Date:</span>
-              <span className="metric-value">{investorMetrics.smallestInvestmentDate}</span>
-            </p>
-          </div>
-        </div>
+                {/* Investment Activity */}
+                <div className="metrics-section">
+                  <h4>Investment Activity</h4>
+                  <div className="metrics-row">
+                    <p>
+                      <span className="metric-label">Total Investments:</span>
+                      <span className="metric-value">{investorMetrics.totalInvestments}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Average Investment Size:</span>
+                      <span className="metric-value">${investorMetrics.averageInvestmentSize.toLocaleString()}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Largest Investment:</span>
+                      <span className="metric-value">${investorMetrics.largestInvestment.toLocaleString()}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Largest Investment Date:</span>
+                      <span className="metric-value">{investorMetrics.largestInvestmentDate}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Smallest Investment:</span>
+                      <span className="metric-value">${investorMetrics.smallestInvestment.toLocaleString()}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Smallest Investment Date:</span>
+                      <span className="metric-value">{investorMetrics.smallestInvestmentDate}</span>
+                    </p>
+                  </div>
+                </div>
 
-        {/* Risk Metrics */}
-        <div className="metrics-section">
-          <h4>Risk Metrics</h4>
-          <div className="metrics-row">
-            <p>
-              <span className="metric-label">Sharpe Ratio:</span>
-              <span className="value">{investorMetrics.sharpeRatio.toFixed(2)}</span>
-            </p>
-            <p>
-              <span className="metric-label">Volatility:</span>
-              <span className="metric-value">{investorMetrics.volatility.toFixed(2)}%</span>
-            </p>
-            <p>
-              <span className="metric-label">Max Drawdown:</span>
-              <span className={`metric-value ${investorMetrics.maxDrawdown >= 0 ? 'status-active' : 'status-withdraw'}`}>
-                {investorMetrics.maxDrawdown.toFixed(2)}%
-              </span>
-            </p>
-          </div>
-        </div>
+                {/* Risk Metrics */}
+                <div className="metrics-section">
+                  <h4>Risk Metrics</h4>
+                  <div className="metrics-row">
+                    <p>
+                      <span className="metric-label">Sharpe Ratio:</span>
+                      <span className="value">{investorMetrics.sharpeRatio.toFixed(2)}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Volatility:</span>
+                      <span className="metric-value">{investorMetrics.volatility.toFixed(2)}%</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Max Drawdown:</span>
+                      <span className={`metric-value ${investorMetrics.maxDrawdown >= 0 ? 'status-active' : 'status-withdraw'}`}>
+                        {investorMetrics.maxDrawdown.toFixed(2)}%
+                      </span>
+                    </p>
+                  </div>
+                </div>
 
-        {/* Performance Metrics */}
-        <div className="metrics-section">
-          <h4>Performance Metrics</h4>
-          <div className="metrics-row">
-            <p>
-              <span className="metric-label">Average Investment Duration:</span>
-              <span className="metric-value">{investorMetrics.averageInvestmentDuration}</span>
-            </p>
-            <p>
-              <span className="metric-label">Positive Return Months:</span>
-              <span className="metric-value">{investorMetrics.positiveReturnMonths}</span>
-            </p>
-            <p>
-              <span className="metric-label">Negative Return Months:</span>
-              <span className="metric-value">{investorMetrics.negativeReturnMonths}</span>
-            </p>
-            <p>
-              <span className="metric-label">Average Monthly Return:</span>
-              <span className={`metric-value ${investorMetrics.averageMonthlyReturn >= 0}`}>
-                {investorMetrics.averageMonthlyReturn.toFixed(2)}%
-              </span>
-            </p>
-          </div>
-        </div>
+                {/* Performance Metrics */}
+                <div className="metrics-section">
+                  <h4>Performance Metrics</h4>
+                  <div className="metrics-row">
+                    <p>
+                      <span className="metric-label">Average Investment Duration:</span>
+                      <span className="metric-value">{investorMetrics.averageInvestmentDuration}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Positive Return Months:</span>
+                      <span className="metric-value">{investorMetrics.positiveReturnMonths}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Negative Return Months:</span>
+                      <span className="metric-value">{investorMetrics.negativeReturnMonths}</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Average Monthly Return:</span>
+                      <span className={`metric-value ${investorMetrics.averageMonthlyReturn >= 0}`}>
+                        {investorMetrics.averageMonthlyReturn.toFixed(2)}%
+                      </span>
+                    </p>
+                  </div>
+                </div>
 
-        {/* Sector Allocation */}
-        <div className="metrics-section">
-          <h4>Sector Allocation</h4>
-          <div className="metrics-row">
-            <p>
-              <span className="metric-label">Technology:</span>
-              <span className="metric-value">{investorMetrics.sectorAllocation.technology}%</span>
-            </p>
-            <p>
-              <span className="metric-label">Real Estate:</span>
-              <span className="metric-value">{investorMetrics.sectorAllocation.realEstate}%</span>
-            </p>
-            <p>
-              <span className="metric-label">Healthcare:</span>
-              <span className="metric-value">{investorMetrics.sectorAllocation.healthcare}%</span>
-            </p>
-            <p>
-              <span className="metric-label">Others:</span>
-              <span className="metric-value">{investorMetrics.sectorAllocation.others}%</span>
-            </p>
-          </div>
-        </div>
-      </div>
+                {/* Sector Allocation */}
+                <div className="metrics-section">
+                  <h4>Sector Allocation</h4>
+                  <div className="metrics-row">
+                    <p>
+                      <span className="metric-label">Technology:</span>
+                      <span className="metric-value">{investorMetrics.sectorAllocation.technology}%</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Real Estate:</span>
+                      <span className="metric-value">{investorMetrics.sectorAllocation.realEstate}%</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Healthcare:</span>
+                      <span className="metric-value">{investorMetrics.sectorAllocation.healthcare}%</span>
+                    </p>
+                    <p>
+                      <span className="metric-label">Others:</span>
+                      <span className="metric-value">{investorMetrics.sectorAllocation.others}%</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
               <button className="dialog-close-btn" onClick={() => setShowMetricsDialog(false)}>
                 Close
               </button>
@@ -1275,13 +1281,13 @@ const InvestorProfile = () => {
                   {selectedUser.kycDocuments?.cnicFront?.url || selectedUser.kycDocuments?.cnicFront?.filename ? (
                     <div>
                       <div style={{ marginBottom: '10px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px', background: '#fff' }}>
-                        <img 
-                          src={selectedUser.kycDocuments.cnicFront.url ? 
-                            (selectedUser.kycDocuments.cnicFront.url.startsWith('http') ? 
-                              selectedUser.kycDocuments.cnicFront.url : 
-                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicFront.url}`) : 
-                            'https://via.placeholder.com/400x250?text=CNIC+Front'} 
-                          alt="CNIC Front" 
+                        <img
+                          src={selectedUser.kycDocuments.cnicFront.url ?
+                            (selectedUser.kycDocuments.cnicFront.url.startsWith('http') ?
+                              selectedUser.kycDocuments.cnicFront.url :
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicFront.url}`) :
+                            'https://via.placeholder.com/400x250?text=CNIC+Front'}
+                          alt="CNIC Front"
                           style={{ width: '100%', maxWidth: '400px', height: 'auto', borderRadius: '4px' }}
                         />
                       </div>
@@ -1313,13 +1319,13 @@ const InvestorProfile = () => {
                   {selectedUser.kycDocuments?.cnicBack?.url || selectedUser.kycDocuments?.cnicBack?.filename ? (
                     <div>
                       <div style={{ marginBottom: '10px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px', background: '#fff' }}>
-                        <img 
-                          src={selectedUser.kycDocuments.cnicBack.url ? 
-                            (selectedUser.kycDocuments.cnicBack.url.startsWith('http') ? 
-                              selectedUser.kycDocuments.cnicBack.url : 
-                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicBack.url}`) : 
-                            'https://via.placeholder.com/400x250?text=CNIC+Back'} 
-                          alt="CNIC Back" 
+                        <img
+                          src={selectedUser.kycDocuments.cnicBack.url ?
+                            (selectedUser.kycDocuments.cnicBack.url.startsWith('http') ?
+                              selectedUser.kycDocuments.cnicBack.url :
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.cnicBack.url}`) :
+                            'https://via.placeholder.com/400x250?text=CNIC+Back'}
+                          alt="CNIC Back"
                           style={{ width: '100%', maxWidth: '400px', height: 'auto', borderRadius: '4px' }}
                         />
                       </div>
@@ -1351,13 +1357,13 @@ const InvestorProfile = () => {
                   {selectedUser.kycDocuments?.facePicture?.url || selectedUser.kycDocuments?.facePicture?.filename ? (
                     <div>
                       <div style={{ marginBottom: '10px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px', background: '#fff' }}>
-                        <img 
-                          src={selectedUser.kycDocuments.facePicture.url ? 
-                            (selectedUser.kycDocuments.facePicture.url.startsWith('http') ? 
-                              selectedUser.kycDocuments.facePicture.url : 
-                              `https://backend.greentrutle.com${selectedUser.kycDocuments.facePicture.url}`) : 
-                            'https://via.placeholder.com/400x400?text=Face+Picture'} 
-                          alt="Face Picture" 
+                        <img
+                          src={selectedUser.kycDocuments.facePicture.url ?
+                            (selectedUser.kycDocuments.facePicture.url.startsWith('http') ?
+                              selectedUser.kycDocuments.facePicture.url :
+                              `https://backend.greentrutle.com${selectedUser.kycDocuments.facePicture.url}`) :
+                            'https://via.placeholder.com/400x400?text=Face+Picture'}
+                          alt="Face Picture"
                           style={{ width: '100%', maxWidth: '400px', height: 'auto', borderRadius: '4px' }}
                         />
                       </div>

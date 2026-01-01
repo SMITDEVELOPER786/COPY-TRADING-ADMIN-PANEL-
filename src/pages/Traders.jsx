@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
+import {
   Search,
   Calendar,
   ChevronDown,
@@ -49,7 +49,7 @@ function Traders() {
   const [adminNotes, setAdminNotes] = useState("");
 
   // ==================== HELPER FUNCTIONS ====================
-  
+
   /**
    * Transform API user data to component format
    */
@@ -66,18 +66,18 @@ function Traders() {
       wallet: apiUser.wallet || apiUser.walletAddress || '-',
       market: apiUser.market || '-',
       broker: apiUser.broker || '-',
-      joined: apiUser.createdAt 
-        ? new Date(apiUser.createdAt).toLocaleDateString('en-GB', { 
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric' 
-          })
+      joined: apiUser.createdAt
+        ? new Date(apiUser.createdAt).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        })
         : '-',
       createdAt: apiUser.createdAt,
-      status: apiUser.isFrozen ? 'Delete' : 
-              apiUser.kycStatus === 'APPROVED' ? 'Active' : 
-              apiUser.kycStatus === 'PENDING' ? 'PENDING' : 
-              'Active',
+      status: apiUser.isFrozen ? 'Delete' :
+        apiUser.kycStatus === 'APPROVED' ? 'Active' :
+          apiUser.kycStatus === 'PENDING' ? 'PENDING' :
+            'Active',
       kycStatus: apiUser.kycStatus,
       isFrozen: apiUser.isFrozen,
       avatar: apiUser.profileImage?.url || apiUser.avatar || apiUser.profilePicture || 'https://via.placeholder.com/40',
@@ -85,12 +85,12 @@ function Traders() {
       netProfit: apiUser.netProfit || '$0',
       avgROI: apiUser.avgROI || '0%',
       avgDrawdown: apiUser.avgDrawdown || '0%',
-      tag: apiUser.kycStatus === 'APPROVED' ? 'Profitable' : 
-           apiUser.kycStatus === 'PENDING' ? 'Average' : 
-           apiUser.isFrozen ? 'Unprofitable' : 'Profitable',
-      tagColor: apiUser.kycStatus === 'APPROVED' ? 'green' : 
-                apiUser.kycStatus === 'PENDING' ? 'orange' : 
-                apiUser.isFrozen ? 'red' : 'green',
+      tag: apiUser.kycStatus === 'APPROVED' ? 'Profitable' :
+        apiUser.kycStatus === 'PENDING' ? 'Average' :
+          apiUser.isFrozen ? 'Unprofitable' : 'Profitable',
+      tagColor: apiUser.kycStatus === 'APPROVED' ? 'green' :
+        apiUser.kycStatus === 'PENDING' ? 'orange' :
+          apiUser.isFrozen ? 'red' : 'green',
       kycDocuments: apiUser.kycDocuments || {},
       kycReview: apiUser.kycReview || {},
     };
@@ -103,12 +103,12 @@ function Traders() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await getUsers({
         role: 'TRADER',
         all: true,
       });
-      
+
       setUsersData(response);
     } catch (err) {
       console.error('Error fetching traders:', err);
@@ -119,15 +119,15 @@ function Traders() {
   };
 
   // ==================== DATA TRANSFORMATION ====================
-  
+
   /**
    * Extract and transform traders from API response
    */
   const traders = useMemo(() => {
     if (!usersData) return [];
-    
+
     let apiUsers = [];
-    
+
     try {
       // Handle nested structure: usersData.data.users
       if (usersData.data && usersData.data.users && Array.isArray(usersData.data.users)) {
@@ -145,13 +145,13 @@ function Traders() {
       else if (Array.isArray(usersData)) {
         apiUsers = usersData;
       }
-      
+
       // Ensure apiUsers is an array before mapping
       if (!Array.isArray(apiUsers)) {
         console.error('API response is not an array:', { usersData, apiUsers });
         return [];
       }
-      
+
       // Transform to component format
       return apiUsers.map(transformUserData);
     } catch (error) {
@@ -161,7 +161,7 @@ function Traders() {
   }, [usersData]);
 
   // ==================== API CALLS ====================
-  
+
   useEffect(() => {
     fetchTraders();
   }, []);
@@ -197,15 +197,23 @@ function Traders() {
     setMenuOpen(null);
   };
 
-  const handleSubmitKycApproval = async () => {
+  const handleSubmitKycApproval = async (status = "APPROVED") => {
     if (!selectedUserForKyc) return;
-    
+
+    // Default admin notes if empty
+    let notes = adminNotes;
+    if (!notes) {
+      notes = status === "APPROVED"
+        ? "All documents verified successfully. Identity confirmed."
+        : "Documents rejected due to insufficient quality or mismatch.";
+    }
+
     const userId = selectedUserForKyc.id || selectedUserForKyc._id;
     try {
       setIsLoading(true);
       await submitKycReview(userId, {
-        status: "APPROVED",
-        adminNotes: adminNotes || "All documents verified successfully. Identity confirmed."
+        status: status,
+        adminNotes: notes
       });
       // Refresh the traders list
       await fetchTraders();
@@ -225,25 +233,25 @@ function Traders() {
   // Check if user has submitted KYC documents
   const hasKycDocuments = (user) => {
     const docs = user.kycDocuments || {};
-    return !!(docs.cnicFront?.url || docs.cnicFront?.filename || 
-              docs.cnicBack?.url || docs.cnicBack?.filename || 
-              docs.facePicture?.url || docs.facePicture?.filename);
+    return !!(docs.cnicFront?.url || docs.cnicFront?.filename ||
+      docs.cnicBack?.url || docs.cnicBack?.filename ||
+      docs.facePicture?.url || docs.facePicture?.filename);
   };
 
   // ==================== FILTERS ====================
-  
+
   const filteredTraders = useMemo(() => {
     return traders.filter(trader => {
-      const searchMatch = !searchTerm || 
+      const searchMatch = !searchTerm ||
         trader.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trader.email.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const statusMatch = !selectedStatus || trader.tag === selectedStatus;
-      
-      const dateMatch = !selectedDate || 
+
+      const dateMatch = !selectedDate ||
         (trader.joined && trader.joined.toLowerCase().includes(selectedDate.toLowerCase())) ||
         (trader.createdAt && trader.createdAt.toLowerCase().includes(selectedDate.toLowerCase()));
-      
+
       return searchMatch && statusMatch && dateMatch;
     });
   }, [traders, searchTerm, selectedStatus, selectedDate]);
@@ -355,7 +363,7 @@ function Traders() {
           </h2>
           <div className="times-filters">
             {['Months', '30 Days', '7 Days', '24 Hour'].map((period) => (
-              <button 
+              <button
                 key={period}
                 className={`time-filter ${activeTab === period ? 'active' : ''}`}
                 onClick={() => setActiveTab(period)}
@@ -369,8 +377,8 @@ function Traders() {
         {/* Metric Cards */}
         <div className="metrics-container">
           {metricCards.map((card, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="metric-box"
               onClick={() => setSelectedMetric(selectedMetric === card.title ? null : card.title)}
               style={{ cursor: 'pointer' }}
@@ -379,10 +387,10 @@ function Traders() {
                 <span className="metric-box-title">{card.title}</span>
                 <div className="metric-mini-chart">
                   <svg width="60" height="30">
-                    <polyline 
-                      points="0,25 15,20 30,15 45,10 60,5" 
-                      fill="none" 
-                      stroke={card.positive ? "#10B981" : "#EF4444"} 
+                    <polyline
+                      points="0,25 15,20 30,15 45,10 60,5"
+                      fill="none"
+                      stroke={card.positive ? "#10B981" : "#EF4444"}
                       strokeWidth="2"
                     />
                   </svg>
@@ -400,13 +408,13 @@ function Traders() {
         <div className="roi-panel">
           <div className="roi-panel-header">
             <div className="roi-tab-group">
-              <button 
+              <button
                 className={`roi-tab-item ${roiTab === 'Average ROI' ? 'active' : ''}`}
                 onClick={() => setRoiTab('Average ROI')}
               >
                 Average ROI
               </button>
-              <button 
+              <button
                 className={`roi-tab-item ${roiTab === 'Average Downtime' ? 'active' : ''}`}
                 onClick={() => setRoiTab('Average Downtime')}
               >
@@ -438,9 +446,9 @@ function Traders() {
           <div className="table-controls-panel">
             <div className="search-box">
               <Search size={20} />
-              <input 
-                type="text" 
-                placeholder="Search Traders by Name" 
+              <input
+                type="text"
+                placeholder="Search Traders by Name"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -508,8 +516,8 @@ function Traders() {
                     filteredTraders.map((trader, index) => (
                       <tr key={trader.id}>
                         <td data-label="Trader Name">
-                          <div 
-                            className="trader-details" 
+                          <div
+                            className="trader-details"
                             style={{ cursor: 'pointer' }}
                             onClick={() => handleViewProfile(trader.id || trader._id)}
                             title="Click to view profile"
@@ -529,7 +537,7 @@ function Traders() {
                         </td>
                         <td data-label="Actions" className="traders-actions">
                           <div className="traders-action-menu">
-                            <button 
+                            <button
                               className="traders-action-btn"
                               onClick={() => setMenuOpen(menuOpen === (trader.id || trader._id) ? null : (trader.id || trader._id))}
                               aria-label="More actions"
@@ -545,7 +553,7 @@ function Traders() {
                                 </button>
                                 {hasKycDocuments(trader) && (
                                   <>
-                                    <button onClick={() => navigate(`/profile/${trader.id || trader._id}?tab=kyc`)}>
+                                    <button onClick={() => handleApproveKyc(trader)}>
                                       <FileText size={14} /> View KYC
                                     </button>
                                     {trader.kycStatus !== 'APPROVED' && (
@@ -569,7 +577,7 @@ function Traders() {
                                   };
                                   return statusMap[status] !== trader.tag;
                                 }).map(({ status, icon }) => (
-                                  <button 
+                                  <button
                                     key={status}
                                     onClick={() => handleStatusChange(trader, status)}
                                   >
@@ -597,36 +605,121 @@ function Traders() {
         </div>
       </div>
 
-      {/* KYC Approval Dialog */}
+      {/* KYC Details & Approval Modal */}
       {showKycApprovalDialog && selectedUserForKyc && (
         <div className="modal" onClick={() => setShowKycApprovalDialog(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
-            <div className="modal-header">
-              <h3>Approve KYC</h3>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '800px', width: '90%', maxHeight: '90vh', overflowY: 'auto' }}
+          >
+            <div className="modal-header" style={{ borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <img
+                  src={selectedUserForKyc.avatar}
+                  alt={selectedUserForKyc.name}
+                  style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}
+                />
+                <div>
+                  <h3 style={{ margin: 0 }}>{selectedUserForKyc.name}</h3>
+                  <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>{selectedUserForKyc.email}</p>
+                </div>
+              </div>
               <button className="modal-close" onClick={() => setShowKycApprovalDialog(false)}>
-                <X size={20} />
+                <X size={24} />
               </button>
             </div>
+
             <div style={{ padding: '20px' }}>
-              <div style={{ marginBottom: '20px' }}>
-                <p style={{ marginBottom: '10px', color: '#666' }}>
-                  Approving KYC for: <strong>{selectedUserForKyc.name}</strong>
-                </p>
-                <p style={{ marginBottom: '10px', color: '#666', fontSize: '14px' }}>
-                  Email: {selectedUserForKyc.email}
-                </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                <div>
+                  <label style={{ fontWeight: '600', color: '#666' }}>User Type</label>
+                  <p>{selectedUserForKyc.role}</p>
+                </div>
+                <div>
+                  <label style={{ fontWeight: '600', color: '#666' }}>Status</label>
+                  <p>
+                    <span className={`status-tag status-tag-${selectedUserForKyc.tagColor}`}>
+                      {selectedUserForKyc.kycStatus || selectedUserForKyc.status}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <label style={{ fontWeight: '600', color: '#666' }}>Joined</label>
+                  <p>{selectedUserForKyc.joined}</p>
+                </div>
+                <div>
+                  <label style={{ fontWeight: '600', color: '#666' }}>Wallet</label>
+                  <p>{selectedUserForKyc.wallet}</p>
+                </div>
               </div>
+
+              <h4 style={{ borderBottom: '2px solid #f0f0f0', paddingBottom: '10px', marginBottom: '15px' }}>KYC Documents</h4>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+                {/* CNIC Front */}
+                <div style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px' }}>
+                  <p style={{ fontWeight: '600', marginBottom: '10px', textAlign: 'center' }}>CNIC/ID Front</p>
+                  {selectedUserForKyc.kycDocuments?.cnicFront?.url ? (
+                    <img
+                      src={selectedUserForKyc.kycDocuments.cnicFront.url}
+                      alt="CNIC Front"
+                      style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer' }}
+                      onClick={() => window.open(selectedUserForKyc.kycDocuments.cnicFront.url, '_blank')}
+                    />
+                  ) : (
+                    <div style={{ height: '150px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+                      No Image
+                    </div>
+                  )}
+                </div>
+
+                {/* CNIC Back */}
+                <div style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px' }}>
+                  <p style={{ fontWeight: '600', marginBottom: '10px', textAlign: 'center' }}>CNIC/ID Back</p>
+                  {selectedUserForKyc.kycDocuments?.cnicBack?.url ? (
+                    <img
+                      src={selectedUserForKyc.kycDocuments.cnicBack.url}
+                      alt="CNIC Back"
+                      style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer' }}
+                      onClick={() => window.open(selectedUserForKyc.kycDocuments.cnicBack.url, '_blank')}
+                    />
+                  ) : (
+                    <div style={{ height: '150px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+                      No Image
+                    </div>
+                  )}
+                </div>
+
+                {/* Face Picture */}
+                <div style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px' }}>
+                  <p style={{ fontWeight: '600', marginBottom: '10px', textAlign: 'center' }}>Face Verification</p>
+                  {selectedUserForKyc.kycDocuments?.facePicture?.url ? (
+                    <img
+                      src={selectedUserForKyc.kycDocuments.facePicture.url}
+                      alt="Face Picture"
+                      style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer' }}
+                      onClick={() => window.open(selectedUserForKyc.kycDocuments.facePicture.url, '_blank')}
+                    />
+                  ) : (
+                    <div style={{ height: '150px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+                      No Image
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333' }}>
-                  Admin Notes (Optional)
+                  Admin Notes
                 </label>
                 <textarea
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
-                  placeholder="All documents verified successfully. Identity confirmed."
+                  placeholder="Enter reasons for rejection or approval notes..."
                   style={{
                     width: '100%',
-                    minHeight: '100px',
+                    minHeight: '80px',
                     padding: '10px',
                     border: '1px solid #ddd',
                     borderRadius: '8px',
@@ -636,7 +729,8 @@ function Traders() {
                   }}
                 />
               </div>
-              <div className="form-actions">
+
+              <div className="form-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', borderTop: '1px solid #eee', paddingTop: '20px' }}>
                 <button
                   className="btn outline"
                   onClick={() => {
@@ -646,15 +740,30 @@ function Traders() {
                   }}
                   disabled={isLoading}
                 >
-                  Cancel
+                  Close
                 </button>
-                <button
-                  className="btn green"
-                  onClick={handleSubmitKycApproval}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Approving...' : 'Approve KYC'}
-                </button>
+
+                {selectedUserForKyc.kycStatus !== 'APPROVED' && (
+                  <button
+                    className="btn green"
+                    onClick={() => handleSubmitKycApproval('APPROVED')}
+                    disabled={isLoading}
+                    style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+                  >
+                    <CheckCircle size={16} /> Approve
+                  </button>
+                )}
+
+                {selectedUserForKyc.kycStatus !== 'REJECTED' && selectedUserForKyc.kycStatus !== 'FAILED' && (
+                  <button
+                    className="btn red"
+                    onClick={() => handleSubmitKycApproval('REJECTED')}
+                    disabled={isLoading}
+                    style={{ backgroundColor: '#dc2626', color: 'white', display: 'flex', alignItems: 'center', gap: '5px' }}
+                  >
+                    <XCircle size={16} /> Reject
+                  </button>
+                )}
               </div>
             </div>
           </div>

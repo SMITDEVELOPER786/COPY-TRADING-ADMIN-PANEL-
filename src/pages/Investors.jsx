@@ -35,7 +35,7 @@ const Investors = () => {
   const [adminNotes, setAdminNotes] = useState("");
 
   // ==================== HELPER FUNCTIONS ====================
-  
+
   /**
    * Transform API user data to component format
    */
@@ -52,18 +52,18 @@ const Investors = () => {
       wallet: apiUser.wallet || apiUser.walletAddress || '-',
       market: apiUser.market || '-',
       broker: apiUser.broker || '-',
-      joined: apiUser.createdAt 
-        ? new Date(apiUser.createdAt).toLocaleDateString('en-GB', { 
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric' 
-          })
+      joined: apiUser.createdAt
+        ? new Date(apiUser.createdAt).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        })
         : '-',
       createdAt: apiUser.createdAt,
-      status: apiUser.isFrozen ? 'Delete' : 
-              apiUser.kycStatus === 'APPROVED' ? 'Active' : 
-              apiUser.kycStatus === 'PENDING' ? 'PENDING' : 
-              'Active',
+      status: apiUser.isFrozen ? 'Delete' :
+        apiUser.kycStatus === 'APPROVED' ? 'Active' :
+          apiUser.kycStatus === 'PENDING' ? 'PENDING' :
+            'Active',
       kycStatus: apiUser.kycStatus,
       isFrozen: apiUser.isFrozen,
       avatar: apiUser.profileImage?.url || apiUser.avatar || apiUser.profilePicture || 'https://via.placeholder.com/40',
@@ -83,13 +83,13 @@ const Investors = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Simple: pass role='INVESTOR'
       const response = await getUsers({
         role: 'INVESTOR',
         all: true,
       });
-      
+
       setUsersData(response);
     } catch (err) {
       console.error('Error fetching investors:', err);
@@ -100,16 +100,16 @@ const Investors = () => {
   };
 
   // ==================== DATA TRANSFORMATION ====================
-  
+
   /**
    * Extract and transform investors from API response
    * API structure: { status: 'success', message: '...', data: { users: [...], total: 2, count: 2 } }
    */
   const users = useMemo(() => {
     if (!usersData) return [];
-    
+
     let apiUsers = [];
-    
+
     try {
       // Handle nested structure: usersData.data.users
       if (usersData.data && usersData.data.users && Array.isArray(usersData.data.users)) {
@@ -127,13 +127,13 @@ const Investors = () => {
       else if (Array.isArray(usersData)) {
         apiUsers = usersData;
       }
-      
+
       // Ensure apiUsers is an array before mapping
       if (!Array.isArray(apiUsers)) {
         console.error('API response is not an array:', { usersData, apiUsers });
         return [];
       }
-      
+
       // Transform to component format
       return apiUsers.map(transformUserData);
     } catch (error) {
@@ -143,20 +143,20 @@ const Investors = () => {
   }, [usersData]);
 
   // ==================== DATE UTILITIES ====================
-  
+
   const parseJoinedDate = (joinedStr) => {
     const monthNames = {
       'January': 0, 'February': 1, 'March': 2, 'April': 3,
       'May': 4, 'June': 5, 'July': 6, 'August': 7,
       'September': 8, 'October': 9, 'November': 10, 'December': 11
     };
-    
+
     const parts = joinedStr.split(' ');
     if (parts.length === 3) {
       const day = parseInt(parts[0]);
       const month = monthNames[parts[1]];
       const year = parseInt(parts[2]);
-      
+
       if (!isNaN(day) && month !== undefined && !isNaN(year)) {
         return new Date(year, month, day);
       }
@@ -166,20 +166,20 @@ const Investors = () => {
 
   const isDateMatch = (joinedStr, searchDate) => {
     if (!searchDate || !joinedStr) return true;
-    
+
     let joinedDate = null;
     if (joinedStr.includes('T') || (joinedStr.includes('-') && joinedStr.length > 10)) {
       joinedDate = new Date(joinedStr);
     } else {
       joinedDate = parseJoinedDate(joinedStr);
     }
-    
+
     if (!joinedDate || isNaN(joinedDate.getTime())) return false;
-    
+
     const year = joinedDate.getFullYear().toString();
     const month = String(joinedDate.getMonth() + 1).padStart(2, '0');
     const day = String(joinedDate.getDate()).padStart(2, '0');
-    
+
     if (searchDate.length === 4) {
       return year === searchDate;
     } else if (searchDate.length === 7 && searchDate.includes('-')) {
@@ -192,13 +192,13 @@ const Investors = () => {
   };
 
   // ==================== API CALLS ====================
-  
+
   useEffect(() => {
     fetchInvestors();
   }, []);
 
   // ==================== FILTERS & PAGINATION ====================
-  
+
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedStatus, selectedDate, activeTab]);
@@ -206,23 +206,23 @@ const Investors = () => {
   // Check if user has submitted KYC documents
   const hasKycDocuments = (user) => {
     const docs = user.kycDocuments || {};
-    return !!(docs.cnicFront?.url || docs.cnicFront?.filename || 
-              docs.cnicBack?.url || docs.cnicBack?.filename || 
-              docs.facePicture?.url || docs.facePicture?.filename);
+    return !!(docs.cnicFront?.url || docs.cnicFront?.filename ||
+      docs.cnicBack?.url || docs.cnicBack?.filename ||
+      docs.facePicture?.url || docs.facePicture?.filename);
   };
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const searchMatch = !searchTerm || 
+      const searchMatch = !searchTerm ||
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const statusMatch = !selectedStatus || user.status === selectedStatus;
-      
-      const dateMatch = !selectedDate || 
+
+      const dateMatch = !selectedDate ||
         (user.joined && isDateMatch(user.joined, selectedDate)) ||
         (user.createdAt && isDateMatch(user.createdAt, selectedDate));
-      
+
       // Tab-based filtering
       let tabMatch = true;
       if (activeTab === "kyc-approval") {
@@ -232,7 +232,7 @@ const Investors = () => {
         // Show users who have submitted KYC documents
         tabMatch = hasKycDocuments(user);
       }
-      
+
       return searchMatch && statusMatch && dateMatch && tabMatch;
     });
   }, [users, searchTerm, selectedStatus, selectedDate, activeTab]);
@@ -242,7 +242,7 @@ const Investors = () => {
   const currentUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
 
   // ==================== EVENT HANDLERS ====================
-  
+
   const toggleMenu = (id) => {
     setMenuOpen(menuOpen === id ? null : id);
   };
@@ -253,8 +253,8 @@ const Investors = () => {
       // Navigate to investor profile
       navigate(`/investment/1/investor/${userId}`);
     } else if (action === "viewKyc") {
-      // Navigate to investor profile with KYC tab focus
-      navigate(`/investment/1/investor/${userId}?tab=kyc`);
+      // Open KYC Modal directly instead of navigating
+      handleApproveKyc(user);
     } else if (action === "edit") {
       // TODO: Implement edit
       console.log('Edit user:', user);
@@ -290,15 +290,23 @@ const Investors = () => {
     setMenuOpen(null);
   };
 
-  const handleSubmitKycApproval = async () => {
+  const handleSubmitKycApproval = async (status = "APPROVED") => {
     if (!selectedUserForKyc) return;
-    
+
+    // Default admin notes if empty
+    let notes = adminNotes;
+    if (!notes) {
+      notes = status === "APPROVED"
+        ? "All documents verified successfully. Identity confirmed."
+        : "Documents rejected due to insufficient quality or mismatch.";
+    }
+
     const userId = selectedUserForKyc.id || selectedUserForKyc._id;
     try {
       setIsLoading(true);
       await submitKycReview(userId, {
-        status: "APPROVED",
-        adminNotes: adminNotes || "All documents verified successfully. Identity confirmed."
+        status: status,
+        adminNotes: notes
       });
       // Refresh the investors list
       await fetchInvestors();
@@ -306,8 +314,8 @@ const Investors = () => {
       setSelectedUserForKyc(null);
       setAdminNotes("");
     } catch (error) {
-      console.error('Error approving KYC:', error);
-      setError(error.message || 'Failed to approve KYC');
+      console.error('Error updating KYC:', error);
+      setError(error.message || 'Failed to update KYC');
       // Clear error after 3 seconds
       setTimeout(() => setError(null), 3000);
     } finally {
@@ -330,7 +338,7 @@ const Investors = () => {
   };
 
   // ==================== RENDER ====================
-  
+
   return (
     <div className="app users-component">
       <main className="main-content">
@@ -433,7 +441,7 @@ const Investors = () => {
               </thead>
               <tbody>
                 {currentUsers.length === 0 ? (
-                
+
                   <tr>
                     <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
                       No investors found
@@ -456,7 +464,7 @@ const Investors = () => {
                       <td data-label="Email">{user.email}</td>
 
                       <td data-label="Type">{user.type}</td>
-                      <td data-label="emailverified" style={user.isEmailVerified==true ? { color: 'green' } : { color: 'red' }}>{user.isEmailVerified==true ?  'Yes' : 'No'}</td>
+                      <td data-label="emailverified" style={user.isEmailVerified == true ? { color: 'green' } : { color: 'red' }}>{user.isEmailVerified == true ? 'Yes' : 'No'}</td>
                       <td data-label="Wallet">{user.wallet}</td>
                       <td data-label="Joined">{user.joined}</td>
                       <td data-label="Joined">{hasKycDocuments(user) ? 'Yes' : 'No'}</td>
@@ -476,9 +484,8 @@ const Investors = () => {
                           </button>
                           {menuOpen === (user.id || user._id) && (
                             <div
-                              className={`team-dropdown-menu ${
-                                index >= currentUsers.length - 2 ? "drop-up" : ""
-                              }`}
+                              className={`team-dropdown-menu ${index >= currentUsers.length - 2 ? "drop-up" : ""
+                                }`}
                             >
                               <button onClick={() => handleAction(user, "view")}>
                                 <Eye size={14} /> View Profile
@@ -501,7 +508,7 @@ const Investors = () => {
                                 // { status: 'Deactivate', icon: <XCircle size={14} color="#92400e" /> },
                                 // { status: 'Delete', icon: <XCircle size={14} color="#dc2626" /> }
                               ].filter(({ status }) => status !== user.status).map(({ status, icon }) => (
-                                <button 
+                                <button
                                   key={status}
                                   onClick={() => handleStatusChange(user, status)}
                                 >
@@ -569,36 +576,121 @@ const Investors = () => {
         </div>
       </main>
 
-      {/* KYC Approval Dialog */}
+      {/* KYC Details & Approval Modal */}
       {showKycApprovalDialog && selectedUserForKyc && (
         <div className="modal" onClick={() => setShowKycApprovalDialog(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
-            <div className="modal-header">
-              <h3>Approve KYC</h3>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '800px', width: '90%', maxHeight: '90vh', overflowY: 'auto' }}
+          >
+            <div className="modal-header" style={{ borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <img
+                  src={selectedUserForKyc.avatar}
+                  alt={selectedUserForKyc.name}
+                  style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}
+                />
+                <div>
+                  <h3 style={{ margin: 0 }}>{selectedUserForKyc.name}</h3>
+                  <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>{selectedUserForKyc.email}</p>
+                </div>
+              </div>
               <button className="modal-close" onClick={() => setShowKycApprovalDialog(false)}>
-                <X size={20} />
+                <X size={24} />
               </button>
             </div>
+
             <div style={{ padding: '20px' }}>
-              <div style={{ marginBottom: '20px' }}>
-                <p style={{ marginBottom: '10px', color: '#666' }}>
-                  Approving KYC for: <strong>{selectedUserForKyc.name}</strong>
-                </p>
-                <p style={{ marginBottom: '10px', color: '#666', fontSize: '14px' }}>
-                  Email: {selectedUserForKyc.email}
-                </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                <div>
+                  <label style={{ fontWeight: '600', color: '#666' }}>User Type</label>
+                  <p>{selectedUserForKyc.role}</p>
+                </div>
+                <div>
+                  <label style={{ fontWeight: '600', color: '#666' }}>Status</label>
+                  <p>
+                    <span className={`status-badge ${getStatusClass(selectedUserForKyc.status)}`}>
+                      {selectedUserForKyc.status}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <label style={{ fontWeight: '600', color: '#666' }}>Joined</label>
+                  <p>{selectedUserForKyc.joined}</p>
+                </div>
+                <div>
+                  <label style={{ fontWeight: '600', color: '#666' }}>Wallet</label>
+                  <p>{selectedUserForKyc.wallet}</p>
+                </div>
               </div>
+
+              <h4 style={{ borderBottom: '2px solid #f0f0f0', paddingBottom: '10px', marginBottom: '15px' }}>KYC Documents</h4>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+                {/* CNIC Front */}
+                <div style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px' }}>
+                  <p style={{ fontWeight: '600', marginBottom: '10px', textAlign: 'center' }}>CNIC/ID Front</p>
+                  {selectedUserForKyc.kycDocuments?.cnicFront?.url ? (
+                    <img
+                      src={selectedUserForKyc.kycDocuments.cnicFront.url}
+                      alt="CNIC Front"
+                      style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer' }}
+                      onClick={() => window.open(selectedUserForKyc.kycDocuments.cnicFront.url, '_blank')}
+                    />
+                  ) : (
+                    <div style={{ height: '150px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+                      No Image
+                    </div>
+                  )}
+                </div>
+
+                {/* CNIC Back */}
+                <div style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px' }}>
+                  <p style={{ fontWeight: '600', marginBottom: '10px', textAlign: 'center' }}>CNIC/ID Back</p>
+                  {selectedUserForKyc.kycDocuments?.cnicBack?.url ? (
+                    <img
+                      src={selectedUserForKyc.kycDocuments.cnicBack.url}
+                      alt="CNIC Back"
+                      style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer' }}
+                      onClick={() => window.open(selectedUserForKyc.kycDocuments.cnicBack.url, '_blank')}
+                    />
+                  ) : (
+                    <div style={{ height: '150px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+                      No Image
+                    </div>
+                  )}
+                </div>
+
+                {/* Face Picture */}
+                <div style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px' }}>
+                  <p style={{ fontWeight: '600', marginBottom: '10px', textAlign: 'center' }}>Face Verification</p>
+                  {selectedUserForKyc.kycDocuments?.facePicture?.url ? (
+                    <img
+                      src={selectedUserForKyc.kycDocuments.facePicture.url}
+                      alt="Face Picture"
+                      style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer' }}
+                      onClick={() => window.open(selectedUserForKyc.kycDocuments.facePicture.url, '_blank')}
+                    />
+                  ) : (
+                    <div style={{ height: '150px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+                      No Image
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333' }}>
-                  Admin Notes (Optional)
+                  Admin Notes
                 </label>
                 <textarea
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
-                  placeholder="All documents verified successfully. Identity confirmed."
+                  placeholder="Enter reasons for rejection or approval notes..."
                   style={{
                     width: '100%',
-                    minHeight: '100px',
+                    minHeight: '80px',
                     padding: '10px',
                     border: '1px solid #ddd',
                     borderRadius: '8px',
@@ -608,7 +700,8 @@ const Investors = () => {
                   }}
                 />
               </div>
-              <div className="form-actions">
+
+              <div className="form-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', borderTop: '1px solid #eee', paddingTop: '20px' }}>
                 <button
                   className="btn outline"
                   onClick={() => {
@@ -618,15 +711,36 @@ const Investors = () => {
                   }}
                   disabled={isLoading}
                 >
-                  Cancel
+                  Close
                 </button>
-                <button
-                  className="btn green"
-                  onClick={handleSubmitKycApproval}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Approving...' : 'Approve KYC'}
-                </button>
+
+                {selectedUserForKyc.kycStatus !== 'APPROVED' && (
+                  <button
+                    className="btn green"
+                    onClick={() => {
+                      // Assuming handleSubmitKycApproval can be adapted or we call generic submit
+                      // We'll update the component to handle 'status' param separately next
+                      // For now, let's call a new handler wrapper if possible, but I can't add one here in this block.
+                      // I'll call a modified version or just updating the existing one which defaults to APPROVED
+                      handleSubmitKycApproval('APPROVED');
+                    }}
+                    disabled={isLoading}
+                    style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+                  >
+                    <CheckCircle size={16} /> Approve
+                  </button>
+                )}
+
+                {selectedUserForKyc.kycStatus !== 'REJECTED' && selectedUserForKyc.kycStatus !== 'FAILED' && (
+                  <button
+                    className="btn red"
+                    onClick={() => handleSubmitKycApproval('REJECTED')}
+                    disabled={isLoading}
+                    style={{ backgroundColor: '#dc2626', color: 'white', display: 'flex', alignItems: 'center', gap: '5px' }}
+                  >
+                    <XCircle size={16} /> Reject
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ import {
   Clock,
   CheckCircle,
   XCircle,
+  Eye,
 } from "lucide-react";
 import "../Reports.css";
 
@@ -176,6 +177,9 @@ function Reports() {
   const [selectedDate, setSelectedDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [openDropdown, setOpenDropdown] = useState(null); // Track open dropdown
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+
   const dropdownRefs = useRef({}); // Store refs for each dropdown button
   const itemsPerPage = 5;
 
@@ -260,9 +264,8 @@ function Reports() {
       selectedReportTitle === "" || report.reportedTitle === selectedReportTitle;
 
     const isValidDate = /^\d{4}(-\d{2}){0,2}$/;
-    const matchesDate = selectedDate === "" ||  (isValidDate.test(selectedDate) &&
-    report.reportedOn.startsWith(selectedDate));
-    //report.reportedOn === selectedDate;
+    const matchesDate = selectedDate === "" || (isValidDate.test(selectedDate) &&
+      report.reportedOn.startsWith(selectedDate));
 
     return matchesSearch && matchesStatus && matchesTitle && matchesDate;
   });
@@ -281,6 +284,129 @@ function Reports() {
         return "status-resolved";
     }
   };
+
+  const handleViewReport = (report) => {
+    setSelectedReport(report);
+    setIsReportModalOpen(true);
+    setOpenDropdown(null);
+  };
+
+  const ReportDetailsModal = () => (
+    <div
+      style={{
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+        background: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
+        zIndex: 1000,
+        backdropFilter: 'blur(4px)',
+      }}
+    >
+      <div
+        style={{
+          background: 'white', padding: '32px', borderRadius: '24px',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          width: '500px',
+          maxHeight: '90vh', overflowY: 'auto', fontFamily: 'inherit',
+          animation: 'fadeIn 0.3s ease-out',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#111827', margin: 0 }}>
+            Report Details
+          </h3>
+          <button
+            onClick={() => setIsReportModalOpen(false)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}
+          >
+            <XCircle size={24} />
+          </button>
+        </div>
+
+        {selectedReport && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#6b7280', margin: '0 0 12px 0' }}>Reported By</h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <img
+                    src={selectedReport.reportedBy.avatar}
+                    alt={selectedReport.reportedBy.name}
+                    style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e5e7eb' }}
+                  />
+                  <div>
+                    <p style={{ margin: '0', fontSize: '14px', fontWeight: 600, color: '#111827' }}>{selectedReport.reportedBy.name}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#6b7280', margin: '0 0 12px 0' }}>Reported User</h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <img
+                    src={selectedReport.reportedUser.avatar}
+                    alt={selectedReport.reportedUser.name}
+                    style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e5e7eb' }}
+                  />
+                  <div>
+                    <p style={{ margin: '0', fontSize: '14px', fontWeight: 600, color: '#111827' }}>{selectedReport.reportedUser.name}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '4px' }}>Report Title</label>
+                <p style={{ margin: 0, fontSize: '14px', color: '#1f2937', fontWeight: 500 }}>{selectedReport.reportedTitle}</p>
+              </div>
+              <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '4px' }}>Reported On</label>
+                <p style={{ margin: 0, fontSize: '14px', color: '#1f2937', fontWeight: 500 }}>{new Date(selectedReport.reportedOn).toDateString()}</p>
+              </div>
+            </div>
+
+            <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '4px' }}>Current Status</label>
+              <span className={`status-badge ${getStatusClass(selectedReport.status)}`} style={{ display: 'inline-block', marginTop: '4px' }}>
+                {selectedReport.status}
+              </span>
+            </div>
+
+            <div style={{ marginTop: '12px', borderTop: '1px solid #e5e7eb', paddingTop: '24px' }}>
+              <h5 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Take Action</h5>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <button
+                  onClick={() => { handleStatusChange(selectedReport.id, 'Pending'); setIsReportModalOpen(false); }}
+                  disabled={selectedReport.status === 'Pending'}
+                  style={{
+                    padding: '10px', background: '#fffbeb', color: '#b45309', border: '1px solid #fcd34d',
+                    borderRadius: '8px', fontWeight: 600, cursor: selectedReport.status === 'Pending' ? 'not-allowed' : 'pointer',
+                    opacity: selectedReport.status === 'Pending' ? 0.6 : 1, transition: 'all 0.2s',
+                    fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                  }}
+                >
+                  <Clock size={16} /> Mark as Pending
+                </button>
+                <button
+                  onClick={() => { handleStatusChange(selectedReport.id, 'Resolved'); setIsReportModalOpen(false); }}
+                  disabled={selectedReport.status === 'Resolved'}
+                  style={{
+                    padding: '10px', background: '#ecfdf5', color: '#047857', border: '1px solid #6ee7b7',
+                    borderRadius: '8px', fontWeight: 600, cursor: selectedReport.status === 'Resolved' ? 'not-allowed' : 'pointer',
+                    opacity: selectedReport.status === 'Resolved' ? 0.6 : 1, transition: 'all 0.2s',
+                    fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                  }}
+                >
+                  <CheckCircle size={16} /> Mark as Resolved
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="dashboard-container">
@@ -399,6 +525,7 @@ function Reports() {
               <tbody>
                 {currentReports.map((report) => (
                   <tr key={report.id}>
+
                     <td data-label="Reported by">
                       <div className="user-cell">
                         <img
@@ -442,6 +569,13 @@ function Reports() {
                         {openDropdown === report.id && (
                           <div className="action-dropdown-menu">
                             <button
+                              onClick={() => handleViewReport(report)}
+                              className="action-dropdown-item"
+                            >
+                              <Eye size={16} color="#6b7280" />
+                              View Report
+                            </button>
+                            <button
                               onClick={() => handleStatusChange(report.id, "Resolved")}
                               className="action-dropdown-item"
                             >
@@ -472,7 +606,7 @@ function Reports() {
             </table>
           </div>
 
-          {/* Pagination */}
+
           <div className="reports-table-footer">
             <div className="showing-info">
               Showing {currentReports.length} of {filteredReports.length} entries
@@ -505,6 +639,7 @@ function Reports() {
           </div>
         </div>
       </div>
+      {isReportModalOpen && <ReportDetailsModal />}
     </div>
   );
 }
