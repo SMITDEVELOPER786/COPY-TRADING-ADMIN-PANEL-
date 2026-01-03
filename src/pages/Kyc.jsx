@@ -580,7 +580,7 @@ function KYC() {
     </div>
   );
 
-  if (loading) return <p>Loading KYC data...</p>;
+
   if (error) return <p>{error}</p>;
 
   return (
