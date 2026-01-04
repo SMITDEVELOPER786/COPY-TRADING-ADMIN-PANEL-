@@ -708,7 +708,7 @@ function KYC() {
   {loading ? (
     <tr>
       <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
-        <div className="loader"></div>
+        <div className="loader1"></div>
       </td>
     </tr>
   ) : currentKYC.length > 0 ? (

@@ -412,45 +412,57 @@ const Investors = () => {
         </div>
 
         <div className="table-container">
-          {isLoading && (
+          {/* {isLoading && (
             <div style={{ padding: "20px", textAlign: "center" }}>
               Loading investors...
             </div>
-          )}
+          )} */}
           {error && (
             <div style={{ padding: "20px", textAlign: "center", color: "red" }}>
               Error loading investors: {error}
             </div>
           )}
-          {!isLoading && !error && (
-            <table className="team-table">
-              <thead>
-                <tr>
-                  <th>Member</th>
-                  <th>Email</th>
+          
+          <table className="team-table">
+  <thead>
+    <tr>
+      <th>Member</th>
+      <th>Email</th>
+      <th>Type</th>
+      <th>Email Verified</th>
+      <th>Wallet</th>
+      <th>Joined</th>
+      <th>Kyc Upload</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
 
-                  <th>Type</th>
-                  <th>Email Verified</th>
-
-                  <th>Wallet</th>
-                  <th>Joined</th>
-                  <th>Kyc Upload</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentUsers.length === 0 ? (
-
-                  <tr>
-                    <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
-                      No investors found
-                    </td>
-                  </tr>
-                ) : (
-                  currentUsers.map((user, index) => (
-                    console.log(currentUsers),
-                    <tr key={user.id}>
+  <tbody>
+    {isLoading ? (
+      <tr>
+        <td colSpan="9" style={{ textAlign: "center", padding: "30px" }}>
+          <div className="loader1"></div>
+        </td>
+      </tr>
+    ) : error ? (
+      <tr>
+        <td colSpan="9" style={{ textAlign: "center", color: "red" }}>
+          {error}
+        </td>
+      </tr>
+    ) : currentUsers.length === 0 ? (
+      <tr>
+        <td colSpan="9" style={{ textAlign: "center" }}>
+          No investors found
+        </td>
+      </tr>
+    ) : (
+     
+      currentUsers.map((user, index) => (
+        <tr key={user.id}>
+  
+  
                       <td data-label="Member">
                         <div className="user-cell">
                           <img
@@ -482,6 +494,7 @@ const Investors = () => {
                           >
                             <MoreHorizontal size={16} />
                           </button>
+                          
                           {menuOpen === (user.id || user._id) && (
                             <div
                               className={`team-dropdown-menu ${index >= currentUsers.length - 2 ? "drop-up" : ""
@@ -531,19 +544,11 @@ const Investors = () => {
                 )}
               </tbody>
             </table>
-          )}
+          
         </div>
 
         <div className="table-footer">
-          <div className="showing-info">
-            {isLoading ? (
-              "Loading..."
-            ) : error ? (
-              `Error: ${error}`
-            ) : (
-              `Showing: ${currentUsers.length} of ${filteredUsers.length}${usersData?.total ? ` (Total: ${usersData.total})` : ''} Entries`
-            )}
-          </div>
+        
           {!isLoading && !error && totalPages > 0 && (
             <div className="pagination">
               <button

@@ -450,17 +450,13 @@ const InvestorProfile = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="app">
-        <main className="main-content">
-          <div style={{ padding: "40px", textAlign: "center" }}>
-            Loading investor profile...
-          </div>
-        </main>
-      </div>
-    );
-  }
+if (isLoading) {
+  return (
+    <div className="loader-wrapper">
+      <div className="loader1"></div>
+    </div>
+  );
+}
 
   if (error) {
     return (
@@ -482,6 +478,7 @@ const InvestorProfile = () => {
     return (
       <div className="app">
         <main className="main-content">
+          
           <div style={{ padding: "40px", textAlign: "center" }}>
             Investor not found
             <br />
