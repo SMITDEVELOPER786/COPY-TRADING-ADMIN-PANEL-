@@ -137,3 +137,70 @@ export const getKycSubmissions = async (params = {}) => {
     throw error;
   }
 };
+
+/**
+ * Send email to user
+ * @param {Object} emailData - Email data
+ * @param {string} emailData.email - Recipient email address
+ * @param {string} emailData.subject - Email subject
+ * @param {string} emailData.message - Email message body
+ * @returns {Promise<Object>} Response data
+ */
+export const sendEmail = async (emailData) => {
+  try {
+    const response = await apiClient.post(ENDPOINTS.ADMIN.EMAIL_SEND, {
+      email: emailData.email,
+      subject: emailData.subject,
+      message: emailData.message,
+    });
+    return response;
+  } catch (error) {
+    console.error('Send email error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Freeze user account
+ * @param {string} id - User ID
+ * @param {string} reason - Optional reason for freezing
+ * @returns {Promise<Object>} Response data
+ */
+export const freezeUser = async (id, reason = 'Account frozen by admin') => {
+  try {
+    // Try to use the freeze endpoint first, fallback to updateUserStatus if it doesn't exist
+    try {
+      const response = await apiClient.post(ENDPOINTS.USERS.FREEZE(id), { reason });
+      return response;
+    } catch (freezeError) {
+      // If freeze endpoint doesn't exist, use updateUserStatus
+      console.warn('Freeze endpoint not available, using updateUserStatus');
+      return await updateUserStatus(id, 'Delete');
+    }
+  } catch (error) {
+    console.error('Freeze user error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Unfreeze user account
+ * @param {string} id - User ID
+ * @returns {Promise<Object>} Response data
+ */
+export const unfreezeUser = async (id) => {
+  try {
+    // Try to use the unfreeze endpoint first, fallback to updateUserStatus if it doesn't exist
+    try {
+      const response = await apiClient.post(ENDPOINTS.USERS.UNFREEZE(id));
+      return response;
+    } catch (unfreezeError) {
+      // If unfreeze endpoint doesn't exist, use updateUserStatus
+      console.warn('Unfreeze endpoint not available, using updateUserStatus');
+      return await updateUserStatus(id, 'Active');
+    }
+  } catch (error) {
+    console.error('Unfreeze user error:', error);
+    throw error;
+  }
+};

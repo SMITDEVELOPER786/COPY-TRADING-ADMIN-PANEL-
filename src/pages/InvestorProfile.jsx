@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import UserCharts from '../components/UserCharts';
-import { getUserById, updateUserStatus, submitKycReview } from '../services/user.service';
+import { getUserById, updateUserStatus, submitKycReview, sendEmail, freezeUser, unfreezeUser } from '../services/user.service';
 import {
   FaEnvelope,
   FaBan,
@@ -12,7 +12,7 @@ import {
   FaEdit,
   FaChartLine,
 } from 'react-icons/fa';
-import { X, Activity } from 'lucide-react';
+import { X, Activity, Mail, AtSign, MessageSquare, Send, FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../Users.css';
@@ -33,6 +33,7 @@ const InvestorProfile = () => {
   const [showKycDialog, setShowKycDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isEmailSending, setIsEmailSending] = useState(false);
+  const [showEmailDialog, setShowEmailDialog] = useState(false);
 
   const investorMetrics = {
     portfolioValue: selectedUser ? parseFloat(selectedUser.profit.replace('$', '').replace('M', '')) * 1000000 : 0,
@@ -178,20 +179,46 @@ const InvestorProfile = () => {
     console.log(`Viewing details for: ${item}`);
   };
 
-  const handleSendEmail = async () => {
+  const handleSendEmail = () => {
+    if (!selectedUser || !selectedUser.email) {
+      toast.error('User email not available');
+      return;
+    }
+    setShowEmailDialog(true);
+  };
+
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedUser || !selectedUser.email) {
+      toast.error('User email not available');
+      return;
+    }
+
+    const formData = new FormData(e.target);
+    const email = formData.get('email');
+    const subject = formData.get('subject');
+    const message = formData.get('message');
+
+    if (!email || !subject || !message) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
     setIsEmailSending(true);
     try {
-      // In a real implementation, this would call an email service
-      // For now, we'll simulate sending an email
-      console.log(`Sending email to: ${selectedUser.email}`);
+      await sendEmail({
+        email: email,
+        subject: subject,
+        message: message,
+      });
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      toast.success(`Email sent successfully to ${selectedUser.email}`);
+      toast.success(`Email sent successfully to ${email}`);
+      setShowEmailDialog(false);
+      // Reset form
+      e.target.reset();
     } catch (error) {
       console.error('Error sending email:', error);
-      toast.error('Failed to send email');
+      toast.error(error.message || 'Failed to send email');
     } finally {
       setIsEmailSending(false);
     }
@@ -203,31 +230,46 @@ const InvestorProfile = () => {
       return;
     }
 
-    try {
-      // Determine the new status based on current status
-      const newStatus = selectedUser.status === 'Active' ? 'Deactivate' : 'Active';
+    const originalStatus = selectedUser.status;
+    const originalKycStatus = selectedUser.kycStatus;
+    const newStatus = selectedUser.status === 'Active' ? 'Deactivate' : 'Active';
 
+    try {
       // Update the local state immediately to provide visual feedback
       setSelectedUser(prev => ({
         ...prev,
         status: newStatus,
         kycStatus: newStatus === 'Active' ? 'APPROVED' : 'PENDING',
-        isFrozen: newStatus === 'Active' ? false : false // Keep isFrozen false for deactivation
+        isFrozen: false // Keep isFrozen false for deactivation
       }));
 
       // Make the API call
       await updateUserStatus(selectedUser.id, newStatus);
 
+      // Refresh user data to get the latest state from server
+      try {
+        const updatedUser = await getUserById(selectedUser.id);
+        const userData = updatedUser.data || updatedUser;
+        setSelectedUser(prev => ({
+          ...prev,
+          status: userData.isFrozen ? 'Delete' : (userData.kycStatus === 'APPROVED' ? 'Active' : 'PENDING'),
+          kycStatus: userData.kycStatus,
+          isFrozen: userData.isFrozen
+        }));
+      } catch (refreshError) {
+        console.warn('Could not refresh user data:', refreshError);
+      }
+
       toast.success(`User ${newStatus === 'Active' ? 'activated' : 'deactivated'} successfully`);
     } catch (error) {
       console.error('Error updating user status:', error);
-      toast.error(`Failed to ${selectedUser.status === 'Active' ? 'deactivate' : 'activate'} user`);
+      toast.error(error.message || `Failed to ${originalStatus === 'Active' ? 'deactivate' : 'activate'} user`);
 
       // Revert the status if API call failed
       setSelectedUser(prev => ({
         ...prev,
-        status: selectedUser.status, // Revert to original status
-        kycStatus: selectedUser.kycStatus,
+        status: originalStatus,
+        kycStatus: originalKycStatus,
         isFrozen: selectedUser.isFrozen
       }));
     }
@@ -239,31 +281,50 @@ const InvestorProfile = () => {
       return;
     }
 
-    try {
-      // Determine the new freeze status based on current status
-      const newIsFrozen = !selectedUser.isFrozen;
-      const newStatus = newIsFrozen ? 'Delete' : 'Active';
+    const originalIsFrozen = selectedUser.isFrozen;
+    const newIsFrozen = !selectedUser.isFrozen;
 
+    try {
       // Update the local state immediately to provide visual feedback
       setSelectedUser(prev => ({
         ...prev,
-        status: newStatus,
-        isFrozen: newIsFrozen
+        status: newIsFrozen ? 'Delete' : 'Active',
+        isFrozen: newIsFrozen,
+        kycStatus: newIsFrozen ? 'PENDING' : 'APPROVED'
       }));
 
-      // Update the user status
-      await updateUserStatus(selectedUser.id, newStatus);
+      // Make the API call
+      if (newIsFrozen) {
+        await freezeUser(selectedUser.id, 'Account frozen by admin');
+      } else {
+        await unfreezeUser(selectedUser.id);
+      }
+
+      // Refresh user data to get the latest state from server
+      try {
+        const updatedUser = await getUserById(selectedUser.id);
+        const userData = updatedUser.data || updatedUser;
+        setSelectedUser(prev => ({
+          ...prev,
+          status: userData.isFrozen ? 'Delete' : (userData.kycStatus === 'APPROVED' ? 'Active' : 'PENDING'),
+          isFrozen: userData.isFrozen,
+          kycStatus: userData.kycStatus
+        }));
+      } catch (refreshError) {
+        console.warn('Could not refresh user data:', refreshError);
+      }
 
       toast.success(`User ${newIsFrozen ? 'frozen' : 'unfrozen'} successfully`);
     } catch (error) {
       console.error('Error updating user freeze status:', error);
-      toast.error(`Failed to ${selectedUser.isFrozen ? 'unfreeze' : 'freeze'} user`);
+      toast.error(error.message || `Failed to ${originalIsFrozen ? 'unfreeze' : 'freeze'} user`);
 
       // Revert the status if API call failed
       setSelectedUser(prev => ({
         ...prev,
-        status: selectedUser.status, // Revert to original status
-        isFrozen: selectedUser.isFrozen
+        status: selectedUser.status,
+        isFrozen: originalIsFrozen,
+        kycStatus: selectedUser.kycStatus
       }));
     }
   };
@@ -280,34 +341,52 @@ const InvestorProfile = () => {
   const confirmDelete = async () => {
     if (!selectedUser || !selectedUser.id) {
       toast.error('User data not available');
+      setShowDeleteDialog(false);
       return;
     }
 
+    const originalStatus = selectedUser.status;
+    const originalIsFrozen = selectedUser.isFrozen;
+    const newStatus = selectedUser.status === 'Delete' ? 'Active' : 'Delete';
+
     try {
       // Update the local state immediately to provide visual feedback
-      const newStatus = selectedUser.status === 'Delete' ? 'Active' : 'Delete';
       setSelectedUser(prev => ({
         ...prev,
         status: newStatus,
-        isFrozen: newStatus === 'Delete'
+        isFrozen: newStatus === 'Delete',
+        kycStatus: newStatus === 'Delete' ? 'PENDING' : 'APPROVED'
       }));
 
-      // In the existing updateUserStatus function, 'Delete' status actually freezes the account
-      // If you want to truly delete the user, you would need a different endpoint
+      // Delete status freezes the account (soft delete)
       await updateUserStatus(selectedUser.id, newStatus);
 
-      toast.success(`User account ${newStatus === 'Delete' ? 'frozen (soft delete)' : 'activated'} successfully`);
+      // Refresh user data to get the latest state from server
+      try {
+        const updatedUser = await getUserById(selectedUser.id);
+        const userData = updatedUser.data || updatedUser;
+        setSelectedUser(prev => ({
+          ...prev,
+          status: userData.isFrozen ? 'Delete' : (userData.kycStatus === 'APPROVED' ? 'Active' : 'PENDING'),
+          isFrozen: userData.isFrozen,
+          kycStatus: userData.kycStatus
+        }));
+      } catch (refreshError) {
+        console.warn('Could not refresh user data:', refreshError);
+      }
+
+      toast.success(`User account ${newStatus === 'Delete' ? 'deleted (frozen)' : 'restored'} successfully`);
       setShowDeleteDialog(false);
     } catch (error) {
       console.error('Error updating user:', error);
-      toast.error('Failed to update user');
+      toast.error(error.message || 'Failed to update user');
       setShowDeleteDialog(false);
 
       // Revert the status if API call failed
       setSelectedUser(prev => ({
         ...prev,
-        status: selectedUser.status, // Revert to original status
-        isFrozen: selectedUser.isFrozen
+        status: originalStatus,
+        isFrozen: originalIsFrozen
       }));
     }
   };
@@ -1571,6 +1650,83 @@ if (isLoading) {
                 >
                   Cancel
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showEmailDialog && (
+          <div className="modal" onClick={() => setShowEmailDialog(false)}>
+            <div className="modal-content small email-dialog" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>
+                  <Mail size={24} />
+                  Send Email
+                </h3>
+                <button className="modal-close" onClick={() => setShowEmailDialog(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="modal-body">
+                <form onSubmit={handleEmailSubmit} className="form">
+                  <div className="form-group">
+                    <label>
+                      <AtSign size={16} />
+                      Email Address
+                    </label>
+                    <input
+                      name="email"
+                      type="email"
+                      defaultValue={selectedUser?.email || ''}
+                      className="form-control"
+                      placeholder="recipient@example.com"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>
+                      <FileText size={16} />
+                      Subject
+                    </label>
+                    <input
+                      name="subject"
+                      type="text"
+                      placeholder="Enter email subject"
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>
+                      <MessageSquare size={16} />
+                      Message
+                    </label>
+                    <textarea
+                      name="message"
+                      placeholder="Enter your message here..."
+                      className="form-control"
+                      rows="6"
+                      required
+                    />
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn outline"
+                      onClick={() => setShowEmailDialog(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn green"
+                      disabled={isEmailSending}
+                    >
+                      <Send size={16} />
+                      {isEmailSending ? 'Sending...' : 'Send Email'}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>

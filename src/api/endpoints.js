@@ -17,12 +17,15 @@ export const ENDPOINTS = {
     CREATE: '/users',
     UPDATE: (id) => `/users/${id}`,
     DELETE: (id) => `/users/${id}`,
+    FREEZE: (id) => `/users/${id}/freeze`,
+    UNFREEZE: (id) => `/users/${id}/unfreeze`,
   },
 
   // Admin
   ADMIN: {
     USERS: '/users',
     INVITE: '/users/invite',
+    EMAIL_SEND: '/email/send',
 
     // ✅ KYC (relative to baseURL /admin/kyc)
     KYC: {

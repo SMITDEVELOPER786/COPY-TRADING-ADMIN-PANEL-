@@ -14,11 +14,14 @@ import {
   Award,
   X,
   Activity,
+  Mail,
+  AtSign,
+  MessageSquare,
+  Send,
 } from "lucide-react";
 import "../TraderProfile.css";
 import { FaBan, FaEnvelope, FaSnowflake, FaTrash, FaEdit, FaIdCard } from "react-icons/fa";
-import { getUserById } from "../services/user.service";
-import { updateUserStatus } from "../services/user.service";
+import { getUserById, updateUserStatus, sendEmail, freezeUser, unfreezeUser } from "../services/user.service";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -31,6 +34,7 @@ const TraderProfile = ({ user: propUser }) => {
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [user, setUser] = useState(propUser || null);
   const [isLoading, setIsLoading] = useState(!propUser);
   const [error, setError] = useState(null);
@@ -155,31 +159,46 @@ const TraderProfile = ({ user: propUser }) => {
       return;
     }
     
+    const originalStatus = user.status;
+    const originalKycStatus = user.kycStatus;
+    const newStatus = user.status === 'Active' ? 'Deactivate' : 'Active';
+    
     try {
-      // Determine the new status based on current status
-      const newStatus = user.status === 'Active' ? 'Deactivate' : 'Active';
-      
       // Update the local state immediately to provide visual feedback
       setUser(prev => ({
         ...prev,
         status: newStatus,
         kycStatus: newStatus === 'Active' ? 'APPROVED' : 'PENDING',
-        isFrozen: newStatus === 'Active' ? false : false // Keep isFrozen false for deactivation
+        isFrozen: false // Keep isFrozen false for deactivation
       }));
       
       // Make the API call
       await updateUserStatus(user.id, newStatus);
       
+      // Refresh user data to get the latest state from server
+      try {
+        const updatedUser = await getUserById(user.id);
+        const userData = updatedUser.data || updatedUser;
+        setUser(prev => ({
+          ...prev,
+          status: userData.isFrozen ? 'Delete' : (userData.kycStatus === 'APPROVED' ? 'Active' : 'PENDING'),
+          kycStatus: userData.kycStatus,
+          isFrozen: userData.isFrozen
+        }));
+      } catch (refreshError) {
+        console.warn('Could not refresh user data:', refreshError);
+      }
+      
       toast.success(`User ${newStatus === 'Active' ? 'activated' : 'deactivated'} successfully`);
     } catch (error) {
       console.error('Error updating user status:', error);
-      toast.error(`Failed to ${user?.status === 'Active' ? 'deactivate' : 'activate'} user`);
+      toast.error(error.message || `Failed to ${originalStatus === 'Active' ? 'deactivate' : 'activate'} user`);
       
       // Revert the status if API call failed
       setUser(prev => ({
         ...prev,
-        status: user.status, // Revert to original status
-        kycStatus: user.kycStatus,
+        status: originalStatus,
+        kycStatus: originalKycStatus,
         isFrozen: user.isFrozen
       }));
     }
@@ -191,34 +210,49 @@ const TraderProfile = ({ user: propUser }) => {
       return;
     }
     
+    const originalIsFrozen = user.isFrozen;
+    const newIsFrozen = !user.isFrozen;
+    
     try {
-      // Determine the new freeze status based on current status
-      const newIsFrozen = !user.isFrozen;
-      
-      // For freezing, we update the status to reflect the freeze state
-      const newStatus = newIsFrozen ? 'Delete' : 'Active';
-      
       // Update the local state immediately to provide visual feedback
       setUser(prev => ({
         ...prev,
-        status: newStatus,
+        status: newIsFrozen ? 'Delete' : 'Active',
         isFrozen: newIsFrozen,
         kycStatus: newIsFrozen ? 'PENDING' : 'APPROVED'
       }));
       
       // Make the API call
-      await updateUserStatus(user.id, newStatus);
+      if (newIsFrozen) {
+        await freezeUser(user.id, 'Account frozen by admin');
+      } else {
+        await unfreezeUser(user.id);
+      }
+      
+      // Refresh user data to get the latest state from server
+      try {
+        const updatedUser = await getUserById(user.id);
+        const userData = updatedUser.data || updatedUser;
+        setUser(prev => ({
+          ...prev,
+          status: userData.isFrozen ? 'Delete' : (userData.kycStatus === 'APPROVED' ? 'Active' : 'PENDING'),
+          isFrozen: userData.isFrozen,
+          kycStatus: userData.kycStatus
+        }));
+      } catch (refreshError) {
+        console.warn('Could not refresh user data:', refreshError);
+      }
       
       toast.success(`User ${newIsFrozen ? 'frozen' : 'unfrozen'} successfully`);
     } catch (error) {
       console.error('Error updating user freeze status:', error);
-      toast.error(`Failed to ${user?.isFrozen ? 'unfreeze' : 'freeze'} user`);
+      toast.error(error.message || `Failed to ${originalIsFrozen ? 'unfreeze' : 'freeze'} user`);
       
       // Revert the status if API call failed
       setUser(prev => ({
         ...prev,
-        status: user.status, // Revert to original status
-        isFrozen: user.isFrozen,
+        status: user.status,
+        isFrozen: originalIsFrozen,
         kycStatus: user.kycStatus
       }));
     }
@@ -236,34 +270,52 @@ const TraderProfile = ({ user: propUser }) => {
   const confirmDelete = async () => {
     if (!user || !user.id) {
       toast.error('User data not available');
+      setShowDeleteDialog(false);
       return;
     }
     
+    const originalStatus = user.status;
+    const originalIsFrozen = user.isFrozen;
+    const newStatus = user.status === 'Delete' ? 'Active' : 'Delete';
+    
     try {
       // Update the local state immediately to provide visual feedback
-      const newStatus = user.status === 'Delete' ? 'Active' : 'Delete';
       setUser(prev => ({
         ...prev,
         status: newStatus,
-        isFrozen: newStatus === 'Delete'
+        isFrozen: newStatus === 'Delete',
+        kycStatus: newStatus === 'Delete' ? 'PENDING' : 'APPROVED'
       }));
       
-      // In the existing updateUserStatus function, 'Delete' status actually freezes the account
-      // If you want to truly delete the user, you would need a different endpoint
+      // Delete status freezes the account (soft delete)
       await updateUserStatus(user.id, newStatus);
       
-      toast.success(`User account ${newStatus === 'Delete' ? 'frozen (soft delete)' : 'activated'} successfully`);
+      // Refresh user data to get the latest state from server
+      try {
+        const updatedUser = await getUserById(user.id);
+        const userData = updatedUser.data || updatedUser;
+        setUser(prev => ({
+          ...prev,
+          status: userData.isFrozen ? 'Delete' : (userData.kycStatus === 'APPROVED' ? 'Active' : 'PENDING'),
+          isFrozen: userData.isFrozen,
+          kycStatus: userData.kycStatus
+        }));
+      } catch (refreshError) {
+        console.warn('Could not refresh user data:', refreshError);
+      }
+      
+      toast.success(`User account ${newStatus === 'Delete' ? 'deleted (frozen)' : 'restored'} successfully`);
       setShowDeleteDialog(false);
     } catch (error) {
       console.error('Error updating user:', error);
-      toast.error('Failed to update user');
+      toast.error(error.message || 'Failed to update user');
       setShowDeleteDialog(false);
       
       // Revert the status if API call failed
       setUser(prev => ({
         ...prev,
-        status: user.status, // Revert to original status
-        isFrozen: user.isFrozen
+        status: originalStatus,
+        isFrozen: originalIsFrozen
       }));
     }
   };
@@ -366,25 +418,45 @@ const TraderProfile = ({ user: propUser }) => {
     }
   };
 
-  const handleSendEmail = async () => {
+  const handleSendEmail = () => {
     if (!user || !user.email) {
       toast.error('User email not available');
       return;
     }
-    
-    // In a real implementation, this would call an email service
-    // For now, we'll simulate the email sending
+    setShowEmailDialog(true);
+  };
+
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault();
+    if (!user || !user.email) {
+      toast.error('User email not available');
+      return;
+    }
+
+    const formData = new FormData(e.target);
+    const email = formData.get('email');
+    const subject = formData.get('subject');
+    const message = formData.get('message');
+
+    if (!email || !subject || !message) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
     try {
-      // Simulate API call to send email
-      console.log('Sending email to:', user.email);
+      await sendEmail({
+        email: email,
+        subject: subject,
+        message: message,
+      });
       
-      // Simulate API response
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success(`Email sent successfully to ${user.email}`);
+      toast.success(`Email sent successfully to ${email}`);
+      setShowEmailDialog(false);
+      // Reset form
+      e.target.reset();
     } catch (error) {
       console.error('Error sending email:', error);
-      toast.error('Failed to send email');
+      toast.error(error.message || 'Failed to send email');
     }
   };
 
@@ -1129,6 +1201,82 @@ const TraderProfile = ({ user: propUser }) => {
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEmailDialog && (
+        <div className="modal" onClick={() => setShowEmailDialog(false)}>
+          <div className="modal-content small email-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>
+                <Mail size={24} />
+                Send Email
+              </h3>
+              <button className="modal-close" onClick={() => setShowEmailDialog(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleEmailSubmit} className="form">
+                <div className="form-group">
+                  <label>
+                    <AtSign size={16} />
+                    Email Address
+                  </label>
+                  <input
+                    name="email"
+                    type="email"
+                    defaultValue={user?.email || ''}
+                    className="form-control"
+                    placeholder="recipient@example.com"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>
+                    <FileText size={16} />
+                    Subject
+                  </label>
+                  <input
+                    name="subject"
+                    type="text"
+                    placeholder="Enter email subject"
+                    className="form-control"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>
+                    <MessageSquare size={16} />
+                    Message
+                  </label>
+                  <textarea
+                    name="message"
+                    placeholder="Enter your message here..."
+                    className="form-control"
+                    rows="6"
+                    required
+                  />
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn outline"
+                    onClick={() => setShowEmailDialog(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn green"
+                  >
+                    <Send size={16} />
+                    Send Email
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
